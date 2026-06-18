@@ -556,6 +556,8 @@ function render(page){
     case 'bpm':           renderBPM(); break;
     case 'haccp':         renderHACCP(); break;
     case 'retermalizado': renderRetermalizado(); break;
+    case 'fichamadre':    renderFichaMadre(); break;
+    case 'trazabilidad':  renderTrazabilidad(); break;
     case 'historial':     renderHistorialGlobal(); break;
     case 'admin':         renderAdmin(); break;
     default: mc.innerHTML='<div class="hemp">Módulo en desarrollo.</div>';
@@ -687,422 +689,18 @@ var RET_SECS = [
 function retSKey(sec,n){ return sec+'_'+n; }
 
 function renderRetermalizado(){
-  var mc = document.getElementById('mainContent');
-  RET_ESTADO = {}; RET_VALIDADO = false;
-  mc.innerHTML =
-    '<div class="section-title">🍽️ Checklist BPM - Área Retermalizado</div>'+
-
-    // FICHA
-    '<div class="card">'+
-      '<div class="card-hdr" style="background:var(--navy2)">Ficha de Identificación</div>'+
-      '<div class="g2">'+
-        '<div class="fi"><label>Establecimiento</label><input id="rf_estab" value="E.P. Santiago 1" readonly></div>'+
-        '<div class="fi"><label>Fecha</label><input type="date" id="rf_fecha"></div>'+
-        '<div class="fi"><label>Fiscalizador ITE</label><input id="rf_fisc" placeholder="Nombre completo..." oninput="retSyncVal()"></div>'+
-        '<div class="fi"><label>Cargo</label><input id="rf_cargo" placeholder="Cargo..."></div>'+
-        '<div class="fi"><label>Área Evaluada</label><input id="rf_area" value="Área Retermalizado"></div>'+
-        '<div class="fi"><label>Turno</label><select id="rf_turno"><option value="">Seleccionar...</option><option>Mañana</option><option>Tarde</option><option>Noche</option></select></div>'+
-      '</div>'+
-    '</div>'+
-
-    // RESUMEN
-    '<div class="card">'+
-      '<div class="card-hdr" style="background:var(--teal2)">Resumen de Evaluación</div>'+
-      '<div class="res-grid">'+
-        '<div class="res-cell"><div class="res-lbl">Total</div><div class="res-val" id="rr_tot">18</div></div>'+
-        '<div class="res-cell"><div class="res-lbl">Cumple</div><div class="res-val gr" id="rr_ok">0</div></div>'+
-        '<div class="res-cell"><div class="res-lbl">No Cumple</div><div class="res-val rd" id="rr_nc">0</div></div>'+
-        '<div class="res-cell"><div class="res-lbl">No Aplica</div><div class="res-val" id="rr_na">0</div></div>'+
-        '<div class="res-cell"><div class="res-lbl">% Cumplim.</div><div class="res-val" id="rr_pct">-</div></div>'+
-      '</div>'+
-      '<div class="res-bar-wrap"><div class="bar-wrap"><div class="bar-fill" id="rr_bar"></div></div><span class="res-result" id="rr_res">Sin evaluar</span></div>'+
-    '</div>'+
-
-    // SECCIONES
-    retBuildSecs()+
-
-    // VALIDACION
-    '<div class="card">'+
-      '<div class="card-hdr" style="background:var(--teal2)">Validación - Fiscalizador ITE</div>'+
-      '<div class="firma-g">'+
-        '<div class="ff"><label>Nombre ITE</label><input id="rv_nom" placeholder="Nombre completo" oninput="retEditNom()"></div>'+
-        '<div class="ff"><label>RUT</label><input id="rv_rut" placeholder="12.345.678-9"></div>'+
-        '<div class="ff"><label>Cargo</label><input id="rv_cargo" placeholder="Cargo..."></div>'+
-      '</div>'+
-      '<div style="padding:12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:1px solid #f2f2f2">'+
-        '<button id="retBtnVal" class="btn btn-teal" onclick="retValidar()">✅ Validar Registro</button>'+
-        '<div><div style="font-size:9px;color:var(--muted);text-transform:uppercase;font-weight:700;margin-bottom:3px">Fecha y hora de validación</div>'+
-        '<div id="rv_ts" style="font-size:13px;font-weight:700;color:var(--navy2)">-</div></div>'+
-      '</div>'+
-      '<div class="decl">Declaro que la información registrada es fiel reflejo de la fiscalización realizada, conforme al Decreto 977 RSA Chile.</div>'+
-    '</div>'+
-
-    // BOTONES
-    '<div class="card"><div class="action-bar">'+
-      '<button class="btn btn-teal" onclick="retGuardar()">💾 Guardar Registro</button>'+
-      '<button class="btn btn-ghost" onclick="retLimpiar()">🗑 Limpiar</button>'+
-      '<button class="btn btn-navy" onclick="retVerHistorial()">📋 Historial</button>'+
-      '<button class="btn" style="background:#1A6EF5;color:white" onclick="retVerPDF()">📄 Informe Diario</button>'+
-      '<button class="btn" style="background:#0D52C7;color:white" onclick="retVerPDFMes()">📊 Informe Mensual</button>'+
-      '<button class="btn" style="background:#4A235A;color:white" onclick="retVerPDFAnual()">📈 Informe Anual</button>'+
-    '</div></div>'+
-
-    // HISTORIAL OVERLAY
-    '<div class="hist-overlay" id="retHistOverlay">'+
-      '<div class="hist-overlay-inner">'+
-        '<div style="background:var(--navy2);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">'+
-          '<span style="font-size:14px;font-weight:700;color:white">📋 Historial - Retermalizado</span>'+
-          '<div style="display:flex;gap:8px">'+
-            '<button onclick="retGuardar()" style="background:var(--teal);color:white;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer">💾 Guardar</button>'+
-            '<button onclick="retLimpiar()" style="background:#fcebeb;color:var(--danger);border:none;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:700;cursor:pointer">🗑 Limpiar</button>'+
-            '<button onclick="document.getElementById(\'retHistOverlay\').classList.remove(\'open\')" style="background:var(--navy2);color:white;border:2px solid rgba(255,255,255,.3);border-radius:6px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer">✕ Cerrar</button>'+
-          '</div>'+
-        '</div>'+
-        '<div class="hist-bar">'+
-          '<span class="hist-cnt" id="retHistCnt">0 registros</span>'+
-          '<input type="date" class="hist-date-input" id="retHistFecha">'+
-          '<button class="hbtn" onclick="retCargarHistorial(document.getElementById(\'retHistFecha\').value)">Buscar</button>'+
-          '<button class="hbtn out" onclick="document.getElementById(\'retHistFecha\').value=\'\';retCargarHistorial(null)">Ver todos</button>'+
-        '</div>'+
-        '<div class="hist-list" id="retHistList"><div class="hemp">Cargando...</div></div>'+
-      '</div>'+
+  var mc=document.getElementById('mainContent');
+  mc.style.padding='14px';
+  mc.style.maxWidth='960px';
+  mc.innerHTML=
+    '<div class="section-title">🍽️ Retermalizado</div>'+
+    '<div class="card" style="padding:24px;text-align:center">'+
+    '<p style="font-size:14px;color:#0D1B4B;margin-bottom:16px">Checklist BPM Area Retermalizado</p>'+
+    '<a href="https://nutcatalan-spec.github.io/SAIF/checklist_retermalizado.html" target="_blank" style="background:#1A6EF5;color:white;border:none;border-radius:8px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block">Abrir Retermalizado ↗</a>'+
+    '<p style="font-size:11px;color:#6B7FA8;margin-top:12px">Se abre en una nueva pestana.</p>'+
     '</div>';
-
-  // Fecha de hoy
-  document.getElementById('rf_fecha').value = hoy();
-  // Pre-fill fiscalizador
-  var nom = currentUser.nombreCompleto||currentUser.username||'';
-  var cargo = currentUser.cargo||'';
-  document.getElementById('rf_fisc').value = nom;
-  document.getElementById('rf_cargo').value = cargo;
-  document.getElementById('rv_nom').value = nom;
-  document.getElementById('rv_cargo').value = cargo;
 }
-
-function retBuildSecs(){
-  var html = '';
-  RET_SECS.forEach(function(sec){
-    html += '<div class="card">'+
-      '<div class="sec-hdr">'+sec.nombre+' <span class="sec-badge" id="ret_sb'+sec.id+'">0 / '+sec.items.length+'</span></div>'+
-      '<div class="eval-wrap"><table class="eval-table">'+
-      '<thead><tr><th style="width:32px">N°</th><th class="param">Ítem / Criterio</th><th style="width:80px">Evaluación</th><th style="min-width:110px">Observación</th></tr></thead>'+
-      '<tbody>';
-    sec.items.forEach(function(it){
-      var k = retSKey(sec.id,it.n);
-      html += '<tr>'+
-        '<td style="font-size:10px;font-weight:700;color:var(--muted);text-align:center">'+it.n+'</td>'+
-        '<td class="param-cell"><span style="font-size:9px;font-weight:700;color:var(--navy2);display:block;margin-bottom:2px">'+it.cat+'</span>'+it.crit+'</td>'+
-        '<td><div class="mod-btn-group">'+
-          '<button class="mb" id="mb_c_'+k+'" onclick="retSetVal('+sec.id+','+it.n+',\'c\',this)">C</button>'+
-          '<button class="mb" id="mb_nc_'+k+'" onclick="retSetVal('+sec.id+','+it.n+',\'nc\',this)">NC</button>'+
-          '<button class="mb" id="mb_na_'+k+'" onclick="retSetVal('+sec.id+','+it.n+',\'na\',this)">NA</button>'+
-        '</div></td>'+
-        '<td><input class="obs-input" id="ret_obs_'+k+'" placeholder="Observación..."></td>'+
-        '</tr>';
-    });
-    html += '</tbody><tfoot><tr><td class="param-cell" colspan="2">Subtotal '+sec.nombre+'</td>'+
-      '<td><span id="ret_st'+sec.id+'_ok" style="color:var(--teal2);font-weight:700">0</span> C / '+
-      '<span id="ret_st'+sec.id+'_nc" style="color:var(--danger);font-weight:700">0</span> NC / '+
-      '<span id="ret_st'+sec.id+'_na" style="color:#888">0</span> NA</td><td></td></tr></tfoot>'+
-      '</table></div></div>';
-  });
-  return html;
-}
-
-function retSetVal(sec,n,val,btn){
-  var k = retSKey(sec,n);
-  RET_ESTADO[k] = RET_ESTADO[k]===val ? '' : val;
-  // Update buttons
-  ['c','nc','na'].forEach(function(v){
-    var b = document.getElementById('mb_'+v+'_'+k);
-    if(b) b.className = 'mb'+(RET_ESTADO[k]===v?' '+v:'');
-  });
-  retUpd();
-}
-
-function retCalcSec(secId){
-  var sec = RET_SECS.find(function(s){return s.id===secId;});
-  if(!sec) return {ok:0,nc:0,na:0};
-  var ok=0,nc=0,na=0;
-  sec.items.forEach(function(it){
-    var v=RET_ESTADO[retSKey(secId,it.n)]||'';
-    if(v==='c')ok++; else if(v==='nc')nc++; else if(v==='na')na++;
-  });
-  return {ok:ok,nc:nc,na:na,tot:sec.items.length};
-}
-
-function retUpd(){
-  var totOk=0,totNc=0,totNa=0,totItems=0;
-  RET_SECS.forEach(function(sec){
-    var r=retCalcSec(sec.id);
-    totOk+=r.ok;totNc+=r.nc;totNa+=r.na;totItems+=r.tot;
-    var stOk=document.getElementById('ret_st'+sec.id+'_ok');
-    var stNc=document.getElementById('ret_st'+sec.id+'_nc');
-    var stNa=document.getElementById('ret_st'+sec.id+'_na');
-    var sb=document.getElementById('ret_sb'+sec.id);
-    if(stOk)stOk.textContent=r.ok;
-    if(stNc)stNc.textContent=r.nc;
-    if(stNa)stNa.textContent=r.na;
-    if(sb)sb.textContent=(r.ok+r.nc+r.na)+' / '+r.tot;
-  });
-  var el=document.getElementById('rr_ok'); if(el) el.textContent=totOk;
-  el=document.getElementById('rr_nc'); if(el) el.textContent=totNc;
-  el=document.getElementById('rr_na'); if(el) el.textContent=totNa;
-  var evalC=totOk+totNc;
-  var pct=evalC>0?Math.round(totOk/evalC*100):null;
-  var pctEl=document.getElementById('rr_pct');
-  var barEl=document.getElementById('rr_bar');
-  var resEl=document.getElementById('rr_res');
-  if(pct!==null){
-    if(pctEl){pctEl.textContent=pct+'%';pctEl.className='res-val'+(pct>=75?' gr':pct>=50?' am':' rd');}
-    if(barEl){barEl.style.width=pct+'%';barEl.style.background=pct>=75?'var(--teal)':pct>=50?'#e09000':'var(--danger)';}
-    var res=pct>=90?'Excelente':pct>=75?'Aceptable':pct>=50?'Deficiente':'Crítico';
-    if(resEl){resEl.textContent=pct+'% - '+res;resEl.className='res-result '+(pct>=75?'exc':pct>=50?'def':'cri');}
-  } else {
-    if(pctEl){pctEl.textContent='-';pctEl.className='res-val';}
-    if(barEl)barEl.style.width='0';
-    if(resEl){resEl.textContent='Sin evaluar';resEl.className='res-result';}
-  }
-}
-
-function retSyncVal(){
-  var fisc=document.getElementById('rf_fisc');
-  var vnom=document.getElementById('rv_nom');
-  if(fisc&&vnom&&!vnom.dataset.edited) vnom.value=fisc.value;
-}
-function retEditNom(){
-  var fisc=document.getElementById('rf_fisc');
-  var vnom=document.getElementById('rv_nom');
-  if(fisc&&vnom&&vnom.value!==fisc.value) vnom.dataset.edited='1';
-  else if(vnom) delete vnom.dataset.edited;
-}
-
-function retValidar(){
-  var fecha=document.getElementById('rf_fecha').value;
-  if(!fecha){toast('⚠️ Ingresa la fecha antes de validar','var(--warn)');return;}
-  var fisc=document.getElementById('rf_fisc').value.trim();
-  if(!fisc){toast('⚠️ Ingresa el nombre del fiscalizador','var(--warn)');return;}
-  var algunoEval=false;
-  RET_SECS.forEach(function(sec){sec.items.forEach(function(it){if(RET_ESTADO[retSKey(sec.id,it.n)])algunoEval=true;});});
-  if(!algunoEval){toast('⚠️ Evalúa al menos un ítem antes de validar','var(--warn)');return;}
-  RET_VALIDADO=true;
-  document.getElementById('rv_ts').textContent=fmtTs();
-  var btn=document.getElementById('retBtnVal');
-  if(btn){btn.disabled=true;btn.style.opacity='0.5';btn.style.cursor='not-allowed';btn.style.background='#aaa';btn.textContent='✅ Validado';}
-  document.querySelectorAll('.mb').forEach(function(b){b.disabled=true;b.style.opacity='0.7';});
-  document.querySelectorAll('.obs-input').forEach(function(el){el.readOnly=true;});
-  toast('✅ Registro validado','var(--teal2)');
-}
-
-function retDesbloquear(){
-  RET_VALIDADO=false;
-  var btn=document.getElementById('retBtnVal');
-  if(btn){btn.disabled=false;btn.style.opacity='';btn.style.cursor='';btn.style.background='var(--teal)';btn.textContent='✅ Validar Registro';}
-  document.querySelectorAll('.mb').forEach(function(b){b.disabled=false;b.style.opacity='';});
-  document.querySelectorAll('.obs-input').forEach(function(el){el.readOnly=false;});
-  var ts=document.getElementById('rv_ts');if(ts)ts.textContent='-';
-}
-
-async function retGuardar(){
-  if(!RET_VALIDADO){toast('⚠️ Debes validar antes de guardar','var(--warn)');return;}
-  var fecha=document.getElementById('rf_fecha').value;
-  var fisc=document.getElementById('rf_fisc').value.trim();
-  var totOk=0,totNc=0,totNa=0,secData=[],ncDetails=[];
-  var catMap={};
-  RET_SECS.forEach(function(sec){
-    var r=retCalcSec(sec.id);
-    totOk+=r.ok;totNc+=r.nc;totNa+=r.na;
-    var items=[];
-    sec.items.forEach(function(it){
-      var k=retSKey(sec.id,it.n);
-      var v=RET_ESTADO[k]||'';
-      catMap[it.cat.toUpperCase()]=v;
-      var obs=document.getElementById('ret_obs_'+k);
-      items.push({n:it.n,cat:it.cat,crit:it.crit,val:v,obs:obs?obs.value:''});
-      if(v==='nc') ncDetails.push({param:it.cat+' - '+it.crit.substring(0,60),art:'Retermalizado',mods:[it.cat],obs:obs?obs.value:''});
-    });
-    secData.push({id:sec.id,nombre:sec.nombre,ok:r.ok,nc:r.nc,na:r.na,items:items});
-  });
-  var evalC=totOk+totNc;
-  var pct=evalC>0?Math.round(totOk/evalC*100):null;
-  var res=pct===null?'Sin evaluar':pct>=90?'Excelente':pct>=75?'Aceptable':pct>=50?'Deficiente':'Crítico';
-  // fmMap para Ficha Madre
-  var RET_MAPEO=[
-    {cats:['PISOS'],              fm:['pis']},
-    {cats:['ILUMINACIÓN'],        fm:['var']},
-    {cats:['CÁMARAS','HORNOS'],   fm:['her']},
-    {cats:['EQUIPOS'],            fm:['ven','her']},
-    {cats:['PAREDES'],            fm:['par']},
-    {cats:['MANEJO QUÍMICOS'],    fm:['des']},
-    {cats:['BASUREROS'],          fm:['av']},
-    {cats:['UNIFORME'],           fm:['uni']},
-    {cats:['EPP'],                fm:['cof','mas','pec','zap','gua']},
-    {cats:['HIGIENE DE MANOS'],   fm:['man']},
-    {cats:['RESTRICCIÓN OBJETOS'],fm:['maq']},
-    {cats:['ZONA DE LAVADO'],     fm:['jab','toa']},
-    {cats:['HIGIENE FACIAL'],     fm:['hig']}
-  ];
-  var fmMap={};
-  RET_MAPEO.forEach(function(m){
-    var vals=m.cats.map(function(c){return catMap[c.toUpperCase()]||'';});
-    var hasNc=vals.some(function(v){return v==='nc';});
-    var hasC=vals.some(function(v){return v==='c';});
-    m.fm.forEach(function(f){fmMap[f]=hasNc?'NC':hasC?'C':'NA';});
-  });
-  fmMap['hig']=pct>=75?'C':'NC';
-  fmMap['bpm']=pct>=75?'C':'NC';
-  var entry={
-    fecha:fecha,turno:document.getElementById('rf_turno').value,
-    estab:'E.P. Santiago 1',area:document.getElementById('rf_area').value,
-    fisc:fisc,cargo:document.getElementById('rf_cargo').value,
-    val_nom:document.getElementById('rv_nom').value,
-    val_rut:document.getElementById('rv_rut').value,
-    val_cargo:document.getElementById('rv_cargo').value,
-    val_ts:document.getElementById('rv_ts').textContent,
-    ok:totOk,nc:totNc,na:totNa,tot:totOk+totNc,
-    pct:pct,res:res,secs:secData,
-    ncDetails:ncDetails,
-    accGen:ncDetails.map(function(n){return{param:n.param,acc:n.obs||''};}),
-    fmMap:fmMap,validado:true
-  };
-  try{
-    toast('Guardando...','var(--navy2)');
-    await saveRecord('RegistroRetermalizado', entry);
-    retDesbloquear();
-    toast('✅ Registro guardado en la nube','var(--teal2)');
-    RET_ESTADO={};
-    document.querySelectorAll('.mb').forEach(function(b){b.className='mb';});
-    document.querySelectorAll('.obs-input').forEach(function(el){el.value='';});
-    document.getElementById('rf_fecha').value=hoy();
-    document.getElementById('rf_turno').value='';
-    retUpd();
-  }catch(e){
-    toast('❌ Error al guardar: '+e.message,'var(--danger)');
-  }
-}
-
-function retLimpiar(){
-  if(!confirm('¿Limpiar todos los valores del formulario?'))return;
-  RET_ESTADO={};
-  document.querySelectorAll('.mb').forEach(function(b){b.className='mb';});
-  document.querySelectorAll('.obs-input').forEach(function(el){el.value='';});
-  document.getElementById('rf_fecha').value=hoy();
-  document.getElementById('rf_turno').value='';
-  retDesbloquear();
-  retUpd();
-  toast('🧹 Formulario limpiado','var(--navy2)');
-}
-
-function retVerHistorial(){
-  document.getElementById('retHistOverlay').classList.add('open');
-  retCargarHistorial(null);
-}
-
-async function retCargarHistorial(fechaFiltro){
-  var listEl=document.getElementById('retHistList');
-  var cntEl=document.getElementById('retHistCnt');
-  if(listEl) listEl.innerHTML='<div class="hemp">Cargando registros...</div>';
-  try{
-    var registros=await getRecords('RegistroRetermalizado',fechaFiltro);
-    if(cntEl) cntEl.textContent=registros.length+' registro'+(registros.length!==1?'s':'');
-    if(!registros.length){
-      if(listEl) listEl.innerHTML='<div class="hemp">'+( fechaFiltro?'Sin registros para esa fecha.':'Sin registros guardados.')+'</div>';
-      return;
-    }
-    // Agrupar AÑO > MES > DÍA
-    var arbol={};
-    registros.forEach(function(r){
-      var fp=(r.fecha||'').split('-');
-      if(fp.length<3)return;
-      var yr=fp[0],mm=parseInt(fp[1])-1,fecha=r.fecha;
-      if(!arbol[yr])arbol[yr]={};
-      if(!arbol[yr][mm])arbol[yr][mm]={};
-      if(!arbol[yr][mm][fecha])arbol[yr][mm][fecha]=[];
-      arbol[yr][mm][fecha].push(r);
-    });
-    var anios=Object.keys(arbol).sort().reverse();
-    var out='';
-    anios.forEach(function(yr,yi){
-      var yrOk=0,yrNc=0,yrReg=0;
-      var meses=Object.keys(arbol[yr]).map(Number).sort().reverse();
-      meses.forEach(function(mm){Object.keys(arbol[yr][mm]).forEach(function(f){arbol[yr][mm][f].forEach(function(r){yrOk+=r.ok||0;yrNc+=r.nc||0;yrReg++;});});});
-      var yrOpen=(yi===0);
-      var yrGid='rhy_'+yr;
-      out+='<div onclick="retToggle(\''+yrGid+'\')" style="background:var(--navy2);padding:10px 14px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none">';
-      out+='<span id="rarr_'+yrGid+'" style="font-size:11px;color:white;transition:transform .2s;transform:'+(yrOpen?'rotate(90deg)':'rotate(0deg)')+'">▶</span>';
-      out+='<span style="font-size:14px;font-weight:700;color:white;flex:1">📁 '+yr+'</span>';
-      out+='<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,.15);color:white">'+yrReg+' registros</span>';
-      if(yrOk>0)out+='<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:#e1f5ee;color:var(--teal2)">'+yrOk+' C</span>';
-      if(yrNc>0)out+='<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:#fcebeb;color:var(--danger)">'+yrNc+' NC</span>';
-      out+='</div><div id="'+yrGid+'" style="display:'+(yrOpen?'block':'none')+'">';
-      meses.forEach(function(mm,mi){
-        var mOk=0,mNc=0,mEval=0,mReg=0;
-        var fechas=Object.keys(arbol[yr][mm]).sort().reverse();
-        fechas.forEach(function(f){arbol[yr][mm][f].forEach(function(r){mOk+=r.ok||0;mNc+=r.nc||0;mEval+=(r.ok||0)+(r.nc||0);mReg++;});});
-        var mPct=mEval>0?Math.round(mOk/mEval*100):null;
-        var mOpen=(yi===0&&mi===0);
-        var mGid='rhm_'+yr+'_'+mm;
-        out+='<div onclick="retToggle(\''+mGid+'\')" style="background:#f0f4ff;padding:9px 14px;padding-left:24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none">';
-        out+='<span id="rarr_'+mGid+'" style="font-size:10px;color:var(--navy2);transition:transform .2s;transform:'+(mOpen?'rotate(90deg)':'rotate(0deg)')+'">▶</span>';
-        out+='<span style="font-size:13px;font-weight:700;color:var(--navy2);flex:1">📅 '+MESES[mm]+' '+yr+'</span>';
-        out+='<span style="font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(26,58,92,.1);color:var(--navy2)">'+mReg+' días</span>';
-        if(mPct!==null)out+='<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:'+(mNc>0?'#fcebeb':'#e1f5ee')+';color:'+(mNc>0?'var(--danger)':'var(--teal2)')+'">'+mPct+'%</span>';
-        out+='</div><div id="'+mGid+'" style="display:'+(mOpen?'block':'none')+'">';
-        fechas.forEach(function(fecha,fi){
-          var items=arbol[yr][mm][fecha];
-          var dOk=0,dNc=0,dEval=0;
-          items.forEach(function(r){dOk+=r.ok||0;dNc+=r.nc||0;dEval+=(r.ok||0)+(r.nc||0);});
-          var dPct=dEval>0?Math.round(dOk/dEval*100):null;
-          var fp=fecha.split('-');
-          var fs=fp.length>2?fp[2]+'/'+fp[1]+'/'+fp[0]:fecha;
-          var ds='';try{var dd=new Date(parseInt(fp[0]),parseInt(fp[1])-1,parseInt(fp[2]));ds=' - '+(DIAS[dd.getDay()]||'');}catch(e){}
-          var dOpen=(yi===0&&mi===0&&fi===0);
-          var dGid='rhd_'+fecha.replace(/-/g,'');
-          out+='<div onclick="retToggle(\''+dGid+'\')" style="background:#fafbff;padding:8px 14px;padding-left:36px;border-bottom:1px solid #eef0f8;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none">';
-          out+='<span id="rarr_'+dGid+'" style="font-size:9px;color:#888;transition:transform .2s;transform:'+(dOpen?'rotate(90deg)':'rotate(0deg)')+'">▶</span>';
-          out+='<span style="font-size:12px;font-weight:700;color:var(--navy2);flex:1">'+fs+ds+'</span>';
-          if(dPct!==null)out+='<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:'+(dNc>0?'#fcebeb':'#e1f5ee')+';color:'+(dNc>0?'var(--danger)':'var(--teal2)')+'">'+dPct+'%</span>';
-          if(dOk>0)out+='<span style="font-size:10px;padding:2px 6px;border-radius:20px;background:#e1f5ee;color:var(--teal2);font-weight:700">'+dOk+' C</span>';
-          if(dNc>0)out+='<span style="font-size:10px;padding:2px 6px;border-radius:20px;background:#fcebeb;color:var(--danger);font-weight:700">'+dNc+' NC</span>';
-          out+='</div><div id="'+dGid+'" style="display:'+(dOpen?'block':'none')+'">';
-          items.forEach(function(r){
-            var col=r.pct>=75?'var(--teal2)':r.pct>=50?'var(--warn)':'var(--danger)';
-            out+='<div class="hrow" style="padding-left:48px">';
-            out+='<div style="display:flex;gap:6px;margin-bottom:5px;flex-wrap:wrap;align-items:center">';
-            out+='<span class="hch" style="background:#e1f5ee;color:var(--teal2);border:1px solid var(--teal)">✓ Validado</span>';
-            out+='</div>';
-            out+='<div style="font-size:11px;color:#555;margin-bottom:4px">'+(r.area||'Retermalizado')+' | Turno: '+(r.turno||'-')+' | '+(r.fisc||'-')+'</div>';
-            out+='<div class="hchips">';
-            out+='<span class="hch ok">'+(r.ok||0)+' Cumple</span>';
-            out+='<span class="hch nc">'+(r.nc||0)+' NC</span>';
-            out+='<span class="hch na">'+(r.na||0)+' NA</span>';
-            if(r.pct!==null)out+='<span class="hch k" style="color:'+col+'">'+r.pct+'% - '+r.res+'</span>';
-            out+='</div></div>';
-          });
-          out+='</div>';
-        });
-        out+='</div>';
-      });
-      out+='</div>';
-    });
-    if(listEl) listEl.innerHTML=out;
-  }catch(e){
-    if(listEl) listEl.innerHTML='<div class="hemp">Error al cargar registros: '+e.message+'</div>';
-  }
-}
-
-function retToggle(gid){
-  var body=document.getElementById(gid),arr=document.getElementById('rarr_'+gid);
-  if(!body)return;
-  var isOpen=body.style.display==='block';
-  body.style.display=isOpen?'none':'block';
-  if(arr) arr.style.transform=isOpen?'rotate(0deg)':'rotate(90deg)';
-}
-
-// ═══════════════════════════════════════════════════════
-// HISTORIAL GLOBAL
-// ═══════════════════════════════════════════════════════
-async function renderHistorialGlobal(){
+function renderHistorialGlobal(){
   var mc=document.getElementById('mainContent');
   mc.innerHTML=
     '<div class="section-title">📚 Historial Global de Registros</div>'+
@@ -1505,6 +1103,33 @@ function renderChecklist(){
   var mc=document.getElementById('mainContent');
   mc.innerHTML='<div class="section-title">🏥 Checklist Higiene Casino</div><div class="card" style="padding:24px;text-align:center"><p style="font-size:14px;color:#0D1B4B;margin-bottom:16px">El modulo se abre en una nueva pestana.</p><a href="https://nutcatalan-spec.github.io/SAIF/checklist_casino.html" target="_blank" style="background:#1A6EF5;color:white;border:none;border-radius:8px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block">Abrir Checklist Higiene ↗</a></div>';
 }
+
+function renderFichaMadre(){
+  var mc=document.getElementById('mainContent');
+  mc.style.padding='14px';
+  mc.style.maxWidth='960px';
+  mc.innerHTML=
+    '<div class="section-title">📄 Ficha Madre de Alimentacion</div>'+
+    '<div class="card" style="padding:24px;text-align:center">'+
+    '<p style="font-size:14px;color:#0D1B4B;margin-bottom:16px">Registro de trazabilidad de produccion alimentaria</p>'+
+    '<a href="https://nutcatalan-spec.github.io/SAIF/ficha_madre.html" target="_blank" style="background:#1A6EF5;color:white;border:none;border-radius:8px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block">Abrir Ficha Madre ↗</a>'+
+    '<p style="font-size:11px;color:#6B7FA8;margin-top:12px">Se abre en una nueva pestana.</p>'+
+    '</div>';
+}
+
+function renderTrazabilidad(){
+  var mc=document.getElementById('mainContent');
+  mc.style.padding='14px';
+  mc.style.maxWidth='960px';
+  mc.innerHTML=
+    '<div class="section-title">🔍 Ejercicio de Trazabilidad</div>'+
+    '<div class="card" style="padding:24px;text-align:center">'+
+    '<p style="font-size:14px;color:#0D1B4B;margin-bottom:16px">Registro y seguimiento de trazabilidad alimentaria</p>'+
+    '<a href="https://nutcatalan-spec.github.io/SAIF/trazabilidad.html" target="_blank" style="background:#1A6EF5;color:white;border:none;border-radius:8px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block">Abrir Trazabilidad ↗</a>'+
+    '<p style="font-size:11px;color:#6B7FA8;margin-top:12px">Se abre en una nueva pestana.</p>'+
+    '</div>';
+}
+
 </script>
 
 </body>
