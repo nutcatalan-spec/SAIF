@@ -202,13 +202,6 @@ input,select,textarea{font-family:inherit}
   margin-bottom:14px;display:flex;align-items:center;gap:8px
 }
 
-/* FICHA INPUTS */
-.g2{display:grid;grid-template-columns:1fr 1fr}
-.fi{padding:8px 12px;border-bottom:1px solid #f2f2f2}
-.fi:nth-child(odd){border-right:1px solid #f2f2f2}
-.fi label{display:block;font-size:9px;color:var(--muted);text-transform:uppercase;font-weight:700;margin-bottom:2px}
-.fi input,.fi select{width:100%;border:none;font-size:13px;color:#1a56a0;background:transparent;outline:none}
-
 /* BOTONES */
 .btn{border:none;border-radius:8px;padding:10px 18px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .15s}
 .btn:hover{opacity:.88}
@@ -218,79 +211,20 @@ input,select,textarea{font-family:inherit}
 .btn-warn{background:#7B4F12;color:var(--white)}
 .btn-ghost{background:#fcebeb;color:var(--danger)}
 .btn-purple{background:#4A235A;color:var(--white)}
-.action-bar{padding:12px;display:flex;gap:8px;flex-wrap:wrap}
-
-/* RESUMEN LIVE */
-.res-grid{display:grid;grid-template-columns:repeat(5,1fr)}
-.res-cell{padding:10px 6px;text-align:center;border-right:1px solid #f2f2f2}
-.res-cell:last-child{border-right:none}
-.res-lbl{font-size:8px;color:var(--muted);text-transform:uppercase;font-weight:700;margin-bottom:4px}
-.res-val{font-size:22px;font-weight:800;color:#1a56a0}
-.res-val.gr{color:var(--teal2)}.res-val.am{color:var(--warn)}.res-val.rd{color:var(--danger)}
-.res-bar-wrap{padding:10px 13px;border-top:1px solid #f2f2f2}
-.bar-wrap{height:8px;background:#eee;border-radius:4px;overflow:hidden;margin:5px 0 8px}
-.bar-fill{height:100%;border-radius:4px;background:var(--teal);transition:width .4s}
-.res-result{display:inline-block;font-size:13px;font-weight:700;padding:5px 12px;border-radius:6px;background:#f0f0f0;color:#888}
-.res-result.exc{background:#e1f5ee;color:var(--teal2)}
-.res-result.def{background:#fff3cd;color:var(--warn)}
-.res-result.cri{background:#fcebeb;color:var(--danger)}
-
-/* TABLA EVALUACION */
-.eval-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
-.eval-table{min-width:560px;width:100%;border-collapse:collapse}
-.eval-table th{background:var(--navy2);color:var(--white);padding:7px 8px;font-size:9px;text-transform:uppercase;letter-spacing:.05em;text-align:center}
-.eval-table th.param{text-align:left;min-width:200px}
-.eval-table td{padding:6px 4px;border-bottom:1px solid #f2f2f2;vertical-align:middle;text-align:center}
-.eval-table td.param-cell{text-align:left;padding:6px 10px;font-size:11px;font-weight:500;color:var(--text)}
-.eval-table tr:nth-child(even) td{background:#f9f9f9}
-.mod-btn-group{display:flex;gap:2px;justify-content:center}
-.mb{border:none;border-radius:4px;padding:5px 0;font-size:10px;font-weight:700;cursor:pointer;width:30px;background:#f0f0f0;color:#aaa;font-family:inherit}
-.mb.c{background:#e1f5ee;color:var(--teal2);border:1px solid #9FE1CB}
-.mb.nc{background:#fcebeb;color:var(--danger);border:1px solid #FFAAAA}
-.mb.na{background:#f5f5f5;color:#888;border:1px solid #ddd}
-.obs-input{width:100%;border:1px solid #eee;border-radius:4px;font-size:10px;padding:3px 5px;font-family:inherit;color:#333;min-width:100px;background:#fafafa}
-.obs-input:focus{outline:none;border-color:var(--teal)}
-.eval-table tfoot td{background:#f0f0f0;padding:6px 4px;font-size:10px;font-weight:700;text-align:center;border-top:2px solid #ddd}
-.eval-table tfoot td.param-cell{text-align:left;padding:6px 10px;color:#888;text-transform:uppercase;font-size:9px}
-
-/* VALIDACION */
-.firma-g{display:grid;grid-template-columns:1fr 1fr}
-.ff{padding:8px 12px;border-bottom:1px solid #f2f2f2}
-.ff:nth-child(odd){border-right:1px solid #f2f2f2}
-.ff label{display:block;font-size:9px;color:var(--muted);text-transform:uppercase;font-weight:700;margin-bottom:2px}
-.ff input{width:100%;border:none;font-size:13px;color:#1a56a0;background:transparent;outline:none}
-.decl{padding:10px 12px;background:#f5f5f5;font-size:10px;color:var(--muted);line-height:1.5}
-
-/* SEC HDR */
-.sec-hdr{padding:8px 13px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--white);background:var(--navy2);display:flex;justify-content:space-between;align-items:center}
-.sec-badge{font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,.2);color:var(--white)}
 
 /* HISTORIAL */
 .hist-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 13px;border-bottom:2px solid #f0f2f6;background:#f8faff}
 .hist-cnt{font-size:11px;font-weight:700;color:var(--navy2);white-space:nowrap}
-.hist-date-input{border:1.5px solid var(--border);border-radius:8px;padding:6px 10px;font-size:12px;color:var(--navy2);font-family:inherit;background:var(--white);outline:none}
-.hist-date-input:focus{border-color:var(--teal)}
-.hbtn{background:var(--teal);color:var(--white);border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
-.hbtn.out{background:var(--white);color:var(--teal);border:1.5px solid var(--teal)}
-.hist-list{max-height:420px;overflow-y:auto}
+.hist-list{max-height:600px;overflow-y:auto}
 .hemp{padding:24px;text-align:center;color:var(--muted);font-size:13px;line-height:1.7}
-.hrow{padding:10px 14px;border-bottom:1px solid #f5f5f5;background:var(--white)}
-.hchips{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
+.hrow{padding:12px 14px;border-bottom:1px solid #f5f5f5;background:var(--white);display:flex;justify-content:space-between;align-items:center}
+.hinfo{display:flex;flex-direction:column;gap:4px}
+.hdate{font-size:12px;font-weight:700;color:var(--navy2)}
+.huser{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em}
+.hchips{display:flex;gap:4px;flex-wrap:wrap}
 .hch{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
-.hch.ok{background:#e1f5ee;color:var(--teal2)}
-.hch.nc{background:#fcebeb;color:var(--danger)}
-.hch.na{background:#f5f5f5;color:#888;border:1px solid #eee}
-.hch.k{background:#f0f4ff;color:var(--navy2)}
-.hdel{border:1px solid #ddd;background:#f9f9f9;color:#555;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:700;cursor:pointer;margin-right:4px;font-family:inherit}
-
-/* ESTADO SYNC */
-.sync-badge{
-  display:inline-flex;align-items:center;gap:5px;
-  font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px
-}
-.sync-badge.ok{background:#e1f5ee;color:var(--teal2)}
-.sync-badge.err{background:#fcebeb;color:var(--danger)}
-.sync-badge.sync{background:#fff3cd;color:var(--warn)}
+.hch.sede{background:#f0f4ff;color:var(--navy2);border:1px solid var(--border)}
+.hch.mod{background:#eef3ff;color:var(--teal)}
 
 /* TOAST */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);color:var(--white);padding:11px 22px;border-radius:8px;font-size:13px;font-weight:700;z-index:999;pointer-events:none;font-family:inherit;box-shadow:0 4px 16px rgba(0,0,0,.25)}
@@ -356,7 +290,6 @@ input,select,textarea{font-family:inherit}
     <div class="nav-item" onclick="goTo('haccp')"><span class="ico">🦠</span> HACCP PCC</div>
     <div class="nav-item" onclick="goTo('retermalizado')"><span class="ico">🍽️</span> Retermalizado</div>
     
-    <!-- NUEVOS ÍTEMS AGREGADOS -->
     <div class="nav-item" onclick="goTo('bpm_modulos')"><span class="ico">📦</span> BPM Módulos</div>
     <div class="nav-item" onclick="goTo('checklist_casino')"><span class="ico">🍴</span> Checklist Casino</div>
     <div class="nav-item" onclick="goTo('control_pcc')"><span class="ico">📉</span> Control PCC (HACCP)</div>
@@ -393,6 +326,44 @@ function getDB(){
   return _db;
 }
 
+/**
+ * SAIF Cloud Connector v2.0
+ */
+const SAIF_CLOUD = {
+    TABLES: {
+        temperatura: 'control_temperatura',
+        bpm: 'bpm_fiscalizacion',
+        haccp: 'control_pcc',
+        checklist: 'checklist_higiene',
+        trazabilidad: 'trazabilidad',
+        ficha_madre: 'ficha_madre'
+    },
+    async save(modulo, data) {
+        try {
+            const table = this.TABLES[modulo];
+            if (!table) throw new Error('Módulo no reconocido: ' + modulo);
+            const user = currentUser || {};
+            const record = {
+                ...data,
+                usuario_id: user.id || null,
+                usuario_nombre: user.nombreCompleto || user.username || 'Usuario Externo',
+                sede: user.sede || data.estab || 'Santiago 1',
+                created_at: new Date().toISOString(),
+                fuente: 'SAIF Web'
+            };
+            const db = getDB();
+            if (!db) throw new Error('Supabase no inicializado');
+            const { error } = await db.from(table).insert([record]);
+            if (error) throw error;
+            console.log(`[SAIF Cloud] Registro guardado en ${table}`);
+            return { success: true };
+        } catch (err) {
+            console.error('[SAIF Cloud] Error:', err);
+            return { success: false, error: err.message };
+        }
+    }
+};
+
 // ═══════════════════════════════════════════════════════
 // ESTADO GLOBAL
 // ═══════════════════════════════════════════════════════
@@ -403,11 +374,6 @@ var currentPage = 'dashboard';
 var MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
              "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 var DIAS  = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
-
-function hoy(){
-  var d=new Date(),m=d.getMonth()+1,dd=d.getDate();
-  return d.getFullYear()+'-'+(m<10?'0'+m:m)+'-'+(dd<10?'0'+dd:dd);
-}
 
 // ═══════════════════════════════════════════════════════
 // AUTH
@@ -509,20 +475,16 @@ function render(page){
   mc.innerHTML = '<div class="hemp">Cargando...</div>';
   switch(page){
     case 'dashboard':     renderDashboard(); break;
-    
-    // CONFIGURACIÓN DE CARGA PARA TODOS LOS MÓDULOS
     case 'temperatura':   renderExternalModule('Control Temperatura', 'control _temperatura.html', '🌡️'); break;
     case 'checklist':     renderExternalModule('Checklist Higiene', 'checklist_casino.html', '🏥'); break;
     case 'bpm':           renderExternalModule('Fiscalización BPM', 'bpm_modulos.html', '📋'); break;
     case 'haccp':         renderExternalModule('HACCP PCC', 'control_pcc.html', '🦠'); break;
     case 'retermalizado': renderExternalModule('Retermalizado', 'checklist_retermalizado.html', '🍽️'); break;
-    
     case 'bpm_modulos':   renderExternalModule('BPM Módulos', 'bpm_modulos.html', '📦'); break;
     case 'checklist_casino': renderExternalModule('Checklist Casino', 'checklist_casino.html', '🍴'); break;
     case 'control_pcc':   renderExternalModule('Control PCC (HACCP)', 'control_pcc.html', '📉'); break;
     case 'trazabilidad':  renderExternalModule('Trazabilidad', 'trazabilidad.html', '🔗'); break;
     case 'ficha_madre':   renderExternalModule('Ficha Madre', 'ficha_madre.html', '📄'); break;
-    
     case 'historial':     renderHistorialGlobal(); break;
     case 'admin':         renderAdmin(); break;
     default: mc.innerHTML='<div class="hemp">Módulo en desarrollo.</div>';
@@ -567,9 +529,75 @@ async function renderDashboard(){
     '</div>';
 }
 
-function renderHistorialGlobal(){
-  var mc=document.getElementById('mainContent');
-  mc.innerHTML='<div class="section-title">📚 Historial Global</div><div class="card" style="padding:20px">Módulo de historial en mantenimiento.</div>';
+// ═══════════════════════════════════════════════════════
+// HISTORIAL GLOBAL (CON FILTROS POR SEDE)
+// ═══════════════════════════════════════════════════════
+async function renderHistorialGlobal(filtroSede = 'todos'){
+  var mc = document.getElementById('mainContent');
+  mc.innerHTML = '<div class="section-title">📚 Historial Global</div>' +
+    '<div class="hist-bar">' +
+      '<span class="hist-cnt">Filtrar por EP:</span>' +
+      '<button class="btn ' + (filtroSede==='todos'?'btn-navy':'btn-teal') + '" onclick="renderHistorialGlobal(\'todos\')">Ver Todo</button>' +
+      '<button class="btn ' + (filtroSede==='Santiago 1'?'btn-navy':'btn-teal') + '" onclick="renderHistorialGlobal(\'Santiago 1\')">Santiago 1</button>' +
+      '<button class="btn ' + (filtroSede==='Puerto Montt'?'btn-navy':'btn-teal') + '" onclick="renderHistorialGlobal(\'Puerto Montt\')">Puerto Montt</button>' +
+      '<button class="btn ' + (filtroSede==='Valdivia'?'btn-navy':'btn-teal') + '" onclick="renderHistorialGlobal(\'Valdivia\')">Valdivia</button>' +
+    '</div>' +
+    '<div class="hist-list" id="globalHistList"><div class="hemp">Cargando registros reales...</div></div>';
+
+  try {
+    const db = getDB();
+    if(!db) throw new Error('Supabase no disponible');
+
+    let allData = [];
+    const tables = Object.values(SAIF_CLOUD.TABLES);
+    
+    // Cargar datos de todas las tablas en paralelo
+    const results = await Promise.all(tables.map(t => db.from(t).select('*').order('created_at', { ascending: false }).limit(20)));
+    
+    results.forEach((res, idx) => {
+      if(res.data) {
+        res.data.forEach(item => {
+          allData.push({
+            fecha: item.fecha || item.created_at.split('T')[0],
+            modulo: Object.keys(SAIF_CLOUD.TABLES)[idx].toUpperCase(),
+            usuario: item.usuario_nombre || 'Anon',
+            sede: item.sede || 'Santiago 1',
+            estado: (item.nc > 0 || item.cr > 0 || item.ncDetails) ? 'nc' : 'ok',
+            raw: item
+          });
+        });
+      }
+    });
+
+    // Ordenar por fecha descendente
+    allData.sort((a, b) => new Date(b.raw.created_at) - new Date(a.raw.created_at));
+
+    var list = document.getElementById('globalHistList');
+    var filtered = filtroSede === 'todos' ? allData : allData.filter(d => d.sede === filtroSede);
+
+    if(filtered.length === 0){
+      list.innerHTML = '<div class="hemp">No hay registros guardados en la nube para esta sede.</div>';
+      return;
+    }
+
+    var html = '';
+    filtered.forEach(r => {
+      html += '<div class="hrow">' +
+        '<div class="hinfo">' +
+          '<div class="hdate">' + r.fecha + ' — ' + r.modulo + '</div>' +
+          '<div class="huser">Registrado por: ' + r.usuario + '</div>' +
+          '<div class="hchips">' +
+            '<span class="hch sede">' + r.sede + '</span>' +
+            '<span class="hch ' + r.estado + '">' + (r.estado==='ok'?'✅ Correcto':'⚠️ No Conforme') + '</span>' +
+          '</div>' +
+        '</div>' +
+        '<button class="btn btn-teal" onclick="alert(\'Detalle: \' + JSON.stringify(this.dataset.raw))" data-raw=\'' + JSON.stringify(r.raw).replace(/'/g, "&apos;") + '\'>Ver Datos</button>' +
+      '</div>';
+    });
+    list.innerHTML = html;
+  } catch (err) {
+    document.getElementById('globalHistList').innerHTML = '<div class="hemp" style="color:var(--danger)">Error al conectar con la nube: ' + err.message + '</div>';
+  }
 }
 
 function renderAdmin(){
