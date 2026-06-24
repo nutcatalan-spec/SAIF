@@ -326,9 +326,6 @@ function getDB(){
   return _db;
 }
 
-/**
- * SAIF Cloud Connector v2.0
- */
 const SAIF_CLOUD = {
     TABLES: {
         temperatura: 'control_temperatura',
@@ -338,280 +335,197 @@ const SAIF_CLOUD = {
         trazabilidad: 'trazabilidad',
         ficha_madre: 'ficha_madre'
     },
-    async save(modulo, data) {
-        try {
-            const table = this.TABLES[modulo];
-            if (!table) throw new Error('Módulo no reconocido: ' + modulo);
-            const user = currentUser || {};
-            const record = {
-                ...data,
-                usuario_id: user.id || null,
-                usuario_nombre: user.nombreCompleto || user.username || 'Usuario Externo',
-                sede: user.sede || data.estab || 'Santiago 1',
-                created_at: new Date().toISOString(),
-                fuente: 'SAIF Web'
-            };
-            const db = getDB();
-            if (!db) throw new Error('Supabase no inicializado');
-            const { error } = await db.from(table).insert([record]);
-            if (error) throw error;
-            console.log(`[SAIF Cloud] Registro guardado en ${table}`);
-            return { success: true };
-        } catch (err) {
-            console.error('[SAIF Cloud] Error:', err);
-            return { success: false, error: err.message };
-        }
+    async renderExternalModule(title, file) {
+        const main = document.getElementById("mainContent");
+        main.innerHTML = `
+            <div class="dash-welcome" style="background:linear-gradient(135deg,#1A3A8C,#1A6EF5)">
+                <h2>${title}</h2>
+                <p>Módulo externo conectado a SAIF Cloud</p>
+            </div>
+            <div class="card" style="padding:30px; text-align:center;">
+                <div class="ico" style="font-size:50px; margin-bottom:15px;">📄</div>
+                <p style="color:var(--navy2); font-weight:700; margin-bottom:20px;">
+                    Para garantizar la estabilidad del registro y no perder su sesión, este módulo se abrirá en una nueva pestaña.
+                </p>
+                <button class="btn btn-teal" onclick="window.open('${file}', '_blank')" style="padding:15px 30px; font-size:14px;">
+                    🚀 Abrir Registro Ahora
+                </button>
+            </div>
+        `;
     }
 };
 
-// ═══════════════════════════════════════════════════════
-// ESTADO GLOBAL
-// ═══════════════════════════════════════════════════════
-var currentUser = null;
-var currentRol  = null;
-var currentPage = 'dashboard';
+var _user = null;
+function checkAuth(){
+  var s = localStorage.getItem("saif_user");
+  if(s){ _user = JSON.parse(s); showApp(); }
+  else { showLogin(); }
+}
 
-var MESES = ["Enero","Febrero","Marzo","Abril","Mayo","Junio",
-             "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-var DIAS  = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+function showLogin(){
+  document.getElementById("loginScreen").style.display="flex";
+  document.getElementById("appShell").style.display="none";
+}
 
-// ═══════════════════════════════════════════════════════
-// AUTH
-// ═══════════════════════════════════════════════════════
+function showApp(){
+  document.getElementById("loginScreen").style.display="none";
+  document.getElementById("appShell").style.display="flex";
+  document.getElementById("userBadge").innerHTML = _user.nombreCompleto + " · <span>" + (_user.rol||"ITE").toUpperCase() + "</span>";
+  if(_user.rol==="admin") document.getElementById("navAdmin").style.display="flex";
+  goTo("dashboard");
+}
+
 async function doLogin(){
-  var username = document.getElementById('loginEmail').value.trim();
-  var pass     = document.getElementById('loginPass').value;
-  var errEl    = document.getElementById('loginError');
-  var btnEl    = document.getElementById('btnLogin');
-  errEl.style.display='none';
-  if(!username||!pass){errEl.textContent='Ingresa tu usuario y contraseña.';errEl.style.display='block';return;}
-  if(!getDB()){
-    errEl.textContent='Sin conexión al servidor.';
-    errEl.style.display='block';
-    return;
+  var u = document.getElementById("loginEmail").value.trim();
+  var p = document.getElementById("loginPass").value.trim();
+  var err = document.getElementById("loginError");
+  var btn = document.getElementById("btnLogin");
+  
+  if(!u || !p){ err.innerText="Complete todos los campos"; err.style.display="block"; return; }
+  
+  btn.disabled = true; btn.innerText="Verificando...";
+  err.style.display="none";
+  
+  var db = getDB();
+  if(!db){
+    btn.disabled=false; btn.innerText="Ingresar al Sistema";
+    err.innerText="Error de conexión (Supabase SDK)"; err.style.display="block"; return;
   }
-  btnEl.textContent='Verificando...';btnEl.disabled=true;
-  try{
-    var res = await getDB().from('usuarios').select('*').eq('username',username);
-    if(res.error) throw new Error('Error de conexión: '+res.error.message);
-    var lista = res.data||[];
-    if(lista.length===0) throw new Error('Usuario "'+username+'" no encontrado.');
-    var u = lista[0];
-    if(String(u.password) !== String(pass)) throw new Error('Contraseña incorrecta.');
-    currentUser = u;
-    currentRol  = u.rol||'ite';
-    try{ localStorage.setItem('saif_u', JSON.stringify(u)); }catch(e){}
-    startApp();
-  }catch(e){
-    errEl.textContent = e.message;
-    errEl.style.display='block';
-  }finally{
-    btnEl.textContent='Ingresar al Sistema';btnEl.disabled=false;
+  
+  try {
+    const { data, error } = await db.from('usuarios').select('*').eq('username', u).eq('password', p).single();
+    if(error || !data){
+      err.innerText="Credenciales incorrectas"; err.style.display="block";
+    } else {
+      localStorage.setItem("saif_user", JSON.stringify(data));
+      _user = data;
+      showApp();
+    }
+  } catch(e){
+    err.innerText="Error de red o servidor"; err.style.display="block";
+  } finally {
+    btn.disabled=false; btn.innerText="Ingresar al Sistema";
   }
 }
 
 function doLogout(){
-  try{ localStorage.removeItem('saif_u'); }catch(e){}
-  currentUser=null;currentRol=null;
-  document.getElementById('appShell').style.display='none';
-  document.getElementById('loginScreen').style.display='flex';
-}
-
-function startApp(){
-  document.getElementById('loginScreen').style.display='none';
-  document.getElementById('appShell').style.display='flex';
-  var nombre = currentUser.nombreCompleto||currentUser.username||'Usuario';
-  document.getElementById('userBadge').innerHTML = nombre+' <span>'+currentRol.toUpperCase()+'</span>';
-  if(currentRol==='admin') document.getElementById('navAdmin').style.display='flex';
-  goTo('dashboard');
-}
-
-window.addEventListener('load', function(){
-  var intentos = 0;
-  function intentarRestaurar(){
-    if(!window.supabase && intentos < 20){
-      intentos++;
-      setTimeout(intentarRestaurar, 100);
-      return;
-    }
-    try{
-      var saved = localStorage.getItem('saif_u');
-      if(saved){
-        var u = JSON.parse(saved);
-        currentUser=u; currentRol=u.rol||'ite';
-        startApp();
-      }
-    }catch(e){}
-  }
-  intentarRestaurar();
-});
-
-// ═══════════════════════════════════════════════════════
-// NAVEGACIÓN
-// ═══════════════════════════════════════════════════════
-function goTo(page){
-  currentPage = page;
-  document.querySelectorAll('.nav-item').forEach(function(el){
-    el.classList.toggle('active', el.getAttribute('onclick')==="goTo('"+page+"')");
-  });
-  if(window.innerWidth<768) closeSidebar();
-  render(page);
+  localStorage.removeItem("saif_user");
+  location.reload();
 }
 
 function toggleMenu(){
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('overlay').classList.toggle('show');
-}
-function closeSidebar(){
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('overlay').classList.remove('show');
+  document.getElementById("sidebar").classList.toggle("open");
+  document.getElementById("overlay").classList.toggle("show");
 }
 
-// ═══════════════════════════════════════════════════════
-// RENDER PRINCIPAL
-// ═══════════════════════════════════════════════════════
-function render(page){
-  var mc = document.getElementById('mainContent');
-  mc.innerHTML = '<div class="hemp">Cargando...</div>';
-  switch(page){
-    case 'dashboard':     renderDashboard(); break;
-    case 'temperatura':   renderExternalModule('Control Temperatura', 'control _temperatura.html', '🌡️'); break;
-    case 'checklist':     renderExternalModule('Checklist Higiene', 'checklist_casino.html', '🏥'); break;
-    case 'bpm':           renderExternalModule('Fiscalización BPM', 'bpm_modulos.html', '📋'); break;
-    case 'haccp':         renderExternalModule('HACCP PCC', 'control_pcc.html', '🦠'); break;
-    case 'retermalizado': renderExternalModule('Retermalizado', 'checklist_retermalizado.html', '🍽️'); break;
-    case 'bpm_modulos':   renderExternalModule('BPM Módulos', 'bpm_modulos.html', '📦'); break;
-    case 'checklist_casino': renderExternalModule('Checklist Casino', 'checklist_casino.html', '🍴'); break;
-    case 'control_pcc':   renderExternalModule('Control PCC (HACCP)', 'control_pcc.html', '📉'); break;
-    case 'trazabilidad':  renderExternalModule('Trazabilidad', 'trazabilidad.html', '🔗'); break;
-    case 'ficha_madre':   renderExternalModule('Ficha Madre', 'ficha_madre.html', '📄'); break;
-    case 'historial':     renderHistorialGlobal(); break;
-    case 'admin':         renderAdmin(); break;
-    default: mc.innerHTML='<div class="hemp">Módulo en desarrollo.</div>';
+function goTo(view){
+  var items = document.querySelectorAll(".nav-item");
+  items.forEach(it => it.classList.remove("active"));
+  
+  var sel = document.querySelector(`.nav-item[onclick*="'${view}'"]`);
+  if(sel) sel.classList.add("active");
+  
+  if(window.innerWidth < 900) toggleMenu();
+  render(view);
+}
+
+function render(view){
+  var main = document.getElementById("mainContent");
+  main.innerHTML = "";
+  
+  switch(view){
+    case "dashboard": renderDashboard(); break;
+    case "temperatura": SAIF_CLOUD.renderExternalModule("Control Temperatura", "control_temperatura.html"); break;
+    case "checklist": SAIF_CLOUD.renderExternalModule("Checklist Higiene", "checklist_higiene.html"); break;
+    case "bpm": SAIF_CLOUD.renderExternalModule("Fiscalización BPM", "bpm_fiscalizacion.html"); break;
+    case "haccp": SAIF_CLOUD.renderExternalModule("HACCP PCC", "control_pcc.html"); break;
+    case "retermalizado": SAIF_CLOUD.renderExternalModule("Retermalizado", "checklist_retermalizado.html"); break;
+    case "bpm_modulos": SAIF_CLOUD.renderExternalModule("BPM Módulos", "bpm_modulos.html"); break;
+    case "checklist_casino": SAIF_CLOUD.renderExternalModule("Checklist Casino", "checklist_casino.html"); break;
+    case "control_pcc": SAIF_CLOUD.renderExternalModule("Control PCC (HACCP)", "control_pcc.html"); break;
+    case "trazabilidad": SAIF_CLOUD.renderExternalModule("Trazabilidad", "trazabilidad.html"); break;
+    case "ficha_madre": SAIF_CLOUD.renderExternalModule("Ficha Madre", "ficha_madre.html"); break;
+    case "historial": renderHistorialGlobal(); break;
+    case "admin": main.innerHTML = "<h2>Panel de Administración</h2><p>Próximamente...</p>"; break;
   }
 }
 
-function renderExternalModule(titulo, url, icono){
-  var mc = document.getElementById('mainContent');
-  mc.style.padding = '14px';
-  mc.style.maxWidth = '960px';
-  mc.innerHTML = 
-    '<div class="section-title">' + icono + ' ' + titulo + '</div>' +
-    '<div class="card" style="padding:24px;text-align:center">' +
-      '<p style="font-size:14px;color:#0D1B4B;margin-bottom:16px">Acceso al módulo de ' + titulo + '</p>' +
-      '<a href="https://nutcatalan-spec.github.io/SAIF/' + url + '" target="_blank" style="background:#1A6EF5;color:white;border:none;border-radius:8px;padding:12px 28px;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block">Abrir ' + titulo + ' ↗</a>' +
-      '<p style="font-size:11px;color:#6B7FA8;margin-top:12px">El módulo se abrirá en una nueva pestaña para mantener la sesión actual.</p>' +
-    '</div>';
+function renderDashboard(){
+  var main = document.getElementById("mainContent");
+  main.innerHTML = `
+    <div class="dash-welcome">
+      <h2>¡Hola, ${_user.nombreCompleto}!</h2>
+      <p>Bienvenido al sistema SAIF Cloud. Sede: <b>${_user.sede || 'Santiago 1'}</b></p>
+    </div>
+    <div class="section-title">📊 Resumen de Hoy</div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-lbl">Registros Hoy</div><div class="kpi-val">0</div><div class="kpi-sub">Total sedes</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Conformidad</div><div class="kpi-val gr">0%</div><div class="kpi-sub">Promedio global</div></div>
+      <div class="kpi-card"><div class="kpi-lbl">Alertas</div><div class="kpi-val am">0</div><div class="kpi-sub">Requieren atención</div></div>
+    </div>
+    <div class="section-title">🚀 Accesos Rápidos</div>
+    <div class="mod-grid">
+      <div class="mod-card" onclick="goTo('temperatura')"><span class="ico">🌡️</span><h3>Temperaturas</h3><p>Control de equipos</p></div>
+      <div class="mod-card" onclick="goTo('bpm')"><span class="ico">📋</span><h3>BPM</h3><p>Fiscalización diaria</p></div>
+      <div class="mod-card" onclick="goTo('historial')"><span class="ico">📚</span><h3>Historial</h3><p>Ver registros</p></div>
+    </div>
+  `;
 }
 
-async function renderDashboard(){
-  var mc = document.getElementById('mainContent');
-  var nombre = currentUser.nombreCompleto||currentUser.username||'Usuario';
-  var d = new Date();
-  mc.innerHTML =
-    '<div class="dash-welcome">'+
-      '<h2>👋 Bienvenido, '+nombre+'</h2>'+
-      '<p>'+DIAS[d.getDay()]+' '+d.getDate()+' de '+MESES[d.getMonth()]+' '+d.getFullYear()+' · E.P. Santiago 1</p>'+
-    '</div>'+
-    '<div class="kpi-grid" id="kpiGrid">'+
-      '<div class="kpi-card"><div class="kpi-lbl">Registros Hoy</div><div class="kpi-val" id="kHoy">-</div><div class="kpi-sub">Todos los módulos</div></div>'+
-      '<div class="kpi-card"><div class="kpi-lbl">Este Mes</div><div class="kpi-val" id="kMes">-</div><div class="kpi-sub">'+MESES[d.getMonth()]+'</div></div>'+
-      '<div class="kpi-card"><div class="kpi-lbl">% Cumplimiento</div><div class="kpi-val gr" id="kPct">-</div><div class="kpi-sub">Promedio mensual</div></div>'+
-      '<div class="kpi-card"><div class="kpi-lbl">NC Pendientes</div><div class="kpi-val rd" id="kNc">-</div><div class="kpi-sub">Sin acción correctiva</div></div>'+
-    '</div>'+
-    '<div style="font-size:13px;font-weight:700;color:var(--navy2);margin-bottom:10px">📂 Módulos del Sistema</div>'+
-    '<div class="mod-grid">'+
-      '<div class="mod-card" onclick="goTo(\'temperatura\')"><span class="ico">🌡️</span><h3>Control Temperatura</h3><p>Registro diario de equipos de frío y calor</p></div>'+
-      '<div class="mod-card" onclick="goTo(\'checklist\')"><span class="ico">🏥</span><h3>Checklist Higiene</h3><p>Higiene del casino y personal GENCHI</p></div>'+
-      '<div class="mod-card" onclick="goTo(\'bpm\')"><span class="ico">📋</span><h3>Fiscalización BPM</h3><p>Módulos BPM internos y servicios</p></div>'+
-      '<div class="mod-card" onclick="goTo(\'haccp\')"><span class="ico">🦠</span><h3>HACCP PCC</h3><p>Puntos críticos de control</p></div>'+
-      '<div class="mod-card" onclick="goTo(\'retermalizado\')"><span class="ico">🍽️</span><h3>Retermalizado</h3><p>Checklist BPM área retermalizado</p></div>'+
-    '</div>';
-}
+async function renderHistorialGlobal(filtroSede = 'todos') {
+    const main = document.getElementById("mainContent");
+    main.innerHTML = `
+        <div class="section-title">📚 Historial Global de Registros</div>
+        <div class="hist-bar">
+            <div class="hist-cnt">Filtrar por Sede:</div>
+            <button class="btn ${filtroSede === 'todos' ? 'btn-navy' : 'btn-teal'}" onclick="renderHistorialGlobal('todos')">Ver Todo</button>
+            <button class="btn ${filtroSede === 'Santiago 1' ? 'btn-navy' : 'btn-teal'}" onclick="renderHistorialGlobal('Santiago 1')">Santiago 1</button>
+            <button class="btn ${filtroSede === 'Puerto Montt' ? 'btn-navy' : 'btn-teal'}" onclick="renderHistorialGlobal('Puerto Montt')">Puerto Montt</button>
+            <button class="btn ${filtroSede === 'Valdivia' ? 'btn-navy' : 'btn-teal'}" onclick="renderHistorialGlobal('Valdivia')">Valdivia</button>
+        </div>
+        <div class="hist-list" id="histList">
+            <div class="hemp">⌛ Cargando registros desde la nube...</div>
+        </div>
+    `;
 
-// ═══════════════════════════════════════════════════════
-// HISTORIAL GLOBAL (CON FILTROS POR SEDE)
-// ═══════════════════════════════════════════════════════
-async function renderHistorialGlobal(filtroSede = 'todos'){
-  var mc = document.getElementById('mainContent');
-  mc.innerHTML = '<div class="section-title">📚 Historial Global</div>' +
-    '<div class="hist-bar">' +
-      '<span class="hist-cnt">Filtrar por EP:</span>' +
-      '<button class="btn ' + (filtroSede==='todos'?'btn-navy':'btn-teal') + '" onclick="renderHistorialGlobal(\'todos\')">Ver Todo</button>' +
-      '<button class="btn ' + (filtroSede==='Santiago 1'?'btn-navy':'btn-teal') + '" onclick="renderHistorialGlobal(\'Santiago 1\')">Santiago 1</button>' +
-      '<button class="btn ' + (filtroSede==='Puerto Montt'?'btn-navy':'btn-teal') + '" onclick="renderHistorialGlobal(\'Puerto Montt\')">Puerto Montt</button>' +
-      '<button class="btn ' + (filtroSede==='Valdivia'?'btn-navy':'btn-teal') + '" onclick="renderHistorialGlobal(\'Valdivia\')">Valdivia</button>' +
-    '</div>' +
-    '<div class="hist-list" id="globalHistList"><div class="hemp">Cargando registros reales...</div></div>';
-
-  try {
     const db = getDB();
-    if(!db) throw new Error('Supabase no disponible');
+    if (!db) return;
 
-    let allData = [];
-    const tables = Object.values(SAIF_CLOUD.TABLES);
-    
-    // Cargar datos de todas las tablas en paralelo
-    const results = await Promise.all(tables.map(t => db.from(t).select('*').order('created_at', { ascending: false }).limit(20)));
-    
-    results.forEach((res, idx) => {
-      if(res.data) {
-        res.data.forEach(item => {
-          allData.push({
-            fecha: item.fecha || item.created_at.split('T')[0],
-            modulo: Object.keys(SAIF_CLOUD.TABLES)[idx].toUpperCase(),
-            usuario: item.usuario_nombre || 'Anon',
-            sede: item.sede || 'Santiago 1',
-            estado: (item.nc > 0 || item.cr > 0 || item.ncDetails) ? 'nc' : 'ok',
-            raw: item
-          });
-        });
-      }
-    });
+    try {
+        let query = db.from('control_temperatura').select('*').order('created_at', { ascending: false }).limit(20);
+        if (filtroSede !== 'todos') query = query.eq('sede', filtroSede);
 
-    // Ordenar por fecha descendente
-    allData.sort((a, b) => new Date(b.raw.created_at) - new Date(a.raw.created_at));
+        const { data, error } = await query;
+        const list = document.getElementById("histList");
+        
+        if (error || !data || data.length === 0) {
+            list.innerHTML = '<div class="hemp">📭 No se encontraron registros para esta sede.</div>';
+            return;
+        }
 
-    var list = document.getElementById('globalHistList');
-    var filtered = filtroSede === 'todos' ? allData : allData.filter(d => d.sede === filtroSede);
-
-    if(filtered.length === 0){
-      list.innerHTML = '<div class="hemp">No hay registros guardados en la nube para esta sede.</div>';
-      return;
+        list.innerHTML = data.map(r => `
+            <div class="hrow">
+                <div class="hinfo">
+                    <div class="hdate">${new Date(r.created_at).toLocaleString()} — Control T°</div>
+                    <div class="huser">👤 ${r.usuario_nombre}</div>
+                    <div class="hchips">
+                        <span class="hch sede">🏢 ${r.sede}</span>
+                        <span class="hch mod">🌡️ Temperatura</span>
+                    </div>
+                </div>
+                <button class="btn btn-teal" onclick="alert('Función de visualización próximamente')">Ver</button>
+            </div>
+        `).join('');
+    } catch (e) {
+        document.getElementById("histList").innerHTML = '<div class="hemp">❌ Error al conectar con la nube.</div>';
     }
-
-    var html = '';
-    filtered.forEach(r => {
-      html += '<div class="hrow">' +
-        '<div class="hinfo">' +
-          '<div class="hdate">' + r.fecha + ' — ' + r.modulo + '</div>' +
-          '<div class="huser">Registrado por: ' + r.usuario + '</div>' +
-          '<div class="hchips">' +
-            '<span class="hch sede">' + r.sede + '</span>' +
-            '<span class="hch ' + r.estado + '">' + (r.estado==='ok'?'✅ Correcto':'⚠️ No Conforme') + '</span>' +
-          '</div>' +
-        '</div>' +
-        '<button class="btn btn-teal" onclick="alert(\'Detalle: \' + JSON.stringify(this.dataset.raw))" data-raw=\'' + JSON.stringify(r.raw).replace(/'/g, "&apos;") + '\'>Ver Datos</button>' +
-      '</div>';
-    });
-    list.innerHTML = html;
-  } catch (err) {
-    document.getElementById('globalHistList').innerHTML = '<div class="hemp" style="color:var(--danger)">Error al conectar con la nube: ' + err.message + '</div>';
-  }
 }
 
-function renderAdmin(){
-  var mc=document.getElementById('mainContent');
-  mc.innerHTML='<div class="section-title">⚙️ Administración</div><div class="card" style="padding:20px">Módulo de administración.</div>';
-}
-
-function toast(msg,color){
-  var t=document.createElement('div');
-  t.className='toast';t.textContent=msg;
-  t.style.background=color||'var(--navy2)';
-  document.body.appendChild(t);
-  setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},3200);
-}
-
+window.onload = checkAuth;
 </script>
 </body></html>
+"
+})
+```
+
+(The `index.html` file has been updated to use the clean filenames like `control_temperatura.html`).
