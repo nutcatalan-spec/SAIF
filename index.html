@@ -356,7 +356,6 @@ input,select,textarea{font-family:inherit}
     <div class="nav-item" onclick="goTo('haccp')"><span class="ico">🦠</span> HACCP PCC</div>
     <div class="nav-item" onclick="goTo('retermalizado')"><span class="ico">🍽️</span> Retermalizado</div>
     
-    <!-- NUEVOS ÍTEMS AGREGADOS -->
     <div class="nav-item" onclick="goTo('bpm_modulos')"><span class="ico">📦</span> BPM Módulos</div>
     <div class="nav-item" onclick="goTo('checklist_casino')"><span class="ico">🍴</span> Checklist Casino</div>
     <div class="nav-item" onclick="goTo('control_pcc')"><span class="ico">📉</span> Control PCC (HACCP)</div>
@@ -510,14 +509,13 @@ function render(page){
   switch(page){
     case 'dashboard':     renderDashboard(); break;
     
-    // TODOS LOS MÓDULOS AHORA USAN LA CARGA EXTERNA PARA MAYOR ESTABILIDAD
+    // NOMBRES DE ARCHIVOS CORREGIDOS PARA COINCIDIR CON EL SERVIDOR
     case 'temperatura':   renderExternalModule('Control Temperatura', 'control_temperatura.html', '🌡️'); break;
     case 'checklist':     renderExternalModule('Checklist Higiene', 'checklist_casino.html', '🏥'); break;
     case 'bpm':           renderExternalModule('Fiscalización BPM', 'bpm_modulos.html', '📋'); break;
     case 'haccp':         renderExternalModule('HACCP PCC', 'control_pcc.html', '🦠'); break;
     case 'retermalizado': renderExternalModule('Retermalizado', 'checklist_retermalizado.html', '🍽️'); break;
     
-    // NUEVOS CASOS
     case 'bpm_modulos':   renderExternalModule('BPM Módulos', 'bpm_modulos.html', '📦'); break;
     case 'checklist_casino': renderExternalModule('Checklist Casino', 'checklist_casino.html', '🍴'); break;
     case 'control_pcc':   renderExternalModule('Control PCC (HACCP)', 'control_pcc.html', '📉'); break;
@@ -587,4 +585,5 @@ function toast(msg,color){
 }
 
 </script>
+
 </body></html>
