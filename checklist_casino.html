@@ -1,12 +1,113 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Checklist Casino - SAIF Cloud</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checklist Higiene Comedor - SAIF Cloud</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, Helvetica, sans-serif; background: #efefef; padding-bottom: 30px; }
+        #topbar { background: #1D9E75; color: white; padding: 12px 14px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+        #topbar h1 { font-size: 14px; font-weight: bold; margin: 0; }
+        #topbar p { font-size: 10px; margin: 2px 0 0; opacity: .8; }
+        .top-btns { display: flex; gap: 6px; }
+        .btnpdf { background: white; color: #0F6E56; border: none; padding: 7px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; white-space: nowrap; }
+        .btnpdf.outline { background: transparent; border: 2px solid white; color: white; }
+        .card { background: white; margin: 10px; border-radius: 8px; border: 1px solid #ddd; overflow: hidden; }
+        .chdr { padding: 10px 13px; font-size: 10px; font-weight: bold; letter-spacing: .07em; text-transform: uppercase; color: white; background: #1D9E75; }
+        .g2 { display: grid; grid-template-columns: 1fr 1fr; }
+        .fi { padding: 8px 12px; border-bottom: 1px solid #f2f2f2; }
+        .fi:nth-child(odd) { border-right: 1px solid #f2f2f2; }
+        .fi label { display: block; font-size: 9px; color: #aaa; text-transform: uppercase; font-weight: bold; margin-bottom: 2px; }
+        .fi input, .fi select { width: 100%; border: none; font-size: 13px; color: #1a56a0; background: transparent; outline: none; }
+        .res-grid { display: grid; grid-template-columns: repeat(4, 1fr); }
+        .res-cell { padding: 10px 6px; text-align: center; border-right: 1px solid #f2f2f2; }
+        .res-cell:last-child { border-right: none; }
+        .res-lbl { font-size: 8px; color: #aaa; text-transform: uppercase; font-weight: bold; margin-bottom: 4px; }
+        .res-val { font-size: 22px; font-weight: bold; color: #1a56a0; }
+        .res-val.green { color: #0F6E56; }
+        .res-val.amber { color: #854F0B; }
+        .res-val.red { color: #A32D2D; }
+        .res-bar-wrap { padding: 10px 13px; border-top: 1px solid #f2f2f2; }
+        .res-pct-lbl { font-size: 9px; color: #aaa; text-transform: uppercase; font-weight: bold; margin-bottom: 5px; }
+        .bar-wrap { height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin: 5px 0 8px; }
+        .bar-fill { height: 100%; border-radius: 4px; background: #1D9E75; width: 0; transition: width .4s; }
+        .res-result { display: inline-block; font-size: 13px; font-weight: bold; padding: 5px 12px; border-radius: 6px; background: #f0f0f0; color: #888; }
+        .res-result.exc { background: #e1f5ee; color: #0F6E56; }
+        .res-result.ace { background: #e1f5ee; color: #0F6E56; }
+        .res-result.def { background: #fff3cd; color: #854F0B; }
+        .res-result.cri { background: #fcebeb; color: #A32D2D; }
+        .item-row { border-bottom: 1px solid #f2f2f2; padding: 12px 13px; }
+        .item-row:last-child { border-bottom: none; }
+        .item-num { font-size: 9px; color: #aaa; font-weight: bold; margin-bottom: 3px; text-transform: uppercase; }
+        .item-name { font-size: 14px; font-weight: bold; color: #111; margin-bottom: 3px; }
+        .item-crit { font-size: 11px; color: #888; line-height: 1.4; margin-bottom: 10px; }
+        .eval-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+        .eb { border: 2px solid #ddd; background: white; border-radius: 8px; padding: 10px 4px; text-align: center; cursor: pointer; font-family: Arial, sans-serif; font-size: 11px; font-weight: bold; color: #888; line-height: 1.3; }
+        .eb span.big { display: block; font-size: 18px; font-weight: bold; }
+        .eb.ac { border-color: #1D9E75; background: #e1f5ee; color: #0F6E56; }
+        .eb.ap { border-color: #e09000; background: #fff3cd; color: #854F0B; }
+        .eb.an { border-color: #A32D2D; background: #fcebeb; color: #A32D2D; }
+        .obs-input { width: 100%; border: 1px solid #ddd; border-radius: 6px; padding: 7px 9px; font-size: 12px; resize: none; outline: none; min-height: 34px; color: #333; background: #fafafa; }
+    </style>
 </head>
 <body>
+
+    <div id="topbar">
+        <div>
+            <h1>Checklist Higiene Comedor</h1>
+            <p>Fiscalización ITE — E.P. Santiago 1</p>
+        </div>
+        <div class="top-btns">
+            <button class="btnpdf outline" onclick="limpiarPlanilla()">🗑 Limpiar</button>
+            <button class="btnpdf" id="btnValidar">✓ Validar</button>
+        </div>
+    </div>
+
+    <div class="container" style="max-width: 800px; margin: 0 auto; padding: 10px;">
+        <div class="card">
+            <div class="chdr">Identificación del Registro</div>
+            <div class="g2">
+                <div class="fi"><label>Establecimiento</label><input type="text" id="fi_emp" value="E.P. Santiago 1" readonly></div>
+                <div class="fi"><label>Fecha</label><input type="date" id="fi_fecha"></div>
+                <div class="fi"><label>Fiscalizador ITE</label><input type="text" id="fi_user" placeholder="Nombre completo..."></div>
+                <div class="fi">
+                    <label>Turno</label>
+                    <select id="fi_turno">
+                        <option value="">Seleccionar...</option>
+                        <option value="Desayuno">Desayuno</option>
+                        <option value="Almuerzo">Almuerzo</option>
+                        <option value="Cena">Cena</option>
+                        <option value="General">General</option>
+                    </select>
+                </div>
+                <div class="fi"><label>N° Registro</label><input type="text" id="fi_nreg" readonly></div>
+                <div class="fi"><label>Servicio</label><input type="text" value="Servicio de Alimentación" readonly style="color:#0F6E56; font-weight:bold;"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="chdr">Resumen de Cumplimiento</div>
+            <div class="res-grid">
+                <div class="res-cell"><div class="res-lbl">Cumple</div><div class="res-val green" id="res_c">0</div></div>
+                <div class="res-cell"><div class="res-lbl">Parcial</div><div class="res-val amber" id="res_pc">0</div></div>
+                <div class="res-cell"><div class="res-lbl">No Cumple</div><div class="res-val red" id="res_nc">0</div></div>
+                <div class="res-cell"><div class="res-lbl">N/A</div><div class="res-val" id="res_na" style="color:#888;">0</div></div>
+            </div>
+            <div class="res-bar-wrap">
+                <div class="res-pct-lbl">Porcentaje de Logro: <span id="res_pct">0.0%</span></div>
+                <div class="bar-wrap"><div class="bar-fill" id="bar_fill"></div></div>
+                <div style="text-align: center; margin-top: 5px;"><span class="res-result" id="res_txt">Sin Datos</span></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="chdr">Criterios de Evaluación Higiénica</div>
+            <div id="contenedorItems"></div>
+        </div>
+    </div>
+
     <script>
         const SAIF_CLOUD = {
             TABLE: 'checklist_casino',
@@ -17,10 +118,16 @@
                     const supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
                     const user = JSON.parse(localStorage.getItem('saif_user') || '{}');
                     const record = {
-                        ...data,
+                        n_registro: data.nreg,
+                        fecha: data.fecha,
+                        instalacion: "Santiago 1 - Casino",
+                        turno: data.turno,
+                        cumplimiento: parseFloat(data.pct),
+                        respuestas: data.respuestas,
+                        observaciones: data.observaciones,
                         usuario_id: user.id || null,
-                        usuario_nombre: user.nombreCompleto || user.username || 'Usuario Externo',
-                        sede: user.sede || 'Santiago 1',
+                        usuario_nombre: document.getElementById("fi_user").value || user.nombreCompleto || 'Usuario ITE',
+                        sede: 'Santiago 1',
                         created_at: new Date().toISOString()
                     };
                     const { error } = await supabase.from(this.TABLE).insert([record]);
@@ -33,16 +140,127 @@
             }
         };
 
-        // Integrar con la función de guardado existente
-        // (Buscamos el punto donde se hace hist2.unshift(entry))
-        async function sincronizarChecklistNube(entry) {
-            console.log("☁️ Sincronizando Checklist Casino con la nube...");
-            const res = await SAIF_CLOUD.save(entry);
-            if(res.success) {
-                console.log("✅ Sincronización exitosa");
+        const CONFIG_ITEMS = [
+            { id: 1, name: "Infraestructura Básica", crit: "Paredes, pisos y cielos limpios, sin grietas y pintura en buen estado." },
+            { id: 2, name: "Sistemas de Drenaje", crit: "Canaletas limpias, con rejillas metálicas completas y sin acumulación de agua." },
+            { id: 3, name: "Puertas y Ventanas", crit: "Cierre hermético para evitar ingreso de plagas y mallas mosquiteras intactas." },
+            { id: 4, name: "Iluminación y Ventilación", crit: "Luminarias protegidas contra estallidos y extractores libres de grasa y hongos." },
+            { id: 5, name: "Higiene del Personal", crit: "Uniforme limpio, de color claro, cofia completa, uñas cortas y sin joyas." },
+            { id: 6, name: "Hábitos Operacionales", crit: "Uso de mascarilla/guantes correctos, lavado frecuente de manos con jabón." },
+            { id: 7, name: "Rotulación PEPS", crit: "Materias primas rotuladas con fecha de vencimiento y ordenadas por primero en vencer." },
+            { id: 8, name: "Almacenamiento Seguro", crit: "Alimentos sobre pallets o estantes, separados del suelo y de las paredes." },
+            { id: 9, name: "Prevención Cruzada", crit: "Separación física estricta entre materias primas crudas y productos listos para consumo." },
+            { id: 10, name: "Control de Químicos", crit: "Productos de aseo y desinfección guardados en un gabinete cerrado exclusivo." }
+        ];
+
+        let evaluaciones = {};
+        let observaciones = {};
+
+        window.onload = function() {
+            document.getElementById("fi_fecha").value = new Date().toISOString().split('T')[0];
+            let yr = new Date().getFullYear();
+            let last = parseInt(localStorage.getItem("saif_casino_nreg_" + yr) || "0") + 1;
+            document.getElementById("fi_nreg").value = yr + "-" + last.toString().padStart(4, '0');
+            renderItems();
+        };
+
+        function renderItems() {
+            const contenedor = document.getElementById("contenedorItems");
+            contenedor.innerHTML = "";
+            CONFIG_ITEMS.forEach(item => {
+                evaluaciones[item.id] = null;
+                let row = document.createElement("div");
+                row.className = "item-row";
+                row.innerHTML = `
+                    <div class="item-num">Ítem ${item.id}</div>
+                    <div class="item-name">${item.name}</div>
+                    <div class="item-crit">${item.crit}</div>
+                    <div class="eval-row">
+                        <button class="eb" id="eb_${item.id}_C" onclick="evaluar(${item.id}, 'C')"><span class="big">C</span>Cumple</button>
+                        <button class="eb" id="eb_${item.id}_PC" onclick="evaluar(${item.id}, 'PC')"><span class="big">PC</span>Parcial</button>
+                        <button class="eb" id="eb_${item.id}_NC" onclick="evaluar(${item.id}, 'NC')"><span class="big">NC</span>No Cumple</button>
+                    </div>
+                    <input type="text" class="obs-input" placeholder="Observación o acción correctiva..." onchange="observaciones[${item.id}] = this.value">
+                `;
+                contenedor.appendChild(row);
+            });
+        }
+
+        function evaluar(id, valor) {
+            ["C", "PC", "NC"].forEach(v => document.getElementById(`eb_${id}_${v}`).classList.remove("ac", "ap", "an"));
+            if (evaluaciones[id] === valor) {
+                evaluaciones[id] = null;
             } else {
-                console.error("⚠️ Error de sincronización");
+                evaluaciones[id] = valor;
+                let btn = document.getElementById(`eb_${id}_${valor}`);
+                if(valor === "C") btn.classList.add("ac");
+                if(valor === "PC") btn.classList.add("ap");
+                if(valor === "NC") btn.classList.add("an");
             }
+            calcularMetricas();
+        }
+
+        function calcularMetricas() {
+            let c = 0, pc = 0, nc = 0, na = 0;
+            CONFIG_ITEMS.forEach(item => {
+                let v = evaluaciones[item.id];
+                if (v === "C") c++;
+                else if (v === "PC") pc++;
+                else if (v === "NC") nc++;
+                else na++;
+            });
+            document.getElementById("res_c").textContent = c;
+            document.getElementById("res_pc").textContent = pc;
+            document.getElementById("res_nc").textContent = nc;
+            document.getElementById("res_na").textContent = na;
+            let evaluados = c + pc + nc;
+            let puntos = (c * 1) + (pc * 0.5);
+            let pct = evaluados > 0 ? ((puntos / evaluados) * 100) : 0;
+            document.getElementById("res_pct").textContent = pct.toFixed(1) + "%";
+            document.getElementById("bar_fill").style.width = pct + "%";
+            let badge = document.getElementById("res_txt");
+            badge.className = "res-result";
+            if (evaluados === 0) { badge.textContent = "Sin Datos"; }
+            else if (pct >= 95) { badge.textContent = "Excelente"; badge.classList.add("exc"); }
+            else if (pct >= 80) { badge.textContent = "Aceptable"; badge.classList.add("ace"); }
+            else if (pct >= 70) { badge.textContent = "Deficiente"; badge.classList.add("def"); }
+            else { badge.textContent = "Crítico"; badge.classList.add("cri"); }
+        }
+
+        document.getElementById("btnValidar").onclick = async function() {
+            if(!document.getElementById("fi_turno").value) {
+                alert("❌ Por favor seleccione el Turno antes de continuar.");
+                return;
+            }
+            this.disabled = true; this.textContent = "Sincronizando...";
+            let c = parseInt(document.getElementById("res_c").textContent);
+            let pc = parseInt(document.getElementById("res_pc").textContent);
+            let evaluados = c + pc + parseInt(document.getElementById("res_nc").textContent);
+            let pctCalculado = evaluados > 0 ? (((c * 1) + (pc * 0.5)) / evaluados * 100).toFixed(1) : "0.0";
+
+            let payload = {
+                nreg: document.getElementById("fi_nreg").value,
+                fecha: document.getElementById("fi_fecha").value,
+                turno: document.getElementById("fi_turno").value,
+                pct: pctCalculado,
+                respuestas: evaluaciones,
+                observaciones: observaciones
+            };
+
+            const res = await SAIF_CLOUD.save(payload);
+            this.disabled = false; this.textContent = "✓ Validar";
+            if(res.success) {
+                alert("✅ Sincronizado y respaldado en la nube correctamente.");
+                let yr = new Date().getFullYear();
+                localStorage.setItem("saif_casino_nreg_" + yr, parseInt(localStorage.getItem("saif_casino_nreg_" + yr) || "0") + 1);
+                location.reload();
+            } else {
+                alert("⚠️ Error al sincronizar: " + res.error);
+            }
+        };
+
+        function limpiarPlanilla() {
+            if(confirm("¿Limpiar la evaluación actual?")) { location.reload(); }
         }
     </script>
 </body>
