@@ -1,39 +1,36 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <title>Fiscalización BPM - SAIF Cloud</title>
+    <!-- SUPABASE SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
     <style>
         /* Estilos originales del usuario */
     </style>
 </head>
 <body>
+    <!-- HTML original del usuario -->
+
     <script>
-        // CONFIGURACIÓN SAIF CLOUD (CORREGIDO)
+        // CONFIGURACIÓN SAIF CLOUD
         const SAIF_CLOUD = {
-            TABLE: 'bpm_modulos', // <- Apunta a la tabla real de Supabase
+            TABLE: 'bpm_fiscalizacion',
             async save(data) {
                 try {
                     const SUPA_URL = "https://pfzbxckmqapkfggkqtbh.supabase.co";
                     const SUPA_KEY = "sb_publishable_M1niH_fsa5YWGvwwCTAqjA_SJD5Omi7";
                     const supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-                    
-                    // Obtener al usuario activo de la sesión del index
-                    const user = JSON.parse(localStorage.getItem('saif_u') || '{}');
-                    
-                    // Estructuramos el registro para que coincida con tu Supabase
+                    const user = JSON.parse(localStorage.getItem('saif_user') || '{}');
                     const record = {
-                        fn_rut: user.username || 'Externo',
-                        fn_cargo: user.rol ? user.rol.toUpperCase() : 'ITE',
-                        fn_emp: 'Santiago 1',
-                        res_text: 'Sincronización automática de planilla de evaluación.',
-                        eqs: data.eqs || {}, 
-                        desvios: data.desvios || {},
+                        ...data,
+                        usuario_id: user.id || null,
+                        usuario_nombre: user.nombreCompleto || user.username || 'Usuario Externo',
+                        sede: user.sede || 'Santiago 1',
                         created_at: new Date().toISOString()
                     };
-                    
                     const { error } = await supabase.from(this.TABLE).insert([record]);
                     if (error) throw error;
                     return { success: true };
@@ -48,36 +45,38 @@
         (function(){
             var _bx = document.getElementById("hBtnGuardar");
             if(_bx) {
+                // Guardamos el original para llamarlo después si es necesario
                 var _origOnClick = _bx.onclick;
                 
                 _bx.onclick = async function() {
-                    var entry = typeof mkEntry === 'function' ? mkEntry() : { tot: 1, na: 0 };
+                    var entry = mkEntry();
+                    if(entry.tot===0 && entry.na===0){ alert("Evalua al menos un parametro antes de guardar."); return; }
                     
-                    // 1. GUARDAR EN LA NUBE
+                    // 1. Guardar localmente
+                    histBPM.unshift(entry);
+                    if(histBPM.length>60) histBPM=histBPM.slice(0,60);
+                    sHist(); addToAnual(entry); renderHist(null);
+                    
+                    // 2. GUARDAR EN LA NUBE (NUEVO)
                     console.log("☁️ Sincronizando BPM con la nube...");
                     const cloudRes = await SAIF_CLOUD.save(entry);
                     
                     if(cloudRes.success) {
-                        alert("✅ Registro guardado y sincronizado con Supabase exitosamente.");
+                        alert("✅ Registro guardado localmente y sincronizado con la nube.");
                     } else {
-                        alert("⚠️ Error de sincronización: " + cloudRes.error);
+                        alert("⚠️ Registro guardado localmente, pero hubo un error al subirlo a la nube.");
                     }
                     
-                    // 2. Ejecutar lógica original de guardado (Auto-incrementar nreg y localStorage local)
-                    if (typeof _origOnClick === 'function') {
-                        _origOnClick.call(this);
-                    } else {
-                        // Respaldo de lógica de numeración si el original no responde
-                        var yr = new Date().getFullYear();
-                        var key = "bpm_nreg_" + yr;
-                        var last = 0;
-                        try { var v = localStorage.getItem(key); if(v) last = parseInt(v)||0; } catch(e){}
-                        last++;
-                        var pad = last<10?"000"+last:last<100?"00"+last:last<1000?"0"+last:""+last;
-                        var el = document.getElementById("fi_nreg");
-                        if(el) el.value = yr+"-"+pad;
-                        try { localStorage.setItem(key,last); } catch(e){}
-                    }
+                    // Auto-incrementar nreg (lógica original)
+                    var yr = new Date().getFullYear();
+                    var key = "bpm_nreg_"+yr;
+                    var last = 0;
+                    try { var v = localStorage.getItem(key); if(v) last = parseInt(v)||0; } catch(e){}
+                    last++;
+                    var pad = last<10?"000"+last:last<100?"00"+last:last<1000?"0"+last:""+last;
+                    var el = document.getElementById("fi_nreg");
+                    if(el) el.value = yr+"-"+pad;
+                    try { localStorage.setItem(key,last); } catch(e){}
                 };
             }
         })();
