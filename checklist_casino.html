@@ -1,345 +1,49 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SAIF Cloud · Checklist Higiene y Casino</title>
-    <!-- SUPABASE SDK -->
+    <title>Checklist Casino - SAIF Cloud</title>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
-    <!-- JSPDF SDK PARA GENERAR INFORMES PDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: #EEF3FF; color: #0D1B4B; margin: 0; padding: 20px; }
-        .container { max-width: 1000px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 16px rgba(13,27,75,0.1); }
-        .header-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-        .header-table td { border: 1px solid #C8D8F8; padding: 10px; font-size: 13px; }
-        .header-title { font-size: 18px; font-weight: bold; color: #1A3A8C; text-align: center; }
-        .meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px; background: #F5F8FF; padding: 15px; border-radius: 8px; border: 1px solid #E2ECFF; }
-        .meta-item { display: flex; flex-direction: column; }
-        .meta-item label { font-size: 11px; font-weight: 700; text-transform: uppercase; color: #6B7FA8; margin-bottom: 4px; }
-        .meta-item input, .meta-item select { padding: 8px 12px; border: 1.5px solid #C8D8F8; border-radius: 6px; font-size: 13px; color: #0D1B4B; outline: none; background: white; }
-        .block-sec { margin-bottom: 20px; border: 1px solid #C8D8F8; border-radius: 8px; overflow: hidden; background: white; }
-        .block-toggle { background: #1A3A8C; color: white; padding: 12px 15px; font-weight: bold; font-size: 14px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-        .block-content { padding: 15px; }
-        .eval-table { width: 100%; border-collapse: collapse; }
-        .eval-table th { background: #F0F4FC; color: #1A3A8C; text-align: left; padding: 10px; font-size: 12px; font-weight: 700; border-bottom: 2px solid #C8D8F8; }
-        .eval-table td { padding: 10px; border-bottom: 1px solid #E2ECFF; font-size: 13px; vertical-align: middle; }
-        .col-num { width: 40px; text-align: center; font-weight: bold; color: #6B7FA8; }
-        .col-crit { width: 50%; }
-        .col-opts { width: 160px; text-align: center; }
-        .opt-btn { border: 1.5px solid #C8D8F8; background: white; padding: 6px 12px; font-size: 12px; font-weight: bold; cursor: pointer; margin: 0 2px; border-radius: 4px; color: #6B7FA8; }
-        .opt-btn[data-val="1"].active { background: #28A745; color: white; border-color: #28A745; }
-        .opt-btn[data-val="0"].active { background: #DC3545; color: white; border-color: #DC3545; }
-        .opt-btn[data-val="NA"].active { background: #6C757D; color: white; border-color: #6C757D; }
-        .obs-input { width: 100%; padding: 6px 10px; border: 1px solid #C8D8F8; border-radius: 4px; font-size: 12px; box-sizing: border-box; }
-        .summary-bar { background: #0D1B4B; color: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
-        .score-badge { background: #1A6EF5; padding: 6px 14px; border-radius: 20px; font-size: 14px; }
-        .action-panel { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .btn { border: none; padding: 14px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; text-align: center; }
-        .btn-primary { background: #1A6EF5; color: white; }
-        .btn-pdf { background: #E0A800; color: #0D1B4B; }
-    </style>
 </head>
 <body>
-<div class="container">
-    <table class="header-table">
-        <tr>
-            <td style="width:25%; text-align:center;"><strong style="color:#1A3A8C;">SANTIAGO 1</strong><br><span style="font-size:11px; color:#6B7FA8;">Inspección Técnica de Explotación</span></td>
-            <td class="header-title">CHECKLIST DE FISCALIZACIÓN HIGIENE Y BUENAS PRÁCTICAS - CASINO</td>
-            <td style="width:25%; font-size:11px; line-height:1.4;"><strong>Código:</strong> ITE-BPM-CAS<br><strong>Versión:</strong> 3.0<br><strong>Vigencia:</strong> 2026</td>
-        </tr>
-    </table>
+    <script>
+        const SAIF_CLOUD = {
+            TABLE: 'checklist_casino',
+            async save(data) {
+                try {
+                    const SUPA_URL = "https://pfzbxckmqapkfggkqtbh.supabase.co";
+                    const SUPA_KEY = "sb_publishable_M1niH_fsa5YWGvwwCTAqjA_SJD5Omi7";
+                    const supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+                    const user = JSON.parse(localStorage.getItem('saif_user') || '{}');
+                    const record = {
+                        ...data,
+                        usuario_id: user.id || null,
+                        usuario_nombre: user.nombreCompleto || user.username || 'Usuario Externo',
+                        sede: user.sede || 'Santiago 1',
+                        created_at: new Date().toISOString()
+                    };
+                    const { error } = await supabase.from(this.TABLE).insert([record]);
+                    if (error) throw error;
+                    return { success: true };
+                } catch (err) {
+                    console.error('Error en SAIF Cloud:', err);
+                    return { success: false, error: err.message };
+                }
+            }
+        };
 
-    <div class="meta-grid">
-        <div class="meta-item"><label>N° Registro</label><input type="text" id="fi_nreg" readonly style="background:#E2ECFF; font-weight:bold; color:#1A3A8C;"></div>
-        <div class="meta-item"><label>Fecha Evaluación</label><input type="date" id="fi_fecha"></div>
-        <div class="meta-item"><label>Instalación / Casino</label><select id="fi_instalacion"><option value="Casino Central">Casino Central</option><option value="Cocina General">Cocina General</option><option value="Rancho Imputados">Rancho Imputados</option><option value="Bodega de Insumos">Bodega de Insumos</option></select></div>
-        <div class="meta-item"><label>Turno / Servicio</label><select id="fi_turno"><option value="Desayuno">Desayuno</option><option value="Almuerzo">Almuerzo</option><option value="Cena">Cena</option><option value="General">Control General</option></select></div>
-    </div>
-
-    <div id="dynamicBlocks"></div>
-
-    <div class="summary-bar">
-        <div>Cumplimiento Global: <span id="lblCumplimiento">0.0%</span></div>
-        <div class="score-badge" id="lblTotales">Cumple: 0 | No Cumple: 0 | N/A: 0</div>
-    </div>
-
-    <div class="action-panel">
-        <button class="btn btn-primary" id="btnGuardar">Guardar Registro y Sincronizar Nube</button>
-        <button class="btn btn-pdf" onclick="generarInformePDF()">Generar Informe PDF</button>
-    </div>
-</div>
-
-<script>
-const CONFIG_ESTRUCTURA = [
-    {
-        titulo: "1. Infraestructura y Condiciones Estructurales del Casino",
-        items: [
-            "Paredes, pisos y cielos limpios, sin grietas y con pintura en buen estado.",
-            "Sistemas de drenaje y canaletas limpias, con rejillas metálicas y sin olores.",
-            "Puertas y ventanas con cierre hermético y mallas anti-insectos intactas.",
-            "Iluminación suficiente, con luminarias protegidas contra estallidos.",
-            "Ventilación adecuada, ausencia de condensación de vapor y hongos."
-        ]
-    },
-    {
-        titulo: "2. Higiene del Personal y Hábitos Operacionales",
-        items: [
-            "Personal con uniforme completo, limpio, de color claro y cofia/gorro.",
-            "Uso riguroso de mascarilla y guantes cuando la operación lo requiera.",
-            "Uñas cortas, limpias, sin esmalte; ausencia de joyas, relojes o anillos.",
-            "Lavado de manos frecuente y correcto con jabón desinfectante y papel.",
-            "Ausencia de heridas expuestas o síntomas de enfermedades."
-        ]
-    },
-    {
-        titulo: "3. Operaciones de Almacenamiento y Materias Primas",
-        items: [
-            "Materias primas rotuladas, vigentes y ordenadas según criterio PEPS.",
-            "Alimentos almacenados en tarimas o estantes separados del suelo y paredes.",
-            "Separación estricta de alimentos crudos y cocidos (prevención cruzada).",
-            "Productos químicos de aseo guardados en bodegas cerradas e independientes.",
-            "Temperaturas de congelación (-18°C) y refrigeración (0°C a 5°C) en rango."
-        ]
-    },
-    {
-        titulo: "4. Higienización, Equipos y Utensilios de Cocina",
-        items: [
-            "Equipos, mesones y utensilios limpios, desinfectados y de material inerte.",
-            "Uso correcto de tablas de picar coloreadas según el tipo de alimento.",
-            "Ausencia de paños de tela de uso común (sustituidos por papel desechable).",
-            "Basureros con tapa de pedal, bolsa plástica y con retiro frecuente.",
-            "Evidencias de un control de plagas vigente y trampas operativas."
-        ]
-    }
-];
-
-let respuestasBPM = {};
-let observacionesBPM = {};
-
-window.onload = function() {
-    initFecha();
-    initNreg();
-    renderEstructura();
-};
-
-function initFecha() {
-    let d = new Date();
-    let m = "" + (d.getMonth() + 1), j = "" + d.getDate(), y = d.getFullYear();
-    if (m.length < 2) m = "0" + m; if (j.length < 2) j = "0" + j;
-    document.getElementById("fi_fecha").value = [y, m, j].join("-");
-}
-
-function initNreg() {
-    let yr = new Date().getFullYear();
-    let key = "saif_nreg_" + yr;
-    let last = parseInt(localStorage.getItem(key) || "0") + 1;
-    let pad = last.toString().padStart(4, '0');
-    document.getElementById("fi_nreg").value = yr + "-" + pad;
-}
-
-function renderEstructura() {
-    const box = document.getElementById("dynamicBlocks");
-    box.innerHTML = "";
-    let globalIdx = 1;
-
-    CONFIG_ESTRUCTURA.forEach((sec, sIdx) => {
-        let div = document.createElement("div");
-        div.className = "block-sec";
-        let html = `<div class="block-toggle" onclick="toggleSec(${sIdx})"><span>${sec.titulo}</span><span id="tglSign_${sIdx}">▼</span></div>`;
-        html += `<div class="block-content" id="tglCont_${sIdx}">`;
-        html += `<table class="eval-table"><thead><tr><th class="col-num">N°</th><th class="col-crit">Criterio de Evaluación BPM</th><th class="col-opts">Evaluación</th><th>Observaciones / Desvíos</th></tr></thead><tbody>`;
-        
-        sec.items.forEach((crit) => {
-            let cKey = "c_" + globalIdx;
-            html += `<tr>
-                <td class="col-num">${globalIdx}</td>
-                <td class="col-crit">${crit}</td>
-                <td class="col-opts">
-                    <button class="opt-btn" id="btn_${cKey}_1" data-key="${cKey}" data-val="1" onclick="setEv(this)">C</button>
-                    <button class="opt-btn" id="btn_${cKey}_0" data-key="${cKey}" data-val="0" onclick="setEv(this)">NC</button>
-                    <button class="opt-btn" id="btn_${cKey}_NA" data-key="${cKey}" data-val="NA" onclick="setEv(this)">N/A</button>
-                </td>
-                <td><input type="text" class="obs-input" id="obs_${cKey}" placeholder="Nota de desviación..." onchange="observacionesBPM['${cKey}']=this.value"></td>
-            </tr>`;
-            globalIdx++;
-        });
-        html += `</tbody></table></div>`;
-        div.innerHTML = html;
-        box.appendChild(div);
-    });
-}
-
-function toggleSec(i) {
-    let el = document.getElementById("tglCont_" + i);
-    let s = document.getElementById("tglSign_" + i);
-    if(el.style.display === "none") { el.style.display = "block"; s.textContent = "▼"; }
-    else { el.style.display = "none"; s.textContent = "►"; }
-}
-
-function setEv(btn) {
-    let key = btn.getAttribute("data-key");
-    let val = btn.getAttribute("data-val");
-    ["1", "0", "NA"].forEach(v => document.getElementById(`btn_${key}_${v}`).classList.remove("active"));
-    btn.classList.add("active");
-    respuestasBPM[key] = val;
-    calcCump();
-}
-
-function calcCump() {
-    let c = 0, nc = 0, na = 0;
-    let totalItems = 20;
-    for (let i = 1; i <= totalItems; i++) {
-        let v = respuestasBPM["c_" + i];
-        if (v === "1") c++; else if (v === "0") nc++; else if (v === "NA") na++;
-    }
-    let act = c + nc;
-    let pct = act > 0 ? ((c / act) * 100).toFixed(1) : "0.0";
-    document.getElementById("lblCumplimiento").textContent = pct + "%";
-    document.getElementById("lblTotales").textContent = `Cumple: ${c} | No Cumple: ${nc} | N/A: ${na}`;
-    return { pct, c, nc, na };
-}
-
-// CÓDIGO EXCLUSIVO DE CONEXIÓN CON SUPABASE CLOUD (BASADO EN TU ARCHIVO)
-const SAIF_CLOUD = {
-    TABLE: 'checklist_casino', // Nombre exacto de tu tabla
-    async save(data) {
-        try {
-            const SUPA_URL = "https://pfzbxckmqapkfggkqtbh.supabase.co";
-            const SUPA_KEY = "sb_publishable_M1niH_fsa5YWGvwwCTAqjA_SJD5Omi7";
-            const supabase = window.supabase.createClient(SUPA_URL, SUPA_KEY);
-            const user = JSON.parse(localStorage.getItem('saif_user') || '{}');
-            
-            const record = {
-                n_registro: data.nreg,
-                fecha: data.fecha,
-                instalacion: data.inst,
-                turno: data.turno,
-                cumplimiento: parseFloat(data.pct),
-                respuestas: data.eqs,
-                observaciones: data.desvios,
-                usuario_id: user.id || null,
-                usuario_nombre: user.nombreCompleto || user.username || 'Usuario Externo',
-                sede: user.sede || 'Santiago 1',
-                created_at: new Date().toISOString()
-            };
-
-            const { error } = await supabase.from(this.TABLE).insert([record]);
-            if (error) throw error;
-            return { success: true };
-        } catch (err) {
-            console.error('Error en SAIF Cloud:', err);
-            return { success: false, error: err.message };
+        // Integrar con la función de guardado existente
+        // (Buscamos el punto donde se hace hist2.unshift(entry))
+        async function sincronizarChecklistNube(entry) {
+            console.log("☁️ Sincronizando Checklist Casino con la nube...");
+            const res = await SAIF_CLOUD.save(entry);
+            if(res.success) {
+                console.log("✅ Sincronización exitosa");
+            } else {
+                console.error("⚠️ Error de sincronización");
+            }
         }
-    }
-};
-
-document.getElementById("btnGuardar").onclick = async function() {
-    let m = calcCump();
-    let desvios = {};
-    for(let k in observacionesBPM){
-        if(observacionesBPM[k].trim() !== "") desvios[k] = observacionesBPM[k];
-    }
-
-    let entry = {
-        nreg: document.getElementById("fi_nreg").value,
-        fecha: document.getElementById("fi_fecha").value,
-        inst: document.getElementById("fi_instalacion").value,
-        turno: document.getElementById("fi_turno").value,
-        pct: m.pct,
-        eqs: respuestasBPM,
-        desvios: desvios
-    };
-
-    if(Object.keys(respuestasBPM).length === 0) {
-        alert("❌ Por favor evalúe al menos un criterio antes de guardar.");
-        return;
-    }
-
-    this.disabled = true;
-    this.textContent = "Sincronizando con SAIF Cloud...";
-
-    const res = await SAIF_CLOUD.save(entry);
-    
-    this.disabled = false;
-    this.textContent = "Guardar Registro y Sincronizar Nube";
-
-    if(res.success) {
-        alert("✅ Datos guardados y respaldados exitosamente en la nube de Supabase.");
-        // Incrementar correlativo
-        let yr = new Date().getFullYear();
-        let key = "saif_nreg_" + yr;
-        let last = parseInt(localStorage.getItem(key) || "0") + 1;
-        localStorage.setItem(key, last);
-        location.reload();
-    } else {
-        alert("⚠️ Error al sincronizar con la nube: " + res.error);
-    }
-};
-
-// GENERACIÓN AUTOMÁTICA DEL INFORME PDF
-function generarInformePDF() {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    let m = calcCump();
-
-    let nreg = document.getElementById("fi_nreg").value;
-    let fecha = document.getElementById("fi_fecha").value;
-    let inst = document.getElementById("fi_instalacion").value;
-    let turno = document.getElementById("fi_turno").value;
-
-    // Encabezado Institucional
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
-    doc.text("SANTIAGO 1 - INSPECCIÓN TÉCNICA DE EXPLOTACIÓN", 14, 20);
-    doc.setFontSize(12);
-    doc.text("INFORME DE FISCALIZACIÓN HIGIENE - CASINO", 14, 28);
-    doc.setDrawColor(26, 58, 140);
-    doc.line(14, 32, 196, 32);
-
-    // Metadatos
-    doc.setFont("helvetica", "normal");
-    doc.setFontSize(10);
-    doc.text(`N° Registro: ${nreg}`, 14, 42);
-    doc.text(`Fecha: ${fecha}`, 14, 48);
-    doc.text(`Instalación: ${inst}`, 110, 42);
-    doc.text(`Turno Controlado: ${turno}`, 110, 48);
-
-    doc.setFont("helvetica", "bold");
-    doc.text(`Porcentaje Cumplimiento Global: ${m.pct}%`, 14, 58);
-    doc.text(`Resumen: Cumple: ${m.c} | No Cumple: ${m.nc} | N/A: ${m.na}`, 110, 58);
-    doc.line(14, 62, 196, 62);
-
-    // Listar Desvíos Encontrados
-    doc.text("DETALLE DE DESVÍOS Y OBSERVACIONES ENCONTRADAS:", 14, 72);
-    let y = 82;
-    doc.setFont("helvetica", "normal");
-
-    let totalItems = 20;
-    let hasDesvios = false;
-    
-    for (let i = 1; i <= totalItems; i++) {
-        let key = "c_" + i;
-        if (respuestasBPM[key] === "0") {
-            hasDesvios = true;
-            let nota = observacionesBPM[key] || "Sin observaciones registradas.";
-            doc.setFont("helvetica", "bold");
-            doc.text(`• Item N° ${i}: NO CUMPLE`, 16, y);
-            doc.setFont("helvetica", "normal");
-            y += 6;
-            let txtLog = doc.splitTextToSize(`Desviación: ${nota}`, 175);
-            doc.text(txtLog, 20, y);
-            y += (txtLog.length * 6);
-            if(y > 270) { doc.addPage(); y = 20; }
-        }
-    }
-
-    if(!hasDesvios) {
-        doc.text("No se registraron desvíos críticos de higiene en esta fiscalización.", 16, y);
-    }
-
-    doc.save(`Informe_BPM_${nreg}.pdf`);
-}
-</script>
+    </script>
 </body>
 </html>
