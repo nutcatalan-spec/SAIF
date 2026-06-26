@@ -3812,22 +3812,72 @@ function getDB() {
   return _db;
 }
 
+function toast(msg, color) {
+  var t = document.createElement("div");
+  t.style.position = "fixed";
+  t.style.bottom = "24px";
+  t.style.left = "50%";
+  t.style.transform = "translateX(-50%)";
+  t.style.padding = "12px 24px";
+  t.style.borderRadius = "10px";
+  t.style.fontSize = "13px";
+  t.style.fontWeight = "bold";
+  t.style.color = "white";
+  t.style.zIndex = "9999";
+  t.style.background = color || "#1A3A5C";
+  t.style.boxShadow = "0 4px 20px rgba(0,0,0,0.25)";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, 3200);
+}
+
 async function guardarChecklistConSincro(entry) {
   const db = getDB();
   if (!db) {
-    console.error("Supabase SDK no cargado.");
+    toast("❌ Error: Conexión no disponible", "#A32D2D");
     return;
   }
+  
+  const valBtn = document.getElementById("val_btn");
+  const originalText = valBtn ? valBtn.textContent : "";
+  if(valBtn) { valBtn.disabled = true; valBtn.textContent = "⏳ Sincronizando..."; }
+
   try {
     const { data, error } = await db
       .from("checklist_casino")
-      .upsert(entry, { onConflict: "nvis" }); // Assuming nvis is unique
+      .upsert(entry, { onConflict: "nvis" });
     if (error) throw error;
-    console.log("✅ Sincronización exitosa en checklist_casino:", data);
+    toast("✅ Registro sincronizado con la nube", "#1D9E75");
   } catch (err) {
     console.error("❌ Error en sincronización (checklist_casino):", err.message);
+    toast("❌ Error al subir a la nube", "#A32D2D");
+    if(valBtn) { valBtn.disabled = false; valBtn.textContent = originalText; }
   }
 }
+
+async function loadCloudDataChecklist() {
+  const db = getDB();
+  if (!db) return;
+  try {
+    const { data, error } = await db
+      .from("checklist_casino")
+      .select("*")
+      .order("ts", { ascending: false });
+    if (error) throw error;
+    if (data && data.length > 0) {
+      hist2 = data;
+      // Re-indexar anual
+      // (Aquí podrías llamar a una función similar a addToAnual si existe para checklist)
+      rH2(null);
+      console.log("✅ Datos cargados desde la nube (Checklist)");
+    }
+  } catch (err) {
+    console.error("❌ Error cargando datos de la nube (Checklist):", err.message);
+  }
+}
+
+// Cargar datos al iniciar
+window.addEventListener('DOMContentLoaded', loadCloudDataChecklist);
 
 // ═══════════════════════════════════════════════════════════════════════════
 // GUARDAR REGISTRO — función única y limpia
