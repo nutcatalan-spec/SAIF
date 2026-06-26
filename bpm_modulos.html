@@ -2032,22 +2032,72 @@ function getDB() {
   return _db;
 }
 
+function toast(msg, color) {
+  var t = document.createElement("div");
+  t.style.position = "fixed";
+  t.style.bottom = "24px";
+  t.style.left = "50%";
+  t.style.transform = "translateX(-50%)";
+  t.style.padding = "12px 24px";
+  t.style.borderRadius = "10px";
+  t.style.fontSize = "13px";
+  t.style.fontWeight = "bold";
+  t.style.color = "white";
+  t.style.zIndex = "9999";
+  t.style.background = color || "#1A3A5C";
+  t.style.boxShadow = "0 4px 20px rgba(0,0,0,0.25)";
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function() { if (t.parentNode) t.parentNode.removeChild(t); }, 3200);
+}
+
 async function guardarBPMConSincro(entry) {
   const db = getDB();
   if (!db) {
-    console.error("Supabase SDK no cargado.");
+    toast("❌ Error: Conexión no disponible", "#A32D2D");
     return;
   }
+  
+  const valBtn = document.getElementById("val_btn");
+  const originalText = valBtn ? valBtn.textContent : "";
+  if(valBtn) { valBtn.disabled = true; valBtn.textContent = "⏳ Sincronizando..."; }
+
   try {
     const { data, error } = await db
       .from("bpm_modulos")
-      .upsert(entry, { onConflict: "nreg" }); // Assuming nreg is unique
+      .upsert(entry, { onConflict: "nreg" });
     if (error) throw error;
-    console.log("✅ Sincronización exitosa en bpm_modulos:", data);
+    toast("✅ Registro sincronizado con la nube", "#1D9E75");
   } catch (err) {
     console.error("❌ Error en sincronización (bpm_modulos):", err.message);
+    toast("❌ Error al subir a la nube", "#A32D2D");
+    if(valBtn) { valBtn.disabled = false; valBtn.textContent = originalText; }
   }
 }
+
+async function loadCloudDataBPM() {
+  const db = getDB();
+  if (!db) return;
+  try {
+    const { data, error } = await db
+      .from("bpm_modulos")
+      .select("*")
+      .order("ts", { ascending: false });
+    if (error) throw error;
+    if (data && data.length > 0) {
+      histBPM = data;
+      anualBPM = {};
+      histBPM.forEach(r => addToAnual(r));
+      renderHist(null);
+      console.log("✅ Datos cargados desde la nube (BPM)");
+    }
+  } catch (err) {
+    console.error("❌ Error cargando datos de la nube (BPM):", err.message);
+  }
+}
+
+// Cargar datos al iniciar
+window.addEventListener('DOMContentLoaded', loadCloudDataBPM);
 </script>
 
 // ─── VALIDACION DEL PROFESIONAL ──────────────────────────────────────────
