@@ -1,8 +1,8 @@
-<!DOCTYPE html
-</script>
->
-<html lang="es">
-<head>
+<html lang="es"><head>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head><body>&gt;
+
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Checklist Higiene Comedor</title>
@@ -403,16 +403,16 @@ body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30
 .cnc-mini.NA-act{border-color:#aaa;background:#f0f0f0;color:#666}
 
 </style>
-</head>
-<body>
+
+
 
 <div id="topbar">
   <div><h1>Checklist Higiene Comedor - ITE</h1><p>Inspeccion Tecnica de Explotacion | BPM / Decreto 977 RSA Chile</p></div>
   <div class="top-btns">
-    <button type="button" class="btnpdf outline" id="btnVerMes" style="border-color:rgba(255,255,255,.5)">Historial</button>
-    <button type="button" class="btnpdf accent" onclick="abrirInforme('dia')">📄 Diario</button>
-    <button type="button" class="btnpdf accent" onclick="abrirInforme('mes')">📅 Mensual</button>
-    <button type="button" class="btnpdf accent" onclick="abrirInforme('anual')">📊 Anual</button>
+    <button type="button" class="btnpdf outline" id="btnVerMes" style="border-color:rgba(255,255,255,.5)" data-manus_clickable="true" data-manus_click_id="1">Historial</button>
+    <button type="button" class="btnpdf accent" onclick="abrirInforme('dia')" data-manus_clickable="true" data-manus_click_id="2">📄 Diario</button>
+    <button type="button" class="btnpdf accent" onclick="abrirInforme('mes')" data-manus_clickable="true" data-manus_click_id="3">📅 Mensual</button>
+    <button type="button" class="btnpdf accent" onclick="abrirInforme('anual')" data-manus_clickable="true" data-manus_click_id="4">📊 Anual</button>
   </div>
 </div>
 
@@ -422,24 +422,24 @@ body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30
 <div class="card">
   <div class="chdr" style="background:#0F6E56">Identificacion</div>
   <div class="g2">
-    <div class="fi"><label>Establecimiento</label><select id="fi_estab" onchange="updFicha()">
+    <div class="fi"><label>Establecimiento</label><select id="fi_estab" onchange="updFicha()" data-manus_clickable="true" data-manus_click_id="5">
       <option value="E.P Santiago 1">E.P Santiago 1</option>
       <option value="E.P Valdivia">E.P Valdivia</option>
       <option value="E.P P. Montt">E.P P. Montt</option>
     </select></div>
-    <div class="fi"><label>Fecha</label><input type="date" id="fi_fecha"></div>
-    <div class="fi"><label>Fiscalizador ITE</label><input type="text" id="fi_fisc" placeholder="Nombre..." oninput="syncFirmaAuto()"></div>
-    <div class="fi"><label>Cargo</label><input type="text" id="fi_cargo" placeholder="Supervisor ITE" oninput="syncFirmaAuto()"></div>
-    <div class="fi"><label>Empresa</label><input type="text" id="fi_emp" placeholder="Creaxxion" oninput="syncFirmaAuto()"></div>
-    <div class="fi"><label>Concesionaria</label><input type="text" id="fi_conc" placeholder="Grupo 3"></div>
-    <div class="fi"><label>Area evaluada</label><input type="text" id="fi_area" placeholder="Casino Funcionarios"></div>
-    <div class="fi"><label>Servicio</label><select id="fi_turno" onchange="seleccionarServicio(this.value)">
+    <div class="fi"><label>Fecha</label><input type="date" id="fi_fecha" data-manus_clickable="true" data-manus_click_id="6"></div>
+    <div class="fi"><label>Fiscalizador ITE</label><input type="text" id="fi_fisc" placeholder="Nombre..." oninput="syncFirmaAuto()" data-manus_clickable="true" data-manus_click_id="7"></div>
+    <div class="fi"><label>Cargo</label><input type="text" id="fi_cargo" placeholder="Supervisor ITE" oninput="syncFirmaAuto()" data-manus_clickable="true" data-manus_click_id="8"></div>
+    <div class="fi"><label>Empresa</label><input type="text" id="fi_emp" placeholder="Creaxxion" oninput="syncFirmaAuto()" data-manus_clickable="true" data-manus_click_id="9"></div>
+    <div class="fi"><label>Concesionaria</label><input type="text" id="fi_conc" placeholder="Grupo 3" data-manus_clickable="true" data-manus_click_id="10"></div>
+    <div class="fi"><label>Area evaluada</label><input type="text" id="fi_area" placeholder="Casino Funcionarios" data-manus_clickable="true" data-manus_click_id="11"></div>
+    <div class="fi"><label>Servicio</label><select id="fi_turno" onchange="seleccionarServicio(this.value)" data-manus_clickable="true" data-manus_click_id="12">
       <option value="">— Seleccionar —</option>
       <option value="Desayuno GENCHI">Desayuno GENCHI</option>
       <option value="Almuerzo GENCHI">Almuerzo GENCHI</option>
       <option value="Cena GENCHI">Cena GENCHI</option>
     </select></div>
-    <div class="fi"><label>N Visita</label><input type="text" id="fi_nvis" readonly style="background:#f0f4ff;color:#1a56a0;font-weight:bold"></div>
+    <div class="fi"><label>N Visita</label><input type="text" id="fi_nvis" readonly="" style="background:#f0f4ff;color:#1a56a0;font-weight:bold" data-manus_clickable="true" data-manus_click_id="13"></div>
   </div>
 </div>
 
@@ -460,9 +460,9 @@ body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30
 
 <div class="card">
   <div class="turno-tabs">
-    <div class="turno-tab act" id="tab_m" onclick="setTurno(0)">☀️ Desayuno</div>
-    <div class="turno-tab" id="tab_t" onclick="setTurno(1)">🌤️ Almuerzo</div>
-    <div class="turno-tab" id="tab_n" onclick="setTurno(2)">🌙 Cena</div>
+    <div class="turno-tab act" id="tab_m" onclick="setTurno(0)" data-manus_clickable="true" data-manus_click_id="14">☀️ Desayuno</div>
+    <div class="turno-tab" id="tab_t" onclick="setTurno(1)" data-manus_clickable="true" data-manus_click_id="15">🌤️ Almuerzo</div>
+    <div class="turno-tab" id="tab_n" onclick="setTurno(2)" data-manus_clickable="true" data-manus_click_id="16">🌙 Cena</div>
   </div>
   <div>
     <div class="turno-panel act" id="panel_m">
@@ -471,156 +471,156 @@ body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30
         <div class="item-name">Utensilios limpios</div>
         <div class="item-crit">Cubiertos, bandejas, vasos y utensilios sin residuos visibles, limpios y correctamente almacenados.</div>
         <div class="eval-row">
-          <button type="button" class="eb" id="b0_m_c" onclick="setEval(0,0,2)"><span class="big">C</span>Cumple<br>2 pts</button>
-          <button type="button" class="eb" id="b0_m_p" onclick="setEval(0,0,1)"><span class="big">P</span>Parcial<br>1 pt</button>
-          <button type="button" class="eb" id="b0_m_n" onclick="setEval(0,0,0)"><span class="big">NC</span>No Cumple<br>0 pts</button>
+          <button type="button" class="eb" id="b0_m_c" onclick="setEval(0,0,2)" data-manus_clickable="true" data-manus_click_id="17"><span class="big">C</span>Cumple<br>2 pts</button>
+          <button type="button" class="eb" id="b0_m_p" onclick="setEval(0,0,1)" data-manus_clickable="true" data-manus_click_id="18"><span class="big">P</span>Parcial<br>1 pt</button>
+          <button type="button" class="eb" id="b0_m_n" onclick="setEval(0,0,0)" data-manus_clickable="true" data-manus_click_id="19"><span class="big">NC</span>No Cumple<br>0 pts</button>
         </div>
         <span class="item-est nd" id="est0_m">Sin evaluar</span>
-        <textarea class="obs-input" rows="1" id="obs0_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..."></textarea>
+        <textarea class="obs-input" rows="1" id="obs0_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..." data-manus_clickable="true" data-manus_click_id="20"></textarea>
       </div>
       <div class="item-row">
         <div class="item-num">Item 2 de 13</div>
         <div class="item-name">Pisos, paredes y techos</div>
         <div class="item-crit">En buen estado, limpios y sin acumulacion de residuos, mugre, humedad o deterioro visible.</div>
         <div class="eval-row">
-          <button type="button" class="eb" id="b1_m_c" onclick="setEval(1,0,2)"><span class="big">C</span>Cumple<br>2 pts</button>
-          <button type="button" class="eb" id="b1_m_p" onclick="setEval(1,0,1)"><span class="big">P</span>Parcial<br>1 pt</button>
-          <button type="button" class="eb" id="b1_m_n" onclick="setEval(1,0,0)"><span class="big">NC</span>No Cumple<br>0 pts</button>
+          <button type="button" class="eb" id="b1_m_c" onclick="setEval(1,0,2)" data-manus_clickable="true" data-manus_click_id="21"><span class="big">C</span>Cumple<br>2 pts</button>
+          <button type="button" class="eb" id="b1_m_p" onclick="setEval(1,0,1)" data-manus_clickable="true" data-manus_click_id="22"><span class="big">P</span>Parcial<br>1 pt</button>
+          <button type="button" class="eb" id="b1_m_n" onclick="setEval(1,0,0)" data-manus_clickable="true" data-manus_click_id="23"><span class="big">NC</span>No Cumple<br>0 pts</button>
         </div>
         <span class="item-est nd" id="est1_m">Sin evaluar</span>
-        <textarea class="obs-input" rows="1" id="obs1_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..."></textarea>
+        <textarea class="obs-input" rows="1" id="obs1_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..." data-manus_clickable="true" data-manus_click_id="24"></textarea>
       </div>
       <div class="item-row">
         <div class="item-num">Item 3 de 13</div>
         <div class="item-name">Iluminacion y ventilacion</div>
         <div class="item-crit">Adecuada intensidad luminica, sin luminarias fundidas. Ventilacion funcional, limpia y sin obstrucciones.</div>
         <div class="eval-row">
-          <button type="button" class="eb" id="b2_m_c" onclick="setEval(2,0,2)"><span class="big">C</span>Cumple<br>2 pts</button>
-          <button type="button" class="eb" id="b2_m_p" onclick="setEval(2,0,1)"><span class="big">P</span>Parcial<br>1 pt</button>
-          <button type="button" class="eb" id="b2_m_n" onclick="setEval(2,0,0)"><span class="big">NC</span>No Cumple<br>0 pts</button>
+          <button type="button" class="eb" id="b2_m_c" onclick="setEval(2,0,2)" data-manus_clickable="true" data-manus_click_id="25"><span class="big">C</span>Cumple<br>2 pts</button>
+          <button type="button" class="eb" id="b2_m_p" onclick="setEval(2,0,1)" data-manus_clickable="true" data-manus_click_id="26"><span class="big">P</span>Parcial<br>1 pt</button>
+          <button type="button" class="eb" id="b2_m_n" onclick="setEval(2,0,0)" data-manus_clickable="true" data-manus_click_id="27"><span class="big">NC</span>No Cumple<br>0 pts</button>
         </div>
         <span class="item-est nd" id="est2_m">Sin evaluar</span>
-        <textarea class="obs-input" rows="1" id="obs2_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..."></textarea>
+        <textarea class="obs-input" rows="1" id="obs2_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..." data-manus_clickable="true" data-manus_click_id="28"></textarea>
       </div>
       <div class="item-row">
         <div class="item-num">Item 4 de 13</div>
         <div class="item-name">Linea de servicio</div>
         <div class="item-crit">Superficies de atencion limpias, sin residuos de alimentos ni manchas. Protegidas adecuadamente.</div>
         <div class="eval-row">
-          <button type="button" class="eb" id="b3_m_c" onclick="setEval(3,0,2)"><span class="big">C</span>Cumple<br>2 pts</button>
-          <button type="button" class="eb" id="b3_m_p" onclick="setEval(3,0,1)"><span class="big">P</span>Parcial<br>1 pt</button>
-          <button type="button" class="eb" id="b3_m_n" onclick="setEval(3,0,0)"><span class="big">NC</span>No Cumple<br>0 pts</button>
+          <button type="button" class="eb" id="b3_m_c" onclick="setEval(3,0,2)" data-manus_clickable="true" data-manus_click_id="29"><span class="big">C</span>Cumple<br>2 pts</button>
+          <button type="button" class="eb" id="b3_m_p" onclick="setEval(3,0,1)" data-manus_clickable="true" data-manus_click_id="30"><span class="big">P</span>Parcial<br>1 pt</button>
+          <button type="button" class="eb" id="b3_m_n" onclick="setEval(3,0,0)" data-manus_clickable="true" data-manus_click_id="31"><span class="big">NC</span>No Cumple<br>0 pts</button>
         </div>
         <span class="item-est nd" id="est3_m">Sin evaluar</span>
-        <textarea class="obs-input" rows="1" id="obs3_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..."></textarea>
+        <textarea class="obs-input" rows="1" id="obs3_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..." data-manus_clickable="true" data-manus_click_id="32"></textarea>
       </div>
       <div class="item-row">
         <div class="item-num">Item 5 de 13</div>
         <div class="item-name">Mesas del comedor</div>
         <div class="item-crit">En buen estado estructural, sin danos ni abolladuras. Limpias y desinfectadas antes del servicio.</div>
         <div class="eval-row">
-          <button type="button" class="eb" id="b4_m_c" onclick="setEval(4,0,2)"><span class="big">C</span>Cumple<br>2 pts</button>
-          <button type="button" class="eb" id="b4_m_p" onclick="setEval(4,0,1)"><span class="big">P</span>Parcial<br>1 pt</button>
-          <button type="button" class="eb" id="b4_m_n" onclick="setEval(4,0,0)"><span class="big">NC</span>No Cumple<br>0 pts</button>
+          <button type="button" class="eb" id="b4_m_c" onclick="setEval(4,0,2)" data-manus_clickable="true" data-manus_click_id="33"><span class="big">C</span>Cumple<br>2 pts</button>
+          <button type="button" class="eb" id="b4_m_p" onclick="setEval(4,0,1)" data-manus_clickable="true" data-manus_click_id="34"><span class="big">P</span>Parcial<br>1 pt</button>
+          <button type="button" class="eb" id="b4_m_n" onclick="setEval(4,0,0)" data-manus_clickable="true" data-manus_click_id="35"><span class="big">NC</span>No Cumple<br>0 pts</button>
         </div>
         <span class="item-est nd" id="est4_m">Sin evaluar</span>
-        <textarea class="obs-input" rows="1" id="obs4_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..."></textarea>
+        <textarea class="obs-input" rows="1" id="obs4_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..." data-manus_clickable="true" data-manus_click_id="36"></textarea>
       </div>
       <div class="item-row">
         <div class="item-num">Item 6 de 13</div>
         <div class="item-name">Carros bandejeros</div>
         <div class="item-crit">En buen estado, sin oxido ni deterioro. Limpios, sin residuos de alimentos en estructura o ruedas.</div>
         <div class="eval-row">
-          <button type="button" class="eb" id="b5_m_c" onclick="setEval(5,0,2)"><span class="big">C</span>Cumple<br>2 pts</button>
-          <button type="button" class="eb" id="b5_m_p" onclick="setEval(5,0,1)"><span class="big">P</span>Parcial<br>1 pt</button>
-          <button type="button" class="eb" id="b5_m_n" onclick="setEval(5,0,0)"><span class="big">NC</span>No Cumple<br>0 pts</button>
+          <button type="button" class="eb" id="b5_m_c" onclick="setEval(5,0,2)" data-manus_clickable="true" data-manus_click_id="37"><span class="big">C</span>Cumple<br>2 pts</button>
+          <button type="button" class="eb" id="b5_m_p" onclick="setEval(5,0,1)" data-manus_clickable="true" data-manus_click_id="38"><span class="big">P</span>Parcial<br>1 pt</button>
+          <button type="button" class="eb" id="b5_m_n" onclick="setEval(5,0,0)" data-manus_clickable="true" data-manus_click_id="39"><span class="big">NC</span>No Cumple<br>0 pts</button>
         </div>
         <span class="item-est nd" id="est5_m">Sin evaluar</span>
-        <textarea class="obs-input" rows="1" id="obs5_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..."></textarea>
+        <textarea class="obs-input" rows="1" id="obs5_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..." data-manus_clickable="true" data-manus_click_id="40"></textarea>
       </div>
       <div class="item-row">
         <div class="item-num">Item 7 de 13</div>
         <div class="item-name">Malla mosquitera</div>
         <div class="item-crit">Sin roturas, agujeros ni deterioro. Correctamente instalada y limpia.</div>
         <div class="eval-row">
-          <button type="button" class="eb" id="b6_m_c" onclick="setEval(6,0,2)"><span class="big">C</span>Cumple<br>2 pts</button>
-          <button type="button" class="eb" id="b6_m_p" onclick="setEval(6,0,1)"><span class="big">P</span>Parcial<br>1 pt</button>
-          <button type="button" class="eb" id="b6_m_n" onclick="setEval(6,0,0)"><span class="big">NC</span>No Cumple<br>0 pts</button>
+          <button type="button" class="eb" id="b6_m_c" onclick="setEval(6,0,2)" data-manus_clickable="true" data-manus_click_id="41"><span class="big">C</span>Cumple<br>2 pts</button>
+          <button type="button" class="eb" id="b6_m_p" onclick="setEval(6,0,1)" data-manus_clickable="true" data-manus_click_id="42"><span class="big">P</span>Parcial<br>1 pt</button>
+          <button type="button" class="eb" id="b6_m_n" onclick="setEval(6,0,0)" data-manus_clickable="true" data-manus_click_id="43"><span class="big">NC</span>No Cumple<br>0 pts</button>
         </div>
         <span class="item-est nd" id="est6_m">Sin evaluar</span>
-        <textarea class="obs-input" rows="1" id="obs6_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..."></textarea>
+        <textarea class="obs-input" rows="1" id="obs6_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..." data-manus_clickable="true" data-manus_click_id="44"></textarea>
       </div>
       <div class="item-row">
         <div class="item-num">Item 8 de 13</div>
         <div class="item-name">Insumos desinfectantes</div>
         <div class="item-crit">Alcohol gel disponible y accesible en puntos de entrada al comedor. Dispensadores operativos y con producto.</div>
         <div class="eval-row">
-          <button type="button" class="eb" id="b7_m_c" onclick="setEval(7,0,2)"><span class="big">C</span>Cumple<br>2 pts</button>
-          <button type="button" class="eb" id="b7_m_p" onclick="setEval(7,0,1)"><span class="big">P</span>Parcial<br>1 pt</button>
-          <button type="button" class="eb" id="b7_m_n" onclick="setEval(7,0,0)"><span class="big">NC</span>No Cumple<br>0 pts</button>
+          <button type="button" class="eb" id="b7_m_c" onclick="setEval(7,0,2)" data-manus_clickable="true" data-manus_click_id="45"><span class="big">C</span>Cumple<br>2 pts</button>
+          <button type="button" class="eb" id="b7_m_p" onclick="setEval(7,0,1)" data-manus_clickable="true" data-manus_click_id="46"><span class="big">P</span>Parcial<br>1 pt</button>
+          <button type="button" class="eb" id="b7_m_n" onclick="setEval(7,0,0)" data-manus_clickable="true" data-manus_click_id="47"><span class="big">NC</span>No Cumple<br>0 pts</button>
         </div>
         <span class="item-est nd" id="est7_m">Sin evaluar</span>
-        <textarea class="obs-input" rows="1" id="obs7_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..."></textarea>
+        <textarea class="obs-input" rows="1" id="obs7_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..." data-manus_clickable="true" data-manus_click_id="48"></textarea>
       </div>
       <div class="item-row">
         <div class="item-num">Item 9 de 13</div>
         <div class="item-name">Microondas</div>
         <div class="item-crit">En buen estado, sin danos en puerta ni interior. Limpio internamente sin residuos de alimentos.</div>
         <div class="eval-row">
-          <button type="button" class="eb" id="b8_m_c" onclick="setEval(8,0,2)"><span class="big">C</span>Cumple<br>2 pts</button>
-          <button type="button" class="eb" id="b8_m_p" onclick="setEval(8,0,1)"><span class="big">P</span>Parcial<br>1 pt</button>
-          <button type="button" class="eb" id="b8_m_n" onclick="setEval(8,0,0)"><span class="big">NC</span>No Cumple<br>0 pts</button>
+          <button type="button" class="eb" id="b8_m_c" onclick="setEval(8,0,2)" data-manus_clickable="true" data-manus_click_id="49"><span class="big">C</span>Cumple<br>2 pts</button>
+          <button type="button" class="eb" id="b8_m_p" onclick="setEval(8,0,1)" data-manus_clickable="true" data-manus_click_id="50"><span class="big">P</span>Parcial<br>1 pt</button>
+          <button type="button" class="eb" id="b8_m_n" onclick="setEval(8,0,0)" data-manus_clickable="true" data-manus_click_id="51"><span class="big">NC</span>No Cumple<br>0 pts</button>
         </div>
         <span class="item-est nd" id="est8_m">Sin evaluar</span>
-        <textarea class="obs-input" rows="1" id="obs8_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..."></textarea>
+        <textarea class="obs-input" rows="1" id="obs8_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..." data-manus_clickable="true" data-manus_click_id="52"></textarea>
       </div>
       <div class="item-row">
         <div class="item-num">Item 10 de 13</div>
         <div class="item-name">Estacion de alinado</div>
         <div class="item-crit">Productos disponibles (aceite, sal, vinagre, limon, etc.), envases limpios y en buen estado. Sin contaminacion cruzada.</div>
         <div class="eval-row">
-          <button type="button" class="eb" id="b9_m_c" onclick="setEval(9,0,2)"><span class="big">C</span>Cumple<br>2 pts</button>
-          <button type="button" class="eb" id="b9_m_p" onclick="setEval(9,0,1)"><span class="big">P</span>Parcial<br>1 pt</button>
-          <button type="button" class="eb" id="b9_m_n" onclick="setEval(9,0,0)"><span class="big">NC</span>No Cumple<br>0 pts</button>
+          <button type="button" class="eb" id="b9_m_c" onclick="setEval(9,0,2)" data-manus_clickable="true" data-manus_click_id="53"><span class="big">C</span>Cumple<br>2 pts</button>
+          <button type="button" class="eb" id="b9_m_p" onclick="setEval(9,0,1)" data-manus_clickable="true" data-manus_click_id="54"><span class="big">P</span>Parcial<br>1 pt</button>
+          <button type="button" class="eb" id="b9_m_n" onclick="setEval(9,0,0)" data-manus_clickable="true" data-manus_click_id="55"><span class="big">NC</span>No Cumple<br>0 pts</button>
         </div>
         <span class="item-est nd" id="est9_m">Sin evaluar</span>
-        <textarea class="obs-input" rows="1" id="obs9_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..."></textarea>
+        <textarea class="obs-input" rows="1" id="obs9_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..." data-manus_clickable="true" data-manus_click_id="56"></textarea>
       </div>
       <div class="item-row">
         <div class="item-num">Item 11 de 13</div>
         <div class="item-name">Dispensador de jugo y agua</div>
         <div class="item-crit">En funcionamiento, sin fugas. Depositos limpios, boquillas sin sarro ni residuos. Nivel de producto adecuado.</div>
         <div class="eval-row">
-          <button type="button" class="eb" id="b10_m_c" onclick="setEval(10,0,2)"><span class="big">C</span>Cumple<br>2 pts</button>
-          <button type="button" class="eb" id="b10_m_p" onclick="setEval(10,0,1)"><span class="big">P</span>Parcial<br>1 pt</button>
-          <button type="button" class="eb" id="b10_m_n" onclick="setEval(10,0,0)"><span class="big">NC</span>No Cumple<br>0 pts</button>
+          <button type="button" class="eb" id="b10_m_c" onclick="setEval(10,0,2)" data-manus_clickable="true" data-manus_click_id="57"><span class="big">C</span>Cumple<br>2 pts</button>
+          <button type="button" class="eb" id="b10_m_p" onclick="setEval(10,0,1)" data-manus_clickable="true" data-manus_click_id="58"><span class="big">P</span>Parcial<br>1 pt</button>
+          <button type="button" class="eb" id="b10_m_n" onclick="setEval(10,0,0)" data-manus_clickable="true" data-manus_click_id="59"><span class="big">NC</span>No Cumple<br>0 pts</button>
         </div>
         <span class="item-est nd" id="est10_m">Sin evaluar</span>
-        <textarea class="obs-input" rows="1" id="obs10_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..."></textarea>
+        <textarea class="obs-input" rows="1" id="obs10_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..." data-manus_clickable="true" data-manus_click_id="60"></textarea>
       </div>
       <div class="item-row">
         <div class="item-num">Item 12 de 13</div>
         <div class="item-name">Vidrios</div>
         <div class="item-crit">Limpios, sin manchas ni polvo visible. En buen estado, sin rajaduras ni astillados que representen riesgo.</div>
         <div class="eval-row">
-          <button type="button" class="eb" id="b11_m_c" onclick="setEval(11,0,2)"><span class="big">C</span>Cumple<br>2 pts</button>
-          <button type="button" class="eb" id="b11_m_p" onclick="setEval(11,0,1)"><span class="big">P</span>Parcial<br>1 pt</button>
-          <button type="button" class="eb" id="b11_m_n" onclick="setEval(11,0,0)"><span class="big">NC</span>No Cumple<br>0 pts</button>
+          <button type="button" class="eb" id="b11_m_c" onclick="setEval(11,0,2)" data-manus_clickable="true" data-manus_click_id="61"><span class="big">C</span>Cumple<br>2 pts</button>
+          <button type="button" class="eb" id="b11_m_p" onclick="setEval(11,0,1)" data-manus_clickable="true" data-manus_click_id="62"><span class="big">P</span>Parcial<br>1 pt</button>
+          <button type="button" class="eb" id="b11_m_n" onclick="setEval(11,0,0)" data-manus_clickable="true" data-manus_click_id="63"><span class="big">NC</span>No Cumple<br>0 pts</button>
         </div>
         <span class="item-est nd" id="est11_m">Sin evaluar</span>
-        <textarea class="obs-input" rows="1" id="obs11_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..."></textarea>
+        <textarea class="obs-input" rows="1" id="obs11_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..." data-manus_clickable="true" data-manus_click_id="64"></textarea>
       </div>
         <div class="item-row">
         <div class="item-num">Item 13 de 13</div>
         <div class="item-name">Higiene del personal</div>
         <div class="item-crit">Personal con uniforme limpio y completo, cabello cubierto con cofia, uso correcto de guantes, sin accesorios prohibidos y practicas de higiene correctas durante el servicio.</div>
         <div class="eval-row">
-          <button type="button" class="eb" id="b12_m_c" onclick="setEval(12,0,2)"><span class="big">C</span>Cumple<br>2 pts</button>
-          <button type="button" class="eb" id="b12_m_p" onclick="setEval(12,0,1)"><span class="big">P</span>Parcial<br>1 pt</button>
-          <button type="button" class="eb" id="b12_m_n" onclick="setEval(12,0,0)"><span class="big">NC</span>No Cumple<br>0 pts</button>
+          <button type="button" class="eb" id="b12_m_c" onclick="setEval(12,0,2)" data-manus_clickable="true" data-manus_click_id="65"><span class="big">C</span>Cumple<br>2 pts</button>
+          <button type="button" class="eb" id="b12_m_p" onclick="setEval(12,0,1)" data-manus_clickable="true" data-manus_click_id="66"><span class="big">P</span>Parcial<br>1 pt</button>
+          <button type="button" class="eb" id="b12_m_n" onclick="setEval(12,0,0)" data-manus_clickable="true" data-manus_click_id="67"><span class="big">NC</span>No Cumple<br>0 pts</button>
         </div>
         <span class="item-est nd" id="est12_m">Sin evaluar</span>
-        <textarea class="obs-input" rows="1" id="obs12_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..."></textarea>
+        <textarea class="obs-input" rows="1" id="obs12_m" oninput="updAccResumen()" placeholder="Observacion / accion correctiva..." data-manus_clickable="true" data-manus_click_id="68"></textarea>
       </div>
     </div>
     <div class="turno-panel" id="panel_t">
@@ -947,7 +947,7 @@ body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30
   <div class="chdr" style="background:#7B3F00">🍽️ Entrega de Alimentos — Casino Funcionarios</div>
   <div style="background:#fff8f0;padding:8px 12px;font-size:10px;color:#854F0B;border-bottom:1px solid #f5e6d0;display:flex;align-items:center;gap:10px">
     <span>Selecciona el servicio que estás fiscalizando:</span>
-    <select id="ea_servicio" style="border:1.5px solid #e09000;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:bold;color:#7B3F00;background:#fff8f0;outline:none;font-family:Arial,sans-serif" onchange="eaSelectSrv(this.value)">
+    <select id="ea_servicio" style="border:1.5px solid #e09000;border-radius:6px;padding:4px 10px;font-size:12px;font-weight:bold;color:#7B3F00;background:#fff8f0;outline:none;font-family:Arial,sans-serif" onchange="eaSelectSrv(this.value)" data-manus_clickable="true" data-manus_click_id="69">
       <option value="s1">1 — Desayuno (Mañana)</option>
       <option value="s2">2 — Almuerzo (Tarde)</option>
       <option value="s3">3 — Cena (Noche)</option>
@@ -959,13 +959,13 @@ body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30
     Servicio 1 — Desayuno (Mañana) | Casino Funcionarios
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
-    <div class="ff"><label>Repostería</label><input type="text" id="ea_rep" placeholder="—"></div>
-    <div class="ff"><label>N° Comensales</label><input type="number" id="ea_com" placeholder="0" min="0"></div>
-    <div class="ff"><label>N° Ración Común</label><input type="number" id="ea_rc" placeholder="0" min="0"></div>
-    <div class="ff"><label>N° Ración Especial</label><input type="number" id="ea_re" placeholder="0" min="0"></div>
-    <div class="ff"><label>Stock C&amp;C</label><input type="number" id="ea_stk" placeholder="0" min="0"></div>
-    <div class="ff"><label>N° Jarros</label><input type="number" id="ea_jar" placeholder="0" min="0"></div>
-    <div class="ff" style="grid-column:span 2"><label>N° Bandejas</label><input type="number" id="ea_ban" placeholder="0" min="0"></div>
+    <div class="ff"><label>Repostería</label><input type="text" id="ea_rep" placeholder="—" data-manus_clickable="true" data-manus_click_id="70"></div>
+    <div class="ff"><label>N° Comensales</label><input type="number" id="ea_com" placeholder="0" min="0" data-manus_clickable="true" data-manus_click_id="71"></div>
+    <div class="ff"><label>N° Ración Común</label><input type="number" id="ea_rc" placeholder="0" min="0" data-manus_clickable="true" data-manus_click_id="72"></div>
+    <div class="ff"><label>N° Ración Especial</label><input type="number" id="ea_re" placeholder="0" min="0" data-manus_clickable="true" data-manus_click_id="73"></div>
+    <div class="ff"><label>Stock C&amp;C</label><input type="number" id="ea_stk" placeholder="0" min="0" data-manus_clickable="true" data-manus_click_id="74"></div>
+    <div class="ff"><label>N° Jarros</label><input type="number" id="ea_jar" placeholder="0" min="0" data-manus_clickable="true" data-manus_click_id="75"></div>
+    <div class="ff" style="grid-column:span 2"><label>N° Bandejas</label><input type="number" id="ea_ban" placeholder="0" min="0" data-manus_clickable="true" data-manus_click_id="76"></div>
   </div>
   <div style="padding:8px 12px">
     <div style="font-size:9px;color:#aaa;font-weight:bold;text-transform:uppercase;margin-bottom:6px">Evaluación C / NC</div>
@@ -976,13 +976,11 @@ body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px">
           <div>
             <label style="font-size:9px;color:#aaa;font-weight:bold;text-transform:uppercase;display:block;margin-bottom:2px">Horario oficial del servicio</label>
-            <input type="text" id="ea_horario_programado" readonly
-              style="width:100%;border:1.5px solid #ddd;border-radius:6px;padding:6px 10px;font-size:13px;font-weight:bold;color:#7B3F00;background:#fdf5ec;font-family:Arial,sans-serif;outline:none">
+            <input type="text" id="ea_horario_programado" readonly="" style="width:100%;border:1.5px solid #ddd;border-radius:6px;padding:6px 10px;font-size:13px;font-weight:bold;color:#7B3F00;background:#fdf5ec;font-family:Arial,sans-serif;outline:none" data-manus_clickable="true" data-manus_click_id="77">
           </div>
           <div>
             <label style="font-size:9px;color:#aaa;font-weight:bold;text-transform:uppercase;display:block;margin-bottom:2px">Hora fiscalizada (real)</label>
-            <input type="time" id="ea_hora_real" oninput="evalEntregaOportuna()"
-              style="width:100%;border:1.5px solid #ddd;border-radius:6px;padding:6px 10px;font-size:13px;font-weight:bold;color:#1a56a0;font-family:Arial,sans-serif;outline:none">
+            <input type="time" id="ea_hora_real" oninput="evalEntregaOportuna()" style="width:100%;border:1.5px solid #ddd;border-radius:6px;padding:6px 10px;font-size:13px;font-weight:bold;color:#1a56a0;font-family:Arial,sans-serif;outline:none" data-manus_clickable="true" data-manus_click_id="78">
           </div>
         </div>
         <div id="ea_eo_resultado" style="display:none;border-radius:6px;padding:6px 10px;font-size:11px;font-weight:bold;margin-top:2px"></div>
@@ -992,26 +990,25 @@ body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30
         <div style="display:flex;align-items:center;justify-content:space-between">
           <span style="font-size:11px;color:#333">Minuta Programada</span>
           <div style="display:flex;gap:3px">
-            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_mp','C')" id="ea_mp_C">C</button>
-            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_mp','NC')" id="ea_mp_NC">NC</button>
-            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_mp','NA')" id="ea_mp_NA">NA</button>
+            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_mp','C')" id="ea_mp_C" data-manus_clickable="true" data-manus_click_id="79">C</button>
+            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_mp','NC')" id="ea_mp_NC" data-manus_clickable="true" data-manus_click_id="80">NC</button>
+            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_mp','NA')" id="ea_mp_NA" data-manus_clickable="true" data-manus_click_id="81">NA</button>
           </div>
         </div>
         <textarea id="ea_mp_acc" placeholder="Acción correctiva..." style="display:none;width:100%;border:1px solid #e09000;border-radius:5px;padding:5px 8px;font-size:11px;font-family:Arial,sans-serif;resize:none;outline:none;min-height:38px;color:#333;background:#fffaf5"></textarea>
       </div>
       <!-- Minuta detalle -->
       <div style="grid-column:span 1;padding:4px 0 6px;border-bottom:1px solid #f8f8f8">
-        <input type="text" id="ea_minuta" placeholder="Describir la minuta del servicio..."
-          style="width:100%;border:1px solid #ddd;border-radius:6px;padding:6px 10px;font-size:12px;font-family:Arial,sans-serif;outline:none;color:#333">
+        <input type="text" id="ea_minuta" placeholder="Describir la minuta del servicio..." style="width:100%;border:1px solid #ddd;border-radius:6px;padding:6px 10px;font-size:12px;font-family:Arial,sans-serif;outline:none;color:#333" data-manus_clickable="true" data-manus_click_id="82">
       </div>
       <!-- Gramajes -->
       <div style="display:flex;flex-direction:column;padding:5px 0;border-bottom:1px solid #f8f8f8;gap:4px">
         <div style="display:flex;align-items:center;justify-content:space-between">
           <span style="font-size:11px;color:#333">Gramajes</span>
           <div style="display:flex;gap:3px">
-            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_gr','C')" id="ea_gr_C">C</button>
-            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_gr','NC')" id="ea_gr_NC">NC</button>
-            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_gr','NA')" id="ea_gr_NA">NA</button>
+            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_gr','C')" id="ea_gr_C" data-manus_clickable="true" data-manus_click_id="83">C</button>
+            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_gr','NC')" id="ea_gr_NC" data-manus_clickable="true" data-manus_click_id="84">NC</button>
+            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_gr','NA')" id="ea_gr_NA" data-manus_clickable="true" data-manus_click_id="85">NA</button>
           </div>
         </div>
         <textarea id="ea_gr_acc" placeholder="Acción correctiva..." style="display:none;width:100%;border:1px solid #e09000;border-radius:5px;padding:5px 8px;font-size:11px;font-family:Arial,sans-serif;resize:none;outline:none;min-height:38px;color:#333;background:#fffaf5"></textarea>
@@ -1021,9 +1018,9 @@ body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30
         <div style="display:flex;align-items:center;justify-content:space-between">
           <span style="font-size:11px;color:#333">Temperatura</span>
           <div style="display:flex;gap:3px">
-            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_temp','C')" id="ea_temp_C">C</button>
-            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_temp','NC')" id="ea_temp_NC">NC</button>
-            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_temp','NA')" id="ea_temp_NA">NA</button>
+            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_temp','C')" id="ea_temp_C" data-manus_clickable="true" data-manus_click_id="86">C</button>
+            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_temp','NC')" id="ea_temp_NC" data-manus_clickable="true" data-manus_click_id="87">NC</button>
+            <button type="button" class="cnc-mini" onclick="setCNCacc('ea_temp','NA')" id="ea_temp_NA" data-manus_clickable="true" data-manus_click_id="88">NA</button>
           </div>
         </div>
         <textarea id="ea_temp_acc" placeholder="Acción correctiva..." style="display:none;width:100%;border:1px solid #e09000;border-radius:5px;padding:5px 8px;font-size:11px;font-family:Arial,sans-serif;resize:none;outline:none;min-height:38px;color:#333;background:#fffaf5"></textarea>
@@ -1037,9 +1034,9 @@ body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30
           </div>
           <div style="display:flex;gap:3px;align-items:center">
             <span id="ea_eo_auto_pill" style="font-size:9px;color:#aaa;font-style:italic">Ingresa hora real →</span>
-            <button type="button" class="cnc-mini" onclick="setCNC('ea_eo','C');eaEoOverride('C')" id="ea_eo_C">C</button>
-            <button type="button" class="cnc-mini" onclick="setCNC('ea_eo','NC');eaEoOverride('NC')" id="ea_eo_NC">NC</button>
-            <button type="button" class="cnc-mini" onclick="setCNC('ea_eo','NA');eaEoOverride('NA')" id="ea_eo_NA">NA</button>
+            <button type="button" class="cnc-mini" onclick="setCNC('ea_eo','C');eaEoOverride('C')" id="ea_eo_C" data-manus_clickable="true" data-manus_click_id="89">C</button>
+            <button type="button" class="cnc-mini" onclick="setCNC('ea_eo','NC');eaEoOverride('NC')" id="ea_eo_NC" data-manus_clickable="true" data-manus_click_id="90">NC</button>
+            <button type="button" class="cnc-mini" onclick="setCNC('ea_eo','NA');eaEoOverride('NA')" id="ea_eo_NA" data-manus_clickable="true" data-manus_click_id="91">NA</button>
           </div>
         </div>
         <textarea id="ea_eo_acc" placeholder="Acción correctiva / observación NC..." style="display:none;width:100%;border:1px solid #e09000;border-radius:5px;padding:5px 8px;font-size:11px;font-family:Arial,sans-serif;resize:none;outline:none;min-height:38px;color:#333;background:#fffaf5"></textarea>
@@ -1055,28 +1052,28 @@ body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30
     <div style="font-size:12px;color:#888;text-align:center;padding:10px 0">Evalua los items para ver las acciones correctivas requeridas.</div>
   </div>
   <div style="padding:0 12px 12px">
-    <textarea id="accGenerales" style="width:100%;border:1px solid #ddd;border-radius:7px;padding:8px 10px;font-size:12px;font-family:Arial,sans-serif;resize:none;outline:none;min-height:60px;color:#333" placeholder="Acciones correctivas generales del dia, responsable y fecha de cierre..."></textarea>
+    <textarea id="accGenerales" style="width:100%;border:1px solid #ddd;border-radius:7px;padding:8px 10px;font-size:12px;font-family:Arial,sans-serif;resize:none;outline:none;min-height:60px;color:#333" placeholder="Acciones correctivas generales del dia, responsable y fecha de cierre..." data-manus_clickable="true" data-manus_click_id="92"></textarea>
   </div>
 </div>
 
 <div class="card">
   <div class="chdr" style="background:#0F6E56">✅ Validación del Registro</div>
   <div class="firma-g">
-    <div class="ff"><label>Nombre Fiscalizador ITE</label><input type="text" id="fn_nom" placeholder="Nombre completo" readonly style="background:#f8fbff"></div>
-    <div class="ff"><label>RUT</label><input type="text" id="fn_rut" placeholder="12.345.678-9" style="background:white"></div>
-    <div class="ff"><label>Cargo</label><input type="text" id="fn_car" placeholder="Cargo..." style="background:#f8fbff;color:#1a56a0"></div>
-    <div class="ff"><label>Empresa</label><input type="text" id="fn_emp" placeholder="Empresa..." readonly style="background:#f8fbff"></div>
+    <div class="ff"><label>Nombre Fiscalizador ITE</label><input type="text" id="fn_nom" placeholder="Nombre completo" readonly="" style="background:#f8fbff" data-manus_clickable="true" data-manus_click_id="93"></div>
+    <div class="ff"><label>RUT</label><input type="text" id="fn_rut" placeholder="12.345.678-9" style="background:white" data-manus_clickable="true" data-manus_click_id="94"></div>
+    <div class="ff"><label>Cargo</label><input type="text" id="fn_car" placeholder="Cargo..." style="background:#f8fbff;color:#1a56a0" data-manus_clickable="true" data-manus_click_id="95"></div>
+    <div class="ff"><label>Empresa</label><input type="text" id="fn_emp" placeholder="Empresa..." readonly="" style="background:#f8fbff" data-manus_clickable="true" data-manus_click_id="96"></div>
   </div>
   <!-- Observación opcional antes de validar -->
   <div style="padding:8px 12px">
     <label style="font-size:9px;color:#aaa;font-weight:bold;text-transform:uppercase;display:block;margin-bottom:3px">Observación de validación (opcional)</label>
-    <textarea id="val_obs" style="width:100%;border:1px solid #ddd;border-radius:6px;padding:8px 10px;font-size:12px;font-family:Arial,sans-serif;resize:none;outline:none;min-height:40px;color:#333" placeholder="Observación del fiscalizador validador..."></textarea>
+    <textarea id="val_obs" style="width:100%;border:1px solid #ddd;border-radius:6px;padding:8px 10px;font-size:12px;font-family:Arial,sans-serif;resize:none;outline:none;min-height:40px;color:#333" placeholder="Observación del fiscalizador validador..." data-manus_clickable="true" data-manus_click_id="97"></textarea>
   </div>
   <div style="padding:8px 12px 12px">
     <!-- Estado sin validar -->
     <div id="valForm">
       <div class="decl" style="margin-bottom:8px">Declaro que la información registrada es fiel reflejo de la fiscalización realizada. BPM / Decreto 977 RSA Chile.</div>
-      <button type="button" id="val_btn" style="width:100%;background:#0F6E56;color:#fff;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif">✅ Validar Registro</button>
+      <button type="button" id="val_btn" style="width:100%;background:#0F6E56;color:#fff;border:none;border-radius:8px;padding:13px;font-size:14px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif" data-manus_clickable="true" data-manus_click_id="98">✅ Validar Registro</button>
     </div>
     <!-- Estado validado -->
     <div id="valDone" style="display:none">
@@ -1127,7 +1124,7 @@ body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30
 <div class="card" style="margin-top:10px">
   <div class="chdr" style="background:#0F6E56">Resumen Anual por Mes</div>
   <div class="anual-tabs" id="anualTabs"></div>
-  <div id="anualPanels"><div class="hemp2">Sin registros anuales aun.</div></div>
+  <div id="anualPanels"><div class="hemp2">Sin registros anuales. Guarda registros para verlos aqui.</div></div>
 </div>
 
 <div style="padding:10px">
@@ -3803,6 +3800,35 @@ function autoNreg(){
 autoNreg();
 
 
+// ─── SUPABASE INTEGRATION ─────────────────────────────────────────────────
+const SUPA_URL = "https://pfzbxckmqapkfggkqtbh.supabase.co";
+const SUPA_KEY = "sb_publishable_M1niH_fsa5YWGvwwCTAqjA_SJD5Omi7";
+let _db = null;
+
+function getDB() {
+  if (!_db && window.supabase) {
+    _db = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+  }
+  return _db;
+}
+
+async function guardarChecklistConSincro(entry) {
+  const db = getDB();
+  if (!db) {
+    console.error("Supabase SDK no cargado.");
+    return;
+  }
+  try {
+    const { data, error } = await db
+      .from("checklist_casino")
+      .upsert(entry, { onConflict: "nvis" }); // Assuming nvis is unique
+    if (error) throw error;
+    console.log("✅ Sincronización exitosa en checklist_casino:", data);
+  } catch (err) {
+    console.error("❌ Error en sincronización (checklist_casino):", err.message);
+  }
+}
+
 // ═══════════════════════════════════════════════════════════════════════════
 // GUARDAR REGISTRO — función única y limpia
 // ═══════════════════════════════════════════════════════════════════════════
@@ -3961,6 +3987,9 @@ function validarYBloquear(){
       hist2[0].valObs   = obs;
       sH2();
       rH2(null);
+      
+      // Sincronizar con Supabase después de validar
+      guardarChecklistConSincro(hist2[0]);
     }
 
     // 4. Mostrar badge
@@ -4058,5 +4087,6 @@ function pdfEntregaSection(entrega, origen){
     <div id="pdfContent"></div>
   </div>
 </div>
+
 
 </body></html>
