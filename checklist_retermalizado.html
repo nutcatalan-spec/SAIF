@@ -338,6 +338,10 @@ body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30
 const SUPABASE_URL = localStorage.getItem('sb_url') || '';
 const SUPABASE_KEY = localStorage.getItem('sb_key') || '';
 
+// Definiciones globales necesarias
+const DIAS_H = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+const MESES_H = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
 // Cliente Supabase simplificado (sin SDK — usa fetch directo)
 const sb = {
   url: SUPABASE_URL,
