@@ -483,6 +483,15 @@ body{font-family:Arial,sans-serif;background:#efefef;padding-bottom:40px}
 // Fuentes: localStorage de cada registro ITE abierto en el mismo navegador
 // ═══════════════════════════════════════════════════════════════════════════
 
+// ═══════════════════════════════════════════════════════════════════════════
+// CONFIGURACIÓN SUPABASE
+// ═══════════════════════════════════════════════════════════════════════════
+const SUPABASE_URL = localStorage.getItem('sb_url') || '';
+const SUPABASE_KEY = localStorage.getItem('sb_key') || '';
+
+const DIAS_H = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+const MESES_H = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+
 // Keys de localStorage de cada registro
 var KEYS = {
   temp:  { hist: "cft_hist",    anual: "cft_anual"  },
