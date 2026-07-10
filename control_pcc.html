@@ -3424,8 +3424,6 @@ function imprimirDesdHist(idx) {
 function hmHoy(){var d=new Date(),m=d.getMonth()+1,dy=d.getDate();return dy+"/"+(m<10?"0"+m:m)+"/"+d.getFullYear();}
 function hmFmt(iso){if(!iso)return"-";var p=iso.split("-");return p.length>2?p[2]+"/"+p[1]+"/"+p[0]:iso;}
 function hmGv(id){var e=document.getElementById(id);return e?e.value:"";}
-const DIAS_H = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
-const MESES_H = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 function hmDiaSem(iso){if(!iso)return"-";var p=iso.split("-");if(p.length<3)return iso;var d=new Date(parseInt(p[0]),parseInt(p[1])-1,parseInt(p[2]));return p[2]+"/"+p[1]+"/"+p[0]+"  —  "+(DIAS_H[d.getDay()]||"");}
 
 function hmHdr(badge,titulo,sub){
