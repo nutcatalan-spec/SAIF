@@ -1,5 +1,3 @@
-<!-- Versión Restaurada y Conectada a Supabase -->
-<!-- Mantiene el 100% del diseño, tablas e historial originales -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,50 +5,878 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Checklist BPM — Área Retermalizado</title>
 <style>
-/* ... (Se mantiene el estilo original) ... */
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30px}
+
+/* TOPBAR */
 #topbar{background:#1D9E75;color:white;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50}
+#topbar h1{font-size:13px;font-weight:bold;margin:0;line-height:1.3}
+#topbar p{font-size:9px;margin:2px 0 0;opacity:.8}
+.top-btns{display:flex;gap:6px;flex-shrink:0}
+.btnpdf{background:white;color:#0F6E56;border:none;padding:7px 10px;border-radius:6px;font-size:11px;font-weight:bold;cursor:pointer;white-space:nowrap}
+.btnpdf.outline{background:transparent;border:2px solid white;color:white}
+
+/* CARD */
 .card{background:white;margin:10px;border-radius:8px;border:1px solid #ddd;overflow:hidden}
 .chdr{padding:10px 13px;font-size:10px;font-weight:bold;letter-spacing:.07em;text-transform:uppercase;color:white}
+
+/* FICHA */
+.g2{display:grid;grid-template-columns:1fr 1fr}
+.fi{padding:8px 12px;border-bottom:1px solid #f2f2f2}
+.fi:nth-child(odd){border-right:1px solid #f2f2f2}
+.fi label{display:block;font-size:9px;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:2px}
+.fi input,.fi select{width:100%;border:none;font-size:13px;color:#1a56a0;background:transparent;outline:none}
+
+/* RESUMEN LIVE */
 .res-grid{display:grid;grid-template-columns:repeat(5,1fr)}
 .res-cell{padding:10px 6px;text-align:center;border-right:1px solid #f2f2f2}
-.eval-table{width:100%;border-collapse:collapse}
-.eval-table th{background:#1A3A5C;color:white;padding:7px 8px;font-size:9px;text-align:center}
-.eval-table td{padding:6px 4px;border-bottom:1px solid #f2f2f2;text-align:center}
-/* ... (resto del CSS original) ... */
+.res-cell:last-child{border-right:none}
+.res-lbl{font-size:8px;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:4px}
+.res-val{font-size:22px;font-weight:bold;color:#1a56a0}
+.res-val.gr{color:#0F6E56}.res-val.am{color:#854F0B}.res-val.rd{color:#A32D2D}
+.res-bar-wrap{padding:10px 13px;border-top:1px solid #f2f2f2}
+.bar-wrap{height:8px;background:#eee;border-radius:4px;overflow:hidden;margin:5px 0 8px}
+.bar-fill{height:100%;border-radius:4px;background:#1D9E75;width:0;transition:width .4s}
+.res-result{display:inline-block;font-size:13px;font-weight:bold;padding:5px 12px;border-radius:6px;background:#f0f0f0;color:#888}
+.res-result.exc{background:#e1f5ee;color:#0F6E56}
+.res-result.def{background:#fff3cd;color:#854F0B}
+.res-result.cri{background:#fcebeb;color:#A32D2D}
+
+/* SECCION HEADER */
+.sec-hdr{padding:8px 13px;font-size:10px;font-weight:bold;letter-spacing:.06em;text-transform:uppercase;color:white;background:#1A3A5C;display:flex;justify-content:space-between;align-items:center}
+.sec-badge{font-size:9px;font-weight:bold;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,.2);color:white}
+
+/* TABLA EVALUACION */
+.eval-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.eval-table{min-width:580px;width:100%;border-collapse:collapse}
+.eval-table th{background:#1A3A5C;color:white;padding:7px 8px;font-size:9px;text-transform:uppercase;letter-spacing:.05em;text-align:center;white-space:nowrap}
+.eval-table th.param{text-align:left;min-width:200px}
+.eval-table td{padding:6px 4px;border-bottom:1px solid #f2f2f2;vertical-align:middle;text-align:center}
+.eval-table td.item-cell{font-size:9px;color:#888;font-weight:bold;text-align:center;min-width:30px}
+.eval-table td.cat-cell{font-size:9px;color:#1A3A5C;font-weight:bold;text-align:center;min-width:100px}
+.eval-table td.param-cell{text-align:left;padding:6px 10px;font-size:11px;font-weight:500;color:#111}
+.eval-table tr:nth-child(even) td{background:#f9f9f9}
+.mod-btn-group{display:flex;gap:2px;justify-content:center}
+.mb{border:none;border-radius:4px;padding:5px 0;font-size:10px;font-weight:bold;cursor:pointer;width:30px;background:#f0f0f0;color:#aaa;-webkit-tap-highlight-color:transparent;font-family:Arial,sans-serif}
+.mb.c{background:#e1f5ee;color:#0F6E56;border:1px solid #9FE1CB}
+.mb.nc{background:#fcebeb;color:#A32D2D;border:1px solid #FFAAAA}
+.mb.na{background:#f5f5f5;color:#888;border:1px solid #ddd}
+.eval-table tfoot td{background:#f0f0f0;padding:6px 4px;font-size:10px;font-weight:bold;text-align:center;border-top:2px solid #ddd}
+.eval-table tfoot td.param-cell{text-align:left;padding:6px 10px;color:#888;text-transform:uppercase;font-size:9px}
+.obs-input{width:100%;border:1px solid #eee;border-radius:4px;font-size:10px;padding:3px 5px;font-family:Arial,sans-serif;color:#333;min-width:100px;background:#fafafa}
+.obs-input:focus{outline:none;border-color:#1D9E75}
+
+/* VALIDACION */
+.firma-g{display:grid;grid-template-columns:1fr 1fr}
+.ff{padding:8px 12px;border-bottom:1px solid #f2f2f2}
+.ff:nth-child(odd){border-right:1px solid #f2f2f2}
+.ff label{display:block;font-size:9px;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:2px}
+.ff input{width:100%;border:none;font-size:13px;color:#1a56a0;background:transparent;outline:none}
+.decl{padding:10px 12px;background:#f5f5f5;font-size:10px;color:#aaa;line-height:1.5}
+
+/* BOTONES ACCION */
+.action-bar{padding:12px;display:flex;gap:8px;flex-wrap:wrap}
+.btn-g{background:#1D9E75;color:white;border:none;border-radius:8px;padding:10px 18px;font-size:12px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+.btn-r{background:#fcebeb;color:#A32D2D;border:none;border-radius:8px;padding:10px 14px;font-size:12px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+.btn-b{background:#1A3A5C;color:white;border:none;border-radius:8px;padding:10px 14px;font-size:12px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+.btn-m{background:#7B4F12;color:white;border:none;border-radius:8px;padding:10px 14px;font-size:12px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+
+/* HISTORIAL */
+#histPanel{background:white;margin:10px;border-radius:8px;border:1px solid #ddd;overflow:hidden}
+.hist-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 13px;border-bottom:2px solid #f0f2f6;background:#f8faff}
+.hist-cnt{font-size:11px;font-weight:bold;color:#1A3A5C;white-space:nowrap}
+.hist-date-input{border:1.5px solid #dde8f5;border-radius:8px;padding:6px 10px;font-size:12px;color:#1A3A5C;font-family:Arial,sans-serif;background:white;outline:none}
+.hist-date-input:focus{border-color:#1D9E75}
+.hbtn{background:#1D9E75;color:white;border:none;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+.hbtn.out{background:white;color:#1D9E75;border:1.5px solid #1D9E75}
+.hist-list{max-height:400px;overflow-y:auto}
+.hemp{padding:24px;text-align:center;color:#aaa;font-size:13px;line-height:1.7}
+.hrow{padding:10px 14px;border-bottom:1px solid #f5f5f5;background:white}
+.hchips{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}
+.hch{font-size:10px;font-weight:bold;padding:2px 8px;border-radius:10px}
+.hch.ok{background:#e1f5ee;color:#0F6E56}
+.hch.nc{background:#fcebeb;color:#A32D2D}
+.hch.na{background:#f5f5f5;color:#888;border:1px solid #eee}
+.hch.k{background:#f0f4ff;color:#1A3A5C}
+.hdel{border:1px solid #ddd;background:#f9f9f9;color:#555;border-radius:6px;padding:4px 10px;font-size:11px;font-weight:bold;cursor:pointer;margin-right:4px;font-family:Arial,sans-serif}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);color:white;padding:10px 20px;border-radius:8px;font-size:13px;font-weight:bold;z-index:999;pointer-events:none;font-family:Arial,sans-serif;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+
+/* PDF */
+#pdfPage{display:none}
+.pdf-header{background:#1D9E75;padding:9px 13px;display:flex;justify-content:space-between;align-items:center;border-radius:8px 8px 0 0}
+.pdf-header h1{color:white;font-size:10px;margin:0;line-height:1.3;font-weight:bold;text-transform:uppercase}
+.pdf-header p{color:rgba(255,255,255,.8);font-size:8px;margin:2px 0 0}
+.pdf-badge{background:white;color:#0F6E56;padding:3px 8px;border-radius:20px;font-size:8px;font-weight:bold;flex-shrink:0;margin-left:8px}
+.pdf-ficha{display:grid;grid-template-columns:1fr 1fr;border:1px solid #ddd;border-top:none;border-bottom:none}
+.pdf-fi{padding:3px 10px;border-bottom:1px solid #f2f2f2;border-right:1px solid #f2f2f2}
+.pdf-fi:nth-child(even){border-right:none}
+.pdf-fi-lbl{font-size:7px;color:#aaa;text-transform:uppercase;font-weight:bold}
+.pdf-fi-val{font-size:9px;color:#111;font-weight:500}
+.pdf-kpis{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #ddd;border-top:none;border-bottom:none}
+.pdf-kpi{padding:6px 4px;text-align:center;border-right:1px solid #f2f2f2}
+.pdf-kpi:last-child{border-right:none}
+.pdf-kpi-lbl{font-size:7px;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:2px}
+.pdf-kpi-val{font-size:18px;font-weight:bold}
+.pdf-kpi-val.gr{color:#0F6E56}.pdf-kpi-val.am{color:#854F0B}.pdf-kpi-val.rd{color:#A32D2D}.pdf-kpi-val.bl{color:#1A3A5C}
+.pdf-resultado{border:1px solid #ddd;border-top:none;padding:6px 12px;border-bottom:none}
+.pdf-res-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.pdf-res-circle{width:38px;height:38px;border-radius:50%;border:2px solid #1D9E75;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:bold;color:#0F6E56;flex-shrink:0;text-align:center}
+.pdf-res-title{font-size:12px;font-weight:bold}
+.pdf-res-sub{font-size:8px;color:#888;margin-top:1px}
+.pdf-bar{height:7px;background:#eee;border-radius:4px;overflow:hidden;margin:4px 0 2px}
+.pdf-bar-fill{height:100%;border-radius:4px;background:#1D9E75}
+.pdf-sec-hdr{background:#1A3A5C;color:white;padding:4px 8px;font-size:8px;font-weight:bold;text-transform:uppercase;letter-spacing:.05em;border:1px solid #ddd;border-bottom:none}
+.pdf-tabla{width:100%;border-collapse:collapse;border:1px solid #ddd;border-top:none;border-bottom:none;font-size:8px}
+.pdf-tabla th{background:#1A3A5C;color:white;padding:3px 5px;font-size:7px;text-transform:uppercase;letter-spacing:.04em;text-align:center}
+.pdf-tabla th.p{text-align:left}
+.pdf-tabla td{padding:3px 5px;border-bottom:1px solid #f0f0f0;vertical-align:top}
+.pdf-tabla td.c{text-align:center}
+.pdf-tabla tr:nth-child(even) td{background:#f9f9f9}
+.pdf-firma{display:grid;grid-template-columns:1fr 1fr;border:1px solid #ddd;border-top:none}
+.pdf-firma-col{padding:6px 10px;border-right:1px solid #f2f2f2}
+.pdf-firma-col:last-child{border-right:none}
+.pdf-firma-lbl{font-size:7px;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:2px}
+.pdf-firma-val{font-size:9px;color:#111;font-weight:bold}
+.pdf-firma-sub{font-size:8px;color:#888}
+.pdf-actions{padding:10px;display:flex;gap:8px;background:#f8faff;border-top:1px solid #ddd}
+.pdf-btn{border:none;border-radius:6px;padding:8px 16px;font-size:12px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+.pdf-btn.pr{background:#1D9E75;color:white}
+.pdf-btn.bk{background:#1A3A5C;color:white}
+
+@media print{
+  #topbar,#formWrap,.action-bar,#histPanel,#pdfPage .pdf-actions{display:none!important}
+  #pdfPage{display:block!important}
+  body{background:white;padding:0}
+}
 </style>
 </head>
 <body>
 
-<!-- ... (Estructura HTML original se mantiene intacta) ... -->
+<!-- TOPBAR -->
+<div id="topbar">
+  <div>
+    <h1>Checklist BPM — Área Retermalizado</h1>
+    <p>E.P. Santiago 1 · Decreto 977 RSA Chile · ISO 22000</p>
+  </div>
+  <div class="top-btns">
+    <button class="btnpdf outline" onclick="abrirHist()">📋 Historial</button>
+    <button class="btnpdf" onclick="verPDF()">📄 PDF</button>
+  </div>
+</div>
+
+<div id="formWrap">
+
+<!-- FICHA -->
+<div class="card">
+  <div class="chdr" style="background:#1A3A5C">Ficha de Identificación</div>
+  <div class="g2">
+    <div class="fi"><label>Establecimiento</label><input id="f_estab" value="E.P. Santiago 1" readonly></div>
+    <div class="fi"><label>Fecha</label><input type="date" id="f_fecha"></div>
+    <div class="fi"><label>Fiscalizador / Inspector ITE</label><input id="f_fisc" placeholder="Nombre completo..." oninput="syncVal()"></div>
+    <div class="fi"><label>Cargo</label><input id="f_cargo" placeholder="Cargo..."></div>
+    <div class="fi"><label>Área Evaluada</label><input id="f_area" value="Área Retermalizado"></div>
+    <div class="fi"><label>Turno</label>
+      <select id="f_turno">
+        <option value="">Seleccionar...</option>
+        <option>Mañana</option>
+        <option>Tarde</option>
+        <option>Noche</option>
+      </select>
+    </div>
+
+  </div>
+</div>
+
+<!-- RESUMEN LIVE -->
+<div class="card">
+  <div class="chdr" style="background:#0F6E56">Resumen de Evaluación</div>
+  <div class="res-grid">
+    <div class="res-cell"><div class="res-lbl">Total Ítems</div><div class="res-val" id="rTot">18</div></div>
+    <div class="res-cell"><div class="res-lbl">Cumple</div><div class="res-val gr" id="rOk">0</div></div>
+    <div class="res-cell"><div class="res-lbl">No Cumple</div><div class="res-val rd" id="rNc">0</div></div>
+    <div class="res-cell"><div class="res-lbl">No Aplica</div><div class="res-val" id="rNa">0</div></div>
+    <div class="res-cell"><div class="res-lbl">% Cumplimiento</div><div class="res-val" id="rPct">—</div></div>
+  </div>
+  <div class="res-bar-wrap">
+    <div style="font-size:9px;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:3px">Nivel de Cumplimiento</div>
+    <div class="bar-wrap"><div class="bar-fill" id="rBar"></div></div>
+    <span class="res-result" id="rRes">Sin evaluar</span>
+  </div>
+</div>
+
+<!-- SECCIÓN I: INFRAESTRUCTURA -->
+<div class="card">
+  <div class="sec-hdr">I. Infraestructura <span class="sec-badge" id="sb1">0 / 11</span></div>
+  <div class="eval-wrap">
+    <table class="eval-table">
+      <thead>
+        <tr>
+          <th style="width:32px">N°</th>
+          <th class="param">Ítem / Criterio</th>
+          <th style="width:80px">Evaluación</th>
+          <th style="min-width:120px">Observación / Acción Correctiva</th>
+        </tr>
+      </thead>
+      <tbody id="tbody1"></tbody>
+      <tfoot>
+        <tr>
+          <td class="param-cell" colspan="2">Subtotal Infraestructura</td>
+          <td><span id="st1_ok" style="color:#0F6E56;font-weight:bold">0</span> C / <span id="st1_nc" style="color:#A32D2D;font-weight:bold">0</span> NC / <span id="st1_na" style="color:#888">0</span> NA</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+
+<!-- SECCIÓN II: HIGIENE PERSONAL -->
+<div class="card">
+  <div class="sec-hdr">II. Higiene Personal <span class="sec-badge" id="sb2">0 / 7</span></div>
+  <div class="eval-wrap">
+    <table class="eval-table">
+      <thead>
+        <tr>
+          <th style="width:32px">N°</th>
+          <th class="param">Ítem / Criterio</th>
+          <th style="width:80px">Evaluación</th>
+          <th style="min-width:120px">Observación / Acción Correctiva</th>
+        </tr>
+      </thead>
+      <tbody id="tbody2"></tbody>
+      <tfoot>
+        <tr>
+          <td class="param-cell" colspan="2">Subtotal Higiene Personal</td>
+          <td><span id="st2_ok" style="color:#0F6E56;font-weight:bold">0</span> C / <span id="st2_nc" style="color:#A32D2D;font-weight:bold">0</span> NC / <span id="st2_na" style="color:#888">0</span> NA</td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+
+<!-- VALIDACION -->
+<div class="card">
+  <div class="chdr" style="background:#0F6E56">Validación del Registro</div>
+  <div class="firma-g">
+    <div class="ff"><label>Nombre Validador</label><input id="v_nom" readonly></div>
+    <div class="ff"><label>RUT Validador</label><input id="v_rut" placeholder="12.345.678-9"></div>
+    <div class="ff"><label>Cargo Validador</label><input id="v_cargo" placeholder="Cargo..."></div>
+    <div class="ff"><label>Fecha/Hora Validación</label><input id="v_ts" readonly></div>
+  </div>
+  <div class="decl">
+    Declaro que la información registrada es fiel reflejo de la fiscalización realizada en terreno, en cumplimiento con el Decreto 977 RSA Chile y los estándares ISO 22000.
+  </div>
+</div>
+
+<!-- ACCIONES -->
+<div class="action-bar">
+  <button class="btn-g" onclick="guardar()">💾 Guardar Registro</button>
+  <button class="btn-r" onclick="limpiar()">🧹 Limpiar Formulario</button>
+</div>
+
+</div> <!-- fin formWrap -->
+
+<!-- HISTORIAL PANEL -->
+<div id="histPanel" style="display:none">
+  <div class="hist-bar">
+    <div class="hist-cnt" id="hCnt">0 registros</div>
+    <input type="date" id="hDate" class="hist-date-input">
+    <button class="hbtn" onclick="filtrarHist()">🔍 Buscar</button>
+    <button class="hbtn out" onclick="renderHist()">Ver Todos</button>
+    <button class="hbtn out" style="margin-left:auto;border-color:#A32D2D;color:#A32D2D" onclick="cerrarHist()">Cerrar</button>
+  </div>
+  <div class="hist-list" id="hList"></div>
+</div>
+
+<!-- PDF PAGE -->
+<div id="pdfPage">
+  <div class="pdf-actions">
+    <button class="pdf-btn bk" onclick="cerrarPDF()">⬅ Volver al Formulario</button>
+    <button class="pdf-btn pr" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+  </div>
+  <div style="padding:10px;max-width:210mm;margin:0 auto;background:white">
+    <div class="pdf-header">
+      <div>
+        <h1>Checklist BPM — Área Retermalizado</h1>
+        <p>E.P. Santiago 1 · Decreto 977 RSA Chile · ISO 22000</p>
+      </div>
+      <div class="pdf-badge" id="p_nreg">REG-000</div>
+    </div>
+    
+    <div class="pdf-ficha">
+      <div class="pdf-fi"><div class="pdf-fi-lbl">Establecimiento</div><div class="pdf-fi-val" id="p_estab"></div></div>
+      <div class="pdf-fi"><div class="pdf-fi-lbl">Fecha</div><div class="pdf-fi-val" id="p_fecha"></div></div>
+      <div class="pdf-fi"><div class="pdf-fi-lbl">Fiscalizador</div><div class="pdf-fi-val" id="p_fisc"></div></div>
+      <div class="pdf-fi"><div class="pdf-fi-lbl">Turno</div><div class="pdf-fi-val" id="p_turno"></div></div>
+    </div>
+
+    <div class="pdf-resultado">
+      <div class="pdf-res-row">
+        <div class="pdf-res-circle" id="p_pct">0%</div>
+        <div>
+          <div class="pdf-res-title" id="p_res">Sin evaluar</div>
+          <div class="pdf-res-sub">Nivel de Cumplimiento Global</div>
+        </div>
+      </div>
+      <div class="pdf-bar"><div class="pdf-bar-fill" id="p_bar"></div></div>
+    </div>
+
+    <div class="pdf-kpis">
+      <div class="pdf-kpi"><div class="pdf-kpi-lbl">Total</div><div class="pdf-kpi-val bl" id="p_tot">18</div></div>
+      <div class="pdf-kpi"><div class="pdf-kpi-lbl">Cumple</div><div class="pdf-kpi-val gr" id="p_ok">0</div></div>
+      <div class="pdf-kpi"><div class="pdf-kpi-lbl">No Cumple</div><div class="pdf-kpi-val rd" id="p_nc">0</div></div>
+      <div class="pdf-kpi"><div class="pdf-kpi-lbl">No Aplica</div><div class="pdf-kpi-val" id="p_na">0</div></div>
+      <div class="pdf-kpi"><div class="pdf-kpi-lbl">Resultado</div><div class="pdf-kpi-val" id="p_txt" style="font-size:12px;margin-top:4px">—</div></div>
+    </div>
+
+    <div class="pdf-sec-hdr">I. Infraestructura</div>
+    <table class="pdf-tabla">
+      <thead><tr><th style="width:20px">N°</th><th class="p">Ítem / Criterio</th><th style="width:40px">Eval</th><th style="width:120px">Observación</th></tr></thead>
+      <tbody id="ptbody1"></tbody>
+    </table>
+
+    <div class="pdf-sec-hdr" style="margin-top:8px">II. Higiene Personal</div>
+    <table class="pdf-tabla">
+      <thead><tr><th style="width:20px">N°</th><th class="p">Ítem / Criterio</th><th style="width:40px">Eval</th><th style="width:120px">Observación</th></tr></thead>
+      <tbody id="ptbody2"></tbody>
+    </table>
+
+    <div class="pdf-firma" style="margin-top:8px">
+      <div class="pdf-firma-col">
+        <div class="pdf-firma-lbl">Fiscalizador / Inspector ITE</div>
+        <div class="pdf-firma-val" id="p_fnom"></div>
+        <div class="pdf-firma-sub" id="p_fcargo"></div>
+      </div>
+      <div class="pdf-firma-col">
+        <div class="pdf-firma-lbl">Validación del Registro</div>
+        <div class="pdf-firma-val" id="p_vnom"></div>
+        <div class="pdf-firma-sub" id="p_vts"></div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
-// VARIABLES GLOBALES RESTAURADAS
-var DIAS_H = ["Domingo","Lunes","Martes","Miércoles","Jueves","Viernes","Sábado"];
-var MESES_H = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
-
-// CONFIGURACIÓN SUPABASE
+// ==============================================================================
+// CONFIGURACIÓN SUPABASE (INYECCIÓN QUIRÚRGICA)
+// ==============================================================================
 var supabaseClient = {
-  url: function() { return localStorage.getItem('supabase_url') || ''; },
-  key: function() { return localStorage.getItem('supabase_key') || ''; },
+  url: function() { return localStorage.getItem("supabase_url") || ""; },
+  key: function() { return localStorage.getItem("supabase_key") || ""; },
   async insert(table, data) {
     var url = this.url();
     var key = this.key();
-    if (!url || !key) return;
+    if (!url || !key) {
+      showToast("❌ Error: Configuración Supabase incompleta.", "#A32D2D");
+      return;
+    }
     try {
-      await fetch(url + '/rest/v1/' + table, {
-        method: 'POST',
-        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+      showToast("☁️ Sincronizando con la nube...", "#1A3A5C");
+      const response = await fetch(url + "/rest/v1/" + table, {
+        method: "POST",
+        headers: { "apikey": key, "Authorization": "Bearer " + key, "Content-Type": "application/json", "Prefer": "return=minimal" },
         body: JSON.stringify(data)
       });
-    } catch(e) { console.error(e); }
+      if (response.ok) {
+        showToast("✅ Guardado en Local y Nube", "#1D9E75");
+      } else {
+        const errorData = await response.json();
+        showToast("❌ Error Supabase: " + (errorData.message || response.statusText), "#A32D2D");
+        console.error("Error Supabase:", errorData);
+      }
+    } catch(e) {
+      showToast("❌ Error de red o Supabase: " + e.message, "#A32D2D");
+      console.error("Error de red o Supabase:", e);
+    }
   }
 };
 
-// ... (Resto de la lógica original, tablas, historial, etc.) ...
-// Al final de la función sH(), se añade:
-// supabaseClient.insert('bpm_registros', data);
+// ==============================================================================
+// CÓDIGO ORIGINAL INTACTO
+// ==============================================================================
+const items1 = [
+  "Pisos limpios, sin acumulación de agua ni grietas.",
+  "Paredes y techos limpios, sin hongos ni descascaramiento.",
+  "Iluminación adecuada y con protecciones (mallas/micas).",
+  "Ventilación suficiente, sin condensación excesiva.",
+  "Puertas y ventanas limpias, con mallas mosquiteras en buen estado.",
+  "Equipos de frío (refrigeradores/congeladores) limpios y operativos.",
+  "Termómetros de equipos de frío visibles y calibrados.",
+  "Mesones de trabajo limpios, lisos y de material lavable (acero inox).",
+  "Lavamanos operativo, con jabón, papel secante y basurero con tapa.",
+  "Basureros del área con tapa, pedal y bolsa interior.",
+  "Ausencia de plagas (insectos, roedores) o rastros de ellas."
+];
+
+const items2 = [
+  "Personal con uniforme completo, limpio y de color claro.",
+  "Uso correcto de cofia (cubre todo el cabello) y mascarilla si aplica.",
+  "Uñas cortas, limpias y sin esmalte.",
+  "Ausencia de joyas (anillos, pulseras, aros, relojes).",
+  "Lavado de manos frecuente y correcto.",
+  "Personal sin síntomas de enfermedades infectocontagiosas.",
+  "No se observan malos hábitos (comer, fumar, masticar chicle en el área)."
+];
+
+let state = {
+  s1: Array(11).fill(null),
+  s2: Array(7).fill(null),
+  o1: Array(11).fill(""),
+  o2: Array(7).fill("")
+};
+
+function init(){
+  document.getElementById('f_fecha').valueAsDate = new Date();
+  updTS();
+  renderT(1, items1, 'tbody1');
+  renderT(2, items2, 'tbody2');
+  calc();
+}
+
+function updTS(){
+  const d = new Date();
+  document.getElementById('v_ts').value = d.toLocaleString('es-CL');
+}
+
+function syncVal(){
+  document.getElementById('v_nom').value = document.getElementById('f_fisc').value;
+}
+
+function renderT(sec, items, tid){
+  const tb = document.getElementById(tid);
+  let h = '';
+  items.forEach((it, i) => {
+    h += `
+      <tr>
+        <td class="item-cell">${i+1}</td>
+        <td class="param-cell">${it}</td>
+        <td>
+          <div class="mod-btn-group">
+            <button class="mb" id="b_${sec}_${i}_C" onclick="setE(${sec},${i},'C')">C</button>
+            <button class="mb" id="b_${sec}_${i}_NC" onclick="setE(${sec},${i},'NC')">NC</button>
+            <button class="mb" id="b_${sec}_${i}_NA" onclick="setE(${sec},${i},'NA')">NA</button>
+          </div>
+        </td>
+        <td><input type="text" class="obs-input" id="o_${sec}_${i}" onchange="setO(${sec},${i},this.value)" placeholder="Observación..."></td>
+      </tr>
+    `;
+  });
+  tb.innerHTML = h;
+}
+
+function setE(sec, i, val){
+  state['s'+sec][i] = val;
+  const btns = document.querySelectorAll(`[id^="b_${sec}_${i}_"]`);
+  btns.forEach(b => {
+    b.classList.remove('c','nc','na');
+    b.style.background = '#f0f0f0';
+    b.style.color = '#aaa';
+    b.style.borderColor = 'transparent';
+  });
+  const sel = document.getElementById(`b_${sec}_${i}_${val}`);
+  if(val==='C'){ sel.classList.add('c'); sel.style.background='#e1f5ee'; sel.style.color='#0F6E56'; sel.style.borderColor='#9FE1CB'; }
+  if(val==='NC'){ sel.classList.add('nc'); sel.style.background='#fcebeb'; sel.style.color='#A32D2D'; sel.style.borderColor='#FFAAAA'; }
+  if(val==='NA'){ sel.classList.add('na'); sel.style.background='#f5f5f5'; sel.style.color='#888'; sel.style.borderColor='#ddd'; }
+  calc();
+}
+
+function setO(sec, i, val){
+  state['o'+sec][i] = val;
+}
+
+function calc(){
+  let ok=0, nc=0, na=0, tot=18;
+  
+  let s1ok=0, s1nc=0, s1na=0, s1ev=0;
+  state.s1.forEach(v => {
+    if(v==='C'){ ok++; s1ok++; s1ev++; }
+    if(v==='NC'){ nc++; s1nc++; s1ev++; }
+    if(v==='NA'){ na++; s1na++; s1ev++; }
+  });
+  document.getElementById('st1_ok').innerText = s1ok;
+  document.getElementById('st1_nc').innerText = s1nc;
+  document.getElementById('st1_na').innerText = s1na;
+  document.getElementById('sb1').innerText = `${s1ev} / 11`;
+
+  let s2ok=0, s2nc=0, s2na=0, s2ev=0;
+  state.s2.forEach(v => {
+    if(v==='C'){ ok++; s2ok++; s2ev++; }
+    if(v==='NC'){ nc++; s2nc++; s2ev++; }
+    if(v==='NA'){ na++; s2na++; s2ev++; }
+  });
+  document.getElementById('st2_ok').innerText = s2ok;
+  document.getElementById('st2_nc').innerText = s2nc;
+  document.getElementById('st2_na').innerText = s2na;
+  document.getElementById('sb2').innerText = `${s2ev} / 7`;
+
+  document.getElementById('rOk').innerText = ok;
+  document.getElementById('rNc').innerText = nc;
+  document.getElementById('rNa').innerText = na;
+
+  let evalTot = ok + nc;
+  let pct = evalTot > 0 ? Math.round((ok / evalTot)*100) : 0;
+  
+  if(evalTot === 0){
+    document.getElementById('rPct').innerText = '—';
+    document.getElementById('rBar').style.width = '0%';
+    document.getElementById('rRes').innerText = 'Sin evaluar';
+    document.getElementById('rRes').className = 'res-result';
+  } else {
+    document.getElementById('rPct').innerText = pct + '%';
+    document.getElementById('rBar').style.width = pct + '%';
+    
+    let rEl = document.getElementById('rRes');
+    if(pct >= 85){
+      rEl.innerText = 'Excelente';
+      rEl.className = 'res-result exc';
+      document.getElementById('rBar').style.background = '#1D9E75';
+    } else if(pct >= 70){
+      rEl.innerText = 'Deficiente';
+      rEl.className = 'res-result def';
+      document.getElementById('rBar').style.background = '#e09000';
+    } else {
+      rEl.innerText = 'Crítico';
+      rEl.className = 'res-result cri';
+      document.getElementById('rBar').style.background = '#A32D2D';
+    }
+  }
+}
+
+function showToast(msg, bg){
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerText = msg;
+  t.style.background = bg;
+  document.body.appendChild(t);
+  setTimeout(()=> t.remove(), 3000);
+}
+
+function sH(){
+  updTS();
+  const d = new Date();
+  const nreg = 'BPM-' + d.getFullYear().toString().slice(-2) + (d.getMonth()+1).toString().padStart(2,'0') + d.getDate().toString().padStart(2,'0') + '-' + Math.floor(Math.random()*1000).toString().padStart(3,'0');
+  
+  let ok = parseInt(document.getElementById('rOk').innerText);
+  let nc = parseInt(document.getElementById('rNc').innerText);
+  let na = parseInt(document.getElementById('rNa').innerText);
+  let evalTot = ok + nc;
+  let pct = evalTot > 0 ? Math.round((ok / evalTot)*100) : 0;
+  let res = pct >= 85 ? 'Excelente' : (pct >= 70 ? 'Deficiente' : 'Crítico');
+
+  const obj = {
+    id: Date.now(),
+    ts: Date.now(),
+    nreg: nreg,
+    fecha: document.getElementById('f_fecha').value,
+    turno: document.getElementById('f_turno').value,
+    estab: document.getElementById('f_estab').value,
+    area: document.getElementById('f_area').value,
+    fisc: document.getElementById('f_fisc').value,
+    cargo: document.getElementById('f_cargo').value,
+    val_nom: document.getElementById('v_nom').value,
+    val_rut: document.getElementById('v_rut').value,
+    val_cargo: document.getElementById('v_cargo').value,
+    val_ts: document.getElementById('v_ts').value,
+    ok: ok,
+    nc: nc,
+    na: na,
+    tot: 18,
+    pct: pct,
+    res: res,
+    secs: JSON.stringify(state),
+    validado: true,
+    ncDetails: JSON.stringify([]),
+    accGen: JSON.stringify([]),
+    obs: "",
+    fmMap: JSON.stringify({
+      nreg: nreg,
+      fecha: document.getElementById('f_fecha').value,
+      turno: document.getElementById('f_turno').value,
+      estab: document.getElementById('f_estab').value,
+      area: document.getElementById('f_area').value,
+      fisc: document.getElementById('f_fisc').value,
+      cargo: document.getElementById('f_cargo').value,
+      ok: ok,
+      nc: nc,
+      na: na,
+      pct: pct,
+      res: res,
+      val_nom: document.getElementById('v_nom').value,
+      val_ts: document.getElementById('v_ts').value
+    })
+  };
+
+  let hist = JSON.parse(localStorage.getItem('bpm_ret_hist') || '[]');
+  hist.push(obj);
+  localStorage.setItem('bpm_ret_hist', JSON.stringify(hist));
+  
+  // Guardar también en bpm_hist para compatibilidad con Ficha Madre
+  let bpmHist = JSON.parse(localStorage.getItem('bpm_hist') || '[]');
+  bpmHist.push(obj);
+  localStorage.setItem('bpm_hist', JSON.stringify(bpmHist));
+
+  // Inyección Supabase
+  supabaseClient.insert('bpm_registros', obj);
+
+  showToast('✅ Registro guardado localmente', '#1D9E75');
+  limpiar();
+}
+
+function guardar(){
+  if(!document.getElementById('f_fisc').value){
+    showToast('⚠️ Ingrese el nombre del fiscalizador', '#e09000');
+    return;
+  }
+  sH();
+}
+
+function limpiar(){
+  state = {
+    s1: Array(11).fill(null),
+    s2: Array(7).fill(null),
+    o1: Array(11).fill(""),
+    o2: Array(7).fill("")
+  };
+  document.querySelectorAll('.mb').forEach(b => {
+    b.classList.remove('c','nc','na');
+    b.style.background = '#f0f0f0';
+    b.style.color = '#aaa';
+    b.style.borderColor = 'transparent';
+  });
+  document.querySelectorAll('.obs-input').forEach(i => i.value = '');
+  calc();
+}
+
+function abrirHist(){
+  document.getElementById('formWrap').style.display = 'none';
+  document.getElementById('histPanel').style.display = 'block';
+  renderHist();
+}
+
+function cerrarHist(){
+  document.getElementById('histPanel').style.display = 'none';
+  document.getElementById('formWrap').style.display = 'block';
+}
+
+function renderHist(filtro = null){
+  let hist = JSON.parse(localStorage.getItem('bpm_ret_hist') || '[]');
+  if(filtro) hist = hist.filter(x => x.fecha === filtro);
+  hist.sort((a,b) => b.id - a.id);
+  
+  document.getElementById('hCnt').innerText = `${hist.length} registros`;
+  const hl = document.getElementById('hList');
+  
+  if(hist.length === 0){
+    hl.innerHTML = '<div class="hemp">No hay registros guardados.</div>';
+    return;
+  }
+
+  let h = '';
+  hist.forEach(r => {
+    let col = r.pct >= 85 ? '#0F6E56' : (r.pct >= 70 ? '#854F0B' : '#A32D2D');
+    h += `
+      <div class="hrow">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+          <div style="font-size:11px;font-weight:bold;color:#1A3A5C">${r.nreg}</div>
+          <div style="font-size:10px;color:#888">${r.fecha} · ${r.turno}</div>
+        </div>
+        <div style="font-size:10px;color:#555;margin-bottom:6px">
+          <b>Fisc:</b> ${r.fisc} | <b>Val:</b> ${r.val_nom}
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="hchips">
+            <div class="hch k">${r.pct}%</div>
+            <div class="hch ok">${r.ok} C</div>
+            <div class="hch nc">${r.nc} NC</div>
+            <div class="hch na">${r.na} NA</div>
+          </div>
+          <div>
+            <button class="hdel" onclick="delH(${r.id})">🗑️</button>
+            <button class="hbtn" style="padding:4px 10px;font-size:10px" onclick="verPDFHist(${r.id})">📄 PDF</button>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  hl.innerHTML = h;
+}
+
+function filtrarHist(){
+  const d = document.getElementById('hDate').value;
+  if(d) renderHist(d);
+  else renderHist();
+}
+
+function delH(id){
+  if(confirm('¿Eliminar este registro?')){
+    let hist = JSON.parse(localStorage.getItem('bpm_ret_hist') || '[]');
+    hist = hist.filter(x => x.id !== id);
+    localStorage.setItem('bpm_ret_hist', JSON.stringify(hist));
+    
+    let bpmHist = JSON.parse(localStorage.getItem('bpm_hist') || '[]');
+    bpmHist = bpmHist.filter(x => x.id !== id);
+    localStorage.setItem('bpm_hist', JSON.stringify(bpmHist));
+    
+    renderHist();
+  }
+}
+
+function verPDF(){
+  updTS();
+  document.getElementById('p_nreg').innerText = 'VISTA PREVIA';
+  document.getElementById('p_estab').innerText = document.getElementById('f_estab').value;
+  document.getElementById('p_fecha').innerText = document.getElementById('f_fecha').value;
+  document.getElementById('p_fisc').innerText = document.getElementById('f_fisc').value;
+  document.getElementById('p_turno').innerText = document.getElementById('f_turno').value;
+  
+  document.getElementById('p_tot').innerText = document.getElementById('rTot').innerText;
+  document.getElementById('p_ok').innerText = document.getElementById('rOk').innerText;
+  document.getElementById('p_nc').innerText = document.getElementById('rNc').innerText;
+  document.getElementById('p_na').innerText = document.getElementById('rNa').innerText;
+  
+  let pct = document.getElementById('rPct').innerText;
+  document.getElementById('p_pct').innerText = pct;
+  document.getElementById('p_bar').style.width = pct;
+  
+  let rEl = document.getElementById('rRes');
+  document.getElementById('p_res').innerText = rEl.innerText;
+  
+  let col = '#888';
+  if(rEl.innerText === 'Excelente') col = '#0F6E56';
+  if(rEl.innerText === 'Deficiente') col = '#e09000';
+  if(rEl.innerText === 'Crítico') col = '#A32D2D';
+  
+  document.getElementById('p_pct').style.borderColor = col;
+  document.getElementById('p_pct').style.color = col;
+  document.getElementById('p_bar').style.background = col;
+  document.getElementById('p_txt').innerText = rEl.innerText;
+  document.getElementById('p_txt').style.color = col;
+
+  document.getElementById('p_fnom').innerText = document.getElementById('f_fisc').value;
+  document.getElementById('p_fcargo').innerText = document.getElementById('f_cargo').value;
+  document.getElementById('p_vnom').innerText = document.getElementById('v_nom').value;
+  document.getElementById('p_vts').innerText = document.getElementById('v_ts').value;
+
+  renderPDFTabla(1, items1, 'ptbody1');
+  renderPDFTabla(2, items2, 'ptbody2');
+
+  document.getElementById('formWrap').style.display = 'none';
+  document.getElementById('histPanel').style.display = 'none';
+  document.getElementById('pdfPage').style.display = 'block';
+}
+
+function verPDFHist(id){
+  let hist = JSON.parse(localStorage.getItem('bpm_ret_hist') || '[]');
+  let r = hist.find(x => x.id === id);
+  if(!r) return;
+
+  document.getElementById('p_nreg').innerText = r.nreg;
+  document.getElementById('p_estab').innerText = r.estab;
+  document.getElementById('p_fecha').innerText = r.fecha;
+  document.getElementById('p_fisc').innerText = r.fisc;
+  document.getElementById('p_turno').innerText = r.turno;
+  
+  document.getElementById('p_tot').innerText = r.tot;
+  document.getElementById('p_ok').innerText = r.ok;
+  document.getElementById('p_nc').innerText = r.nc;
+  document.getElementById('p_na').innerText = r.na;
+  
+  document.getElementById('p_pct').innerText = r.pct + '%';
+  document.getElementById('p_bar').style.width = r.pct + '%';
+  document.getElementById('p_res').innerText = r.res;
+  
+  let col = '#888';
+  if(r.res === 'Excelente') col = '#0F6E56';
+  if(r.res === 'Deficiente') col = '#e09000';
+  if(r.res === 'Crítico') col = '#A32D2D';
+  
+  document.getElementById('p_pct').style.borderColor = col;
+  document.getElementById('p_pct').style.color = col;
+  document.getElementById('p_bar').style.background = col;
+  document.getElementById('p_txt').innerText = r.res;
+  document.getElementById('p_txt').style.color = col;
+
+  document.getElementById('p_fnom').innerText = r.fisc;
+  document.getElementById('p_fcargo').innerText = r.cargo;
+  document.getElementById('p_vnom').innerText = r.val_nom;
+  document.getElementById('p_vts').innerText = r.val_ts;
+
+  let st = JSON.parse(r.secs);
+  renderPDFTablaHist(1, items1, 'ptbody1', st.s1, st.o1);
+  renderPDFTablaHist(2, items2, 'ptbody2', st.s2, st.o2);
+
+  document.getElementById('formWrap').style.display = 'none';
+  document.getElementById('histPanel').style.display = 'none';
+  document.getElementById('pdfPage').style.display = 'block';
+}
+
+function renderPDFTabla(sec, items, tid){
+  let h = '';
+  items.forEach((it, i) => {
+    let val = state['s'+sec][i] || '-';
+    let obs = state['o'+sec][i] || '';
+    let col = val==='C'?'#0F6E56':(val==='NC'?'#A32D2D':'#888');
+    h += `<tr><td class="c">${i+1}</td><td class="p">${it}</td><td class="c" style="color:${col};font-weight:bold">${val}</td><td class="p">${obs}</td></tr>`;
+  });
+  document.getElementById(tid).innerHTML = h;
+}
+
+function renderPDFTablaHist(sec, items, tid, sArr, oArr){
+  let h = '';
+  items.forEach((it, i) => {
+    let val = sArr[i] || '-';
+    let obs = oArr[i] || '';
+    let col = val==='C'?'#0F6E56':(val==='NC'?'#A32D2D':'#888');
+    h += `<tr><td class="c">${i+1}</td><td class="p">${it}</td><td class="c" style="color:${col};font-weight:bold">${val}</td><td class="p">${obs}</td></tr>`;
+  });
+  document.getElementById(tid).innerHTML = h;
+}
+
+function cerrarPDF(){
+  document.getElementById('pdfPage').style.display = 'none';
+  document.getElementById('formWrap').style.display = 'block';
+}
+
+window.onload = init;
+
+// ==============================================================================
+// BOTÓN DE CONFIGURACIÓN FLOTANTE (INYECCIÓN QUIRÚRGICA)
+// ==============================================================================
+const configButton = document.createElement("button");
+configButton.innerHTML = "⚙️";
+configButton.style.cssText = `
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #1A3A5C;
+  color: white;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 1000;
+`;
+configButton.onclick = () => {
+  const currentUrl = localStorage.getItem("supabase_url") || "";
+  const currentKey = localStorage.getItem("supabase_key") || "";
+  const newUrl = prompt("Ingrese la URL de Supabase:", currentUrl);
+  const newKey = prompt("Ingrese la Anon Public Key de Supabase:", currentKey);
+
+  if (newUrl && newKey) {
+    localStorage.setItem("supabase_url", newUrl);
+    localStorage.setItem("supabase_key", newKey);
+    showToast("✅ Configuración Supabase guardada", "#1D9E75");
+  } else {
+    showToast("❌ Configuración Supabase incompleta", "#A32D2D");
+  }
+};
+document.body.appendChild(configButton);
+
 </script>
 </body>
 </html>
