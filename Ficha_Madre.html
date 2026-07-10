@@ -1,5 +1,3 @@
-<!-- Versión Restaurada y Conectada a Supabase -->
-<!-- Mantiene el 100% del diseño y lógica de integración originales -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,38 +5,1549 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Ficha Madre — Servicio de Alimentación ITE</title>
 <style>
-/* ... (Se mantiene el estilo original) ... */
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#efefef;padding-bottom:40px}
-#topbar{background:linear-gradient(135deg,#1A3A5C,#0F6E56);color:white;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100}
+
+/* TOPBAR */
+#topbar{background:linear-gradient(135deg,#1A3A5C,#0F6E56);color:white;padding:11px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+#topbar h1{font-size:14px;font-weight:bold;margin:0}
+#topbar p{font-size:10px;margin:2px 0 0;opacity:.8}
+.top-btns{display:flex;gap:8px;flex-wrap:wrap}
+.tbtn{padding:7px 13px;border:none;border-radius:7px;font-size:11px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;transition:all .2s}
+.tbtn-green{background:#1D9E75;color:white}.tbtn-green:hover{background:#0F6E56}
+.tbtn-blue{background:#1A3A5C;color:white}.tbtn-blue:hover{background:#0d2440}
+.tbtn-outline{background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.4)}.tbtn-outline:hover{background:rgba(255,255,255,.25)}
+
+/* CARDS */
 .card{background:white;margin:10px;border-radius:8px;border:1px solid #ddd;overflow:hidden}
-.tbtn{padding:7px 13px;border:none;border-radius:7px;font-size:11px;font-weight:bold;cursor:pointer}
-/* ... (resto del CSS original) ... */
+.card-hdr{padding:10px 13px;font-size:10px;font-weight:bold;letter-spacing:.07em;text-transform:uppercase;color:white}
+.g2{display:grid;grid-template-columns:1fr 1fr}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr}
+.fi{padding:8px 12px;border-bottom:1px solid #f2f2f2}
+.fi:nth-child(odd){border-right:1px solid #f2f2f2}
+.fi label{display:block;font-size:9px;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:2px}
+.fi input,.fi select,.fi textarea{width:100%;border:none;font-size:13px;color:#1a56a0;background:transparent;outline:none;font-family:Arial,sans-serif}
+.fi textarea{resize:none;min-height:36px}
+.fi.auto input{background:#f0f4ff;color:#0F6E56;font-weight:bold;border-radius:4px;padding:2px 4px}
+.fi.auto label::after{content:" ✦ AUTO";color:#1D9E75;font-size:8px;margin-left:4px}
+
+/* STATUS BANNER */
+.status-bar{display:flex;align-items:center;gap:8px;padding:9px 13px;border-bottom:1px solid #f0f0f0;background:#f8faff;flex-wrap:wrap}
+.src-badge{font-size:10px;font-weight:bold;padding:3px 9px;border-radius:20px;display:flex;align-items:center;gap:4px}
+.src-badge.ok{background:#e1f5ee;color:#0F6E56;border:1px solid #1D9E75}
+.src-badge.warn{background:#fff3cd;color:#854F0B;border:1px solid #e09000}
+.src-badge.empty{background:#f0f0f0;color:#aaa;border:1px solid #ddd}
+.sync-time{font-size:10px;color:#aaa;margin-left:auto}
+
+/* SERVICIOS - 3 COLUMNAS */
+.srv-grid{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid #f2f2f2}
+.srv-col{border-right:1px solid #f2f2f2}
+.srv-col:last-child{border-right:none}
+.srv-hdr{background:#1A3A5C;color:white;padding:7px 10px;font-size:11px;font-weight:bold;text-align:center}
+.srv-body{padding:0}
+.srv-row{display:grid;grid-template-columns:1fr auto;padding:6px 10px;border-bottom:1px solid #f5f5f5;align-items:center;gap:6px}
+.srv-row:last-child{border-bottom:none}
+.srv-lbl{font-size:11px;color:#333}
+.srv-lbl.section{font-size:9px;font-weight:bold;color:#888;text-transform:uppercase;background:#f8f8f8;padding:4px 10px;display:block;grid-column:1/-1}
+.cnc{display:flex;gap:3px}
+.cnc-btn{font-size:10px;font-weight:bold;padding:3px 8px;border:1.5px solid #ddd;border-radius:5px;cursor:pointer;background:white;font-family:Arial,sans-serif;transition:all .15s}
+.cnc-btn.C{border-color:#1D9E75;background:#e1f5ee;color:#0F6E56}
+.cnc-btn.NC{border-color:#A32D2D;background:#fcebeb;color:#A32D2D}
+.cnc-btn.NA{border-color:#aaa;background:#f0f0f0;color:#666}
+
+/* TEMPERATURA CARD */
+.temp-grid{display:grid;grid-template-columns:1fr}
+.temp-item{background:#f8fbff;border:1px solid #dde8f5;border-radius:8px;padding:8px 10px}
+.temp-item-name{font-size:9px;color:#1A3A5C;font-weight:bold;margin-bottom:4px;text-transform:uppercase}
+.temp-vals{display:flex;gap:6px;flex-wrap:wrap}
+.temp-val{font-size:13px;font-weight:bold;padding:3px 8px;border-radius:5px}
+.temp-val.ok{background:#e1f5ee;color:#0F6E56}
+.temp-val.al{background:#fff3cd;color:#854F0B}
+.temp-val.cr{background:#fcebeb;color:#A32D2D}
+.temp-val.nd{background:#f0f0f0;color:#aaa}
+
+/* HACCP */
+.pcc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;padding:10px 12px}
+.pcc-item{background:#f8fbff;border:1px solid #dde8f5;border-radius:8px;padding:8px 10px}
+.pcc-name{font-size:9px;color:#1A3A5C;font-weight:bold;margin-bottom:3px;text-transform:uppercase}
+.pcc-val{display:flex;align-items:center;justify-content:space-between;gap:6px}
+.pcc-temp{font-size:14px;font-weight:bold}
+.pcc-pill{font-size:9px;font-weight:bold;padding:2px 7px;border-radius:10px}
+.pcc-pill.conf{background:#e1f5ee;color:#0F6E56}
+.pcc-pill.alert{background:#fff3cd;color:#854F0B}
+.pcc-pill.noconf{background:#fcebeb;color:#A32D2D}
+.pcc-pill.nd{background:#f0f0f0;color:#aaa}
+
+/* BPM */
+.bpm-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:6px;padding:10px 12px}
+.bpm-item{background:#f8fbff;border:1px solid #dde8f5;border-radius:6px;padding:6px 10px;display:flex;align-items:center;justify-content:space-between;gap:6px}
+.bpm-name{font-size:10px;color:#333;font-weight:500}
+.bpm-pct{font-size:12px;font-weight:bold}
+
+/* KPI RESUMEN */
+.kpi-grid{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid #f2f2f2}
+.kpi{padding:10px 6px;text-align:center;border-right:1px solid #f2f2f2}
+.kpi:last-child{border-right:none}
+.kpi-val{font-size:22px;font-weight:bold;color:#1A3A5C}
+.kpi-lbl{font-size:9px;color:#aaa;text-transform:uppercase;font-weight:bold;margin-top:2px}
+
+/* VALIDACION SECCIÓN */
+.val-grid{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:1px solid #f2f2f2}
+.val-box{padding:10px 13px;border-right:1px solid #f2f2f2;display:flex;flex-direction:column;align-items:center;gap:5px}
+.val-box:last-child{border-right:none}
+.val-icon{font-size:24px}
+.val-name{font-size:12px;font-weight:bold;color:#1A3A5C;text-align:center}
+.val-sub{font-size:10px;color:#888;text-align:center}
+.val-badge{font-size:10px;font-weight:bold;padding:3px 10px;border-radius:20px}
+.val-badge.ok{background:#e1f5ee;color:#0F6E56;border:1px solid #1D9E75}
+.val-badge.pend{background:#fff3cd;color:#854F0B;border:1px solid #e09000}
+
+/* OBS */
+.obs-area{padding:10px 12px;border-top:1px solid #f2f2f2}
+.obs-area label{font-size:9px;color:#aaa;font-weight:bold;text-transform:uppercase;display:block;margin-bottom:4px}
+.obs-area textarea{width:100%;border:1px solid #ddd;border-radius:6px;padding:8px 10px;font-size:12px;font-family:Arial,sans-serif;resize:none;outline:none;min-height:55px;color:#333}
+
+/* FIRMA */
+.firma-line{display:flex;align-items:flex-end;gap:8px;padding:10px 12px;border-top:1px solid #f2f2f2}
+.firma-box{flex:1;border-top:1.5px solid #333;text-align:center;padding-top:4px;font-size:9px;color:#888}
+
+/* MODAL PDF */
+#pdfModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:200;overflow-y:auto}
+#pdfModal.open{display:block}
+#pdfWrap{background:white;margin:14px auto;max-width:210mm;border-radius:8px;overflow:hidden}
+.pm-bar{background:#1A3A5C;color:white;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0}
+.pm-bar span{font-size:13px;font-weight:bold}
+.pm-btns{display:flex;gap:8px}
+.pm-btns button{padding:6px 14px;border:none;border-radius:6px;font-size:11px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+.pm-print{background:#1D9E75;color:white}
+.pm-close{background:white;color:#1A3A5C}
+
+/* TOAST */
+.fm-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:10px;font-size:13px;font-weight:bold;color:white;z-index:9999;font-family:Arial,sans-serif;box-shadow:0 4px 20px rgba(0,0,0,.25);animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateX(-50%) translateY(16px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+
+/* PRINT */
+@media print{
+  @page{size:A4;margin:8mm}
+  body>*:not(#pdfModal){display:none !important}
+  #pdfModal{display:block !important;position:static !important;background:none !important;overflow:visible !important}
+  #pdfWrap{margin:0 !important;border-radius:0 !important;max-width:100% !important}
+  .pm-bar{display:none !important}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+}
 </style>
 </head>
 <body>
 
-<!-- ... (Estructura HTML original se mantiene intacta) ... -->
+<!-- TOPBAR -->
+<div id="topbar" style="display:flex;align-items:center;justify-content:space-between">
+  <div>
+    <h1>Ficha Madre — Servicio de Alimentación</h1>
+    <p>E.P. Santiago 1 · Integración automática de registros ITE</p>
+  </div>
+  <div style="display:flex;align-items:center;gap:12px"><div style="background:rgba(255,255,255,0.92);border-radius:8px;padding:3px 10px;display:flex;align-items:center"><img src="data:image/png;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEJYWVogAAAAAAAAb6IAADj1AAADkFhZWiAAAAAAAABimQAAt4UAABjaWFlaIAAAAAAAACSgAAAPhAAAts9YWVogAAAAAAAA9tYAAQAAAADTLXBhcmEAAAAAAAQAAAACZmYAAPKnAAANWQAAE9AAAApbAAAAAAAAAABtbHVjAAAAAAAAAAEAAAAMZW5VUwAAACAAAAAcAEcAbwBvAGcAbABlACAASQBuAGMALgAgADIAMAAxADb/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCACVAVMDASIAAhEBAxEB/8QAHQABAAEFAQEBAAAAAAAAAAAAAAgEBQYHCQMCAf/EAFQQAAEDBAAEAwQDCgoEDAcAAAECAwQABQYRBxIhMRNBUQgiYXEUdIEVMjM1UpGhsbKzFiMkNjdCYnXB0RdzkpMlJjRTVFVlcoKU0tNDR1ZXwsPw/8QAGwEBAAIDAQEAAAAAAAAAAAAAAAEDAgUGBAf/xAA4EQABAwIDBQUHBAEFAQAAAAABAAIDBBEFITESQVFhcQYTgcHRFDKRobHh8BUiI0I0M1JTYvFj/9oADAMBAAIRAxEAPwCZdKUoiUpVG7drW0rkduUJCu+lPpB/XUgXRVlKoPu1Zv8AraB/5hH+dPu1Zv8AraB/5hH+dNk8EVfSqIXi0ntdIJ+UhP8AnVW2tDiAttaVpPUKSdg0IIRfVKUqESlKURKUpREpSlESlKURKVYcpy2yY2tpq5SFB50cyWm0FS+XeuYgdh3/ADVcrLdIN4t7c+3SEvx3N6UOmiO4I7g1Q2phdIYmuBcNRfP4K91LMyITOYQ06G2XxVZSlKvVCUrDci4h2azZA3aXQp4AhMl5s7SwSexHckdzqsujPsyY7ciO6h1l1IWhaDsKB7EGvNDWQTvdHG4Et1HBemeingY2SRhAdoeK9KUqnuU6JbYLs2dIRHjtDa3FnQAr0OcGi5OS87WlxDWi5KqKVYMby+w5BKci26UpT6AVeG4goUpIOuYb7jqPz1f6rhnjnbtxuBHEZqyeCWB+xK0tPA5JSlKtVSUpSiJSlKIlKUoiUpSiJSlKIlKUoiUpSiJVlzfKbJhuNysgyCamLBjjqe6nFH71CE91LJ6ADvV6qEXtf51IyXiQ7jTDpFqx9XhJb19/KKf4xw+ugoIHp73rXtoKT2qXY3alYudYKy8WOOOa53LdZZnSLDZOYhqBCdLa1o8vGcSdrJB6pBCPLR1s6rfaafXzvNIdV6rSCf0191keKYJmmVxnZWN4xc7nHaPKp5psJb36BaiEqPqATrzrsWNip2WbZo+CozKxX6HE/wCisf7sU+hxP+isf7sVsM8GuK//ANA3Y9Pymf8A11+/6GeK+x/xDuv+01/66e1Rf8g+I9U2eS14IkUdozI+SBUp/YWyi5vTL9iEqU8/AYYbmw0LJUGCVcjiUkn3Un3CEjpvmPma06ngrxYUjmGCXMfAuMg/t1KL2XOE0/hzZ7hcsgW193LqUJcZZXzIjso2UIJ817Uokjp1AG9bOuxWphdTlu0CTpndZMButz0pSuSV6UpSiJSlKIlKUoiUpSiLRHGuPMbzhx6ShZjvMN/R1693lA0Ug+oOzr41T8NMtVjN1LcpxRtckgPp7+GfJYH6/UfIVuDO8Zi5RY1QnT4chs+JGeHdtzX6j2I9KjtOiyIU2RClNKakMLLbiFDWiP8AA9CPga+dY5Sz4ZXCthORN/HeDyK+lYDVU+KUBoZhm0W8NxHMfVSnQpK0JWhQUlQ2lQOwR61+1qvg1mHOlGNXN730jUJxR++H/Nk+o8vh08hW1K7fDq+OvgE0fiOB4LhMSw+TD6gwyeB4jio0ZjBnwMnuKLjFdYW7KecbUoHTqCskKSfMdR8qzbg1lv0SQnHLi9/J3T/I1q1pCu5QT6Hy+PTzrOeJOLIyex8jR5J8UlyKregVa6oV/ZV+ggHyqPriHmH1tOocZeaWUrSoaUhQOiPgQRXB11PNgVeKiLNrvnxafL47l3+H1EGP4eaeXJw+XBw/OIUqHnG2WluvOJbbQkqUtR0EgdyT5CtCcS8xcyW4fRYqlN2uOs+EkEjxj+WofqHl8zXzkGfXm8Y5Hs7pDQCeWU8lXvSQOwPoPUefy6VZ8VsU3Ib01bobatEhTzuvdZb31Uf8B5mvRjONuxLZpaMGzrX4nl0G/wBBnRguBNwsOq6wi7b24Acep3eul/4LwZEvN2pCQ6GYjK3HHNHl6+6E7+O96+Fb4q1YtYLfjlqTb7e2QnmK3HFdVuqPdSj+j4AAVaeKWf4/w5xxN7yFb5adfEdhmO3zuvOEEhKRsDslRJJAAFdfgeFuoqcQDNxNz15Lj8cxMYjVGUCzRkOiyulYXwl4lY7xLssi42ISmVxXA1KjSkBLjSiNjsSCk9dEHyPmCKzSts9jo3FrhYhagG6UpSsESlKURKUpREpSlESlKURKUpREpSlEXy842yyt51YQ2hJUpR7ADqTXMO8zFXG+XK4qPMqZOfkk+pcdUv8A/KumV8/Ek76s5+ya5h10WAj3z081VJuWWcIMTRnHEmyYy8tbcWS+Vy1IJCvAQCtYBHYkDl35c2/KuiVot0C0WuNa7XEZhworYaYYZQEobQBoAAVBv2Q/6ebR9VlfuzU7qoxyRxmazcApjGSUpStIrFaMuyaw4lZXLzkd0j22C2Qkuun75R7JSB1Uo66AAk1qN72peGKHloabv7yEn3XE2/lC/iApQP5wKjb7QefT8+4iz3nJCzabbIdiWyP0CUIQrlU58VLKebZ8uUeVfGE8GOI2Y2Nu+WOyNG3PE+C9JlIZ8UA6JSD1Kd+egD5broocKgjiD6h1iedvwqovJP7VMPhhxnwfiHdHbTZJUpi4ttl0RZrHhLcQO6kdSFa6bAOxvetVsGQ+zGYW/IebZZbHMtxxQSlI9ST0FRm9nDgXmGJ8QWMqyhUOE1AadSxHadDy3luIKNkjolIBJ9Sddq1Z7SfFW559lkyzRpLjGMW6QphiKk6TKcQrRec/K94e6k9AAD3O68v6dHNUbEDv2gZnW3qp2yBcqVdz448J7e+WJGb25a0kg/Rwt8A/EtpUBXnH478JH3Q2nNoCCfN1t1tP+0pIA/PUHsYwvL8njOSccxi63ZhtXIp2MxtAV21zEgEjXUAnVVV74c8QLJbXbleMMvUKGyNuPLY5koHclXKToAdST0Hma9v6RSg7Jkz6j6LHvHcF0Ssd3tV9trdys1xi3CG6NofjuhaD9o8/hVdXN/hjn2QcO8ibvVhkueCVpM2FzfxU1sHqlQPQK10C+4OvLYPQFWXWZPD8ZwX/APgg20XIOeZaLfOPt0e3rWrrsPdSuFswdFm1+0rlerta7Jb3LjeLhFgRGxtb0h0NoT9prA3eO/CNt1TZzi3KKe5QhxafsISQfsqE/E3Psh4jZAq95A6UpSSYcJKttQkH+oj1Pqvuo+g0B92bhpxFvMBq4WrCL1LhvJ5mnwyEJWD2I5yCR8daNbCPBo2MBnfY+A+qxMhvkFN62ca+FVxkpjRs4tIdWoJSl5ZZ5ifIFYANZ8y6280h5lxDjawFIWg7CgexBHcVzWyjDMvxZlt7JsZudpZdVyIdkNfxaiew5kkp38Cd1sr2X+K1yw/Lrdi9yluPY1c30REsrO0wnlqCW1o/JSVEJUnt1CumjvCowdojMkDr2/MiEEmdipw1rrjLiP3Styr9bmdz4qNvoQOr7Y7/ADUkbI/NWxaVzNXSx1cLoZRcFe6kq5KSZs0RsQoqRX1oW3JjulC0KC21oOikg9CKkJw6ylvJ7N4jvIifH0iS2O2/JQ+B0f0isL4y4h4PLkFpiNpZCeWa2y3rl0OjvfWtDR0PQ+tYDi98mY9eG7nCO1JHK42ezqDraT+YdfIgV89pZpuz9eYpc2HXmNxHMfbgvo1VDD2ioBLFk8acjvB5H0KkzWieNKbV/DHnty0mSpr+XBH3viA6SSfytDR+QrMM24jwWcfbGPy23Z0tHQjqYwI6kj8ryAPz8uunUIfly0obDkiTIc0AOqnFqP6yTWw7TYvDMwUkNnE2JIztwA5n6LXdlsHmgkNXPdoFwAcr8SeXnmkWPIlyW4kRsOSHSUtoKgkE6J6k9ANA9T2rfvCuLY2cRjP2QqWiR7z7rieVxTg6EKHlrsB6eu9nUWYYldMVjW92ZIbdTL5wfDbADLnL1Rzb2rad+g6H4V6cOMqcxi8beJNukkJlJ0TyAdlgDzG/tH2Vr8JmZhFYI6lliRmT/W9rW5cT6Z7LGIH4zRGSmfcA3AH9rXvfnw+4tISsB44cMrfxQxdi0ypzlvlRJAkxJSGwvkXylJCkkjmSQogjYPY76VnbDrb7KHmVpcbcSFIUk7CgexFaN9s3McgxXA7VGx+e9b3LrPMeTIZOnA0GlqKEnunmIHUaOgdd6+p0TXvmaIjY7ivlz8gbrLeA/CiFwttFwYbujt0m3F1C5EhTXhpCUAhCEo2dAbUdkkkn5CtkVHr2J8ryC/49f7berpJuLFteY+iLkrLjqAtK+ZJWeqk7QCN7PU9daAkLU1rZGzuEhueKhtrZJStF8e/aAgYPNexvGo7N1yBsakLWo/R4RIBAVrqtejvkBGvMjoDF7JuLXEi/Lddu2aXNLSiVeFGcEVpv4ANhPT5kn4mvVS4TPO0P0B4qHPAXRWlc5Md4pcRLHyOWfNbshHNz8rrwkoX8w6FDXyqSfAn2jWcmuLGN5uxFttzeKW4s5klLEpw6HIpJ/BrJ7dSDvXQ6BmpwieFpcP3AcNfggkBUiKUrTntB8cIPDct2W1RmrpkbyQ4WFrIbitnstwjqSdHSR1Pc6HfXwwvneGMFysiQMytx0rn/AHfjvxbuM1Un+GT8IHWmIcVlDafkFIUr85NeMXjhxcjyGnhnU93w1b5HY0dSFfBQ8PqP/wCGq2owKe3vD5+iw70LoNSo++z17QRzK7M4pl8eNDvLw1DlsbSzMUBsoKDvkXoEjqQdeR6GQVayop5Kd+xIM1mCDolKUqhSlKUoio75+JZ31Zz9k1zDrp5fPxLO+rOfsmuYddHgOj/DzVUi217If9PNo+qyv3Zqd1QR9kP+nm0fVZX7s1O6vJjf+QOnqpj0SvC4bECQQdHwldfsNe9eFx/F8n/VK/Ua1A1Vi5ezSQh8g6ICiDXSzh3GYh4Bj0SK0lphm1xkNoT2SkNJAFc0p34N/wCSq6ZYP/Mux/3dH/dpro8d9yPx8lVGqjJnHGsbubrSyhxEN1SVDuCEHRrl4tRatKloOihjaT31pNdQMs/mtdvqT37BrmJHUlEJtaiAlLQJJ8ulMA91/UeaiXcujUfJuHeBWa2Y7MybH7E3HiISxFkz2mlBAA66UoE777897rzf4u8K0MLUviHiy0hJJSi5srUoegSFEk/ADrUBrvjGUWye4xdcdvMeVpKl+LDcJUCkFJ5tEK6a8zrt5VSi03hXRFluqz6JhOk/mCakYNC4XMhJ8E7w8F6ZVKt03KLvNtET6FbZE552JH3vwmlLJQn4dCOnl28qlLe2JsD2DozT/My6u0xlhPmGnH0KSk/+BQFa04I+z/keXXSPcsttsmy44ghbjclBbkTB0IQlBG0II6FStHXYddiRPtTMts+z5kMdhtLbbbUdCEJGgkB9sACsq2pjdNFCw3s4XRoNiVDjgrbYV44vYpa7lHRJhyLikPNLG0rCUqWAR5jaRseY2K6NgAAAAADsBXPH2ewf9OWGdD+Mv/1OV0OryY6T3rBy8ypi0WPcSrXBvXD6/wBsuUdL8Z+3vhaFeXuEgg+RB0QR1BANc2LctZMZwn3/AHFbHr0O66aZf/NO8fUH/wB2quZNt+8jfJH+FejAj+yQdPNRLqF1FhkqhskkkltJJPn0r1rxg/8AImP9Wn9Ve1c2Vcvh9pt9hbDyEuNuJKVpUNhQPQg1HXP8eGM5K9AbdSuO4kPxwO6G1EgJPxBBG/MAGt75Zf4WOWdy4TFAke600DpTq/JI/wA/IVHW93Sbebq9cZ7niPvHrrskeSUjyAriu19RT92yEi8l79Bz6/ddx2Mp6kSPmBtHp1PLpx8FRgFSglKVKUToBI2SfgK3RwkwxNrjNX65ISZ77fMwje/AQoftEHr6dvWtPsqlQHEvLiuNl5lYR47OgpCgU86N/bo/DpW2eDeXCZGRjlwc/lDCNRFqP4RAH3vzSP0fKtV2cbTRVgFR7592+gO7xO7h1K3HaZ1VNRONP7g962pG/wABv9As/vNshXe3uwLgwl5hwdUnuD5EHyI9ajjk1ll49e37XLClKa0W3eXSXkHsofpB9CCKk1WI8UsZRkGPOOx4/iXOIhS4mjoqPmg/A6+w6NdV2gwkV8G3GP5G6c+XpzXI9ncYOHz7Dz/G7XkePry6LE+C2WKQ6nGZ7m0K2YS1H73zLf6yPtHpWDe3qN4jivp91XP3C6vvCzGru/mEObJt8mLHhKU44p5sp2dEJA9SSfzA1Zvb0adOE4w+lBLSbwpClehMd0gfbyn81bDsQaoNY2oBFiQL62t+BY9qhS+1l9MQdoXNtL3/AAq2+wQT9Fy8eXixf2XK3H7QGbP4Dwuud8ghJuK+WLB5hsB5w8oUfgkbVrz5dedaW9gmSwF5dD8QfSD9FeCPPk/jBv8APV69vJcpOD42hrn+jquyvF0Omww5y7/TXVTxCTEth2lx9FzYNmKMfD3FLvnWZwcbtayqZOcUt2S8CsNJG1OPOHufz+8pQG+u6nFw94J8PsOhNJYsce5zxpTs64IDzq1gdwFbCB8EgD7etaI9g9ERWb5Qt7kMpFujiPvvylxfia+0Nb+z1qX1ZYxVyd73TTYD5qI2i11r7PuDfD7MYbqJ2PxYkxfVE6EgMPIV5HadBXyUCD5ioP8AFXB7pw+zKVjd1Id5AHYshA0mQySeVwDyOwQR5EH4E9Iaiv7ezULx8Pf5tT9S0BOh1a/iio7+CuX/AGjWOEVcgmERNwfkpkaLXW0/ZczqVnPC9ly6Ph+62t0wZjm/ec5QChav7SkKTv47+QhjxbvDt74o5Vd5Bc53Lo+g852QlpRaSPsS2ka+FSE9gdT/ANBzJBH8nD8QpO/65S4FD8wRUZ86/nhkv97zv37lbGhhbHWShvL55rBxu0KYfBjgRw/YwC1XG/WRi+XO5Q2pT70va0o50hYQ2nekgAgb1s66k1kuRcBOFt2s78FnFYdseWn+KlwgW3WleRBB6j+ydg+YrL+Gv9HOM/3RF/cprIK5+Srn7wnbOvFWhosuYs9ubjuRSWmn1szrTOWlt5I0pLrLhCVj0PMgGumFndcftEN91XM44whazrWyUgk1zc4kHefZSf8Atib+/XXR/H/xDb/qrX7Ira42bsiJ1z8lhHvVdSlK59WpSlKIqO+fiWd9Wc/ZNcw66eXz8Szvqzn7JrmHXR4DpJ4eaqkW2vZD/p5tH1WV+7NTuqCPsh/082j6rK/dmp3V5Mb/AMgdPVTHoleM4FUJ9I1stqHX5V7V8Po8Rhxsa95JT1Gx1FacKxct5hCmXlDsUqP6K6Z4R0wuxj/s6P8Au01ztvGD5hEyd/E3cduKrx4xjtspZUoOqJ0lSV65Sg7B5t6APXWjXRvG4jsDHrbBf14saI00vR2OZKAD+kV0WOPa5kdjx8lVHvX7kTD0rH7jGjo53nojrbad62ooIA/PXLx1l025cZTam3vCLZQ4OUpVrRBHkQe9dUahl7TfBW7Y/kE7L8XgPTrDOcVIlMR2+ZyC6o7WeUdS2oknYB5STvpo1TglSyN7mONr2t4JIL5qV2AZLZcsxK33qxzG5MR5lPZQKm1AaUhQ8lJIIIPmKv4I8iK5cRp64ZX9EnuxisgueC+W+YjtvRG9fGqqLkV5YlMvQ8hurcltwKYUzNcKwvfTlAJ2d66aO+2jVz8BJJ2X5dE7zkunta39pqO9I4F5OllBWpEZLqgPyUOJUo/YATWWYA5fHcHsbmTJSm9KgMmcE6/Dcg5t66A77gdN71V1uMONcbfIt81lL0WS0pl5tXZaFAhQPzBNaJju6lDtbH6KzULnVwivcPHeKWMX+5qLUKDPC5CwN8iFIU2VfIc+z8BXRiLIYlR25MV9t9h1IU242sKStJ7EEdCKgPxp4T5Fw4u7zimJE2wqWPoVybTsBGuiXdfeLHbr0V3B7gYFEvNyixksw7vPjsJ2QhiYtCR69EqArpqqiZiAbLG5UtdsZFdJcv8A5p3j6g/+7VXMm2/eRfkn/Csoxm9ZtOuibTYLxfpU64IXGEdmWtxTyFD3k6JPTW9nyHXYqyRrfOORNWJMKR91DLTFEPwyHvFKtchQeoPz+dW0FH7IHNLr3sfqoc7asum8H/kTH+rT+qvG9XOHZ7Y9cZ7oajsp2o+ZPkAPMk9BX34rUK2B6W4llthoFxSj0SAOtaH4j5e9k1y8NgqbtsdR8BGz/GH/AJxQ6dSOwPb7TXzfGcWjw6G+rzoPPoPsuiwTB5MSmtowanyHM/dW3Mcim5Ld1TpW22k+7HYB2GkenxJ8z/hqsk4VYU5eZbd6uTZTbWF7aQe8hYP7AI6+pGvWrbw5xB3KLkVv7btkcj6QvqC4fyEn1PmfIfMVv2KwzFjNxo7SGmWkhCEJGgkDsBXM4DhD62U11XmCbi+88eg3cegz6ntBjEdDF7BR5ECxtuHDqd/qsK4tYiq/21Fwt6B90YaSQkJ2Xm9ElsfHfUfHY860hGfkRJaJEd1bEhle0LT0UhQNSorTvGHD/ob68itjGozp3MbQkANrJ/Cd+yieuh0PXzNevtPg7nj2yD3h73Mceo+nReLstjIYfYpz+0+7fjw8fr1WwMBydjJ7MJA0iYzpEpof1Va7j+ydHX2+lZFUasQv8vG703cY3MtA915kHQdR5j5+YPrUi7RcIl1trFwguh2O+nmQofpB9CD0IrZ9n8YGIQ7Dz/I3XmOPrz8Fq+0WDHD5tuMfxu05Hh6cuhVVWofa8xuRkXBec9FBU9Zn0XQJA3tDaVJc/M2tZ+ytvV8vNtvMrZeQlxtxJStChsKB6EEeldLBKYZGyDcVzhFxZc+vZ8z1vh3xKi3ecXDapLSodwCBzFLaiCHAB3KVJSfP3SrQ2RUs/aGxv/STwUknGn2576A1crcphQWmSEe9ypI786CoDXmRUc/aI4IXDBbm5e8ahyJuLyF7CGUFa7eon8GoDZLf5KvLsfInafsNDKkYxfGrm3Mbx5LjJtSZCCkBw+J4/h768n4M+myddeat/W929ra2J2Yt4/fyVTbj9pUbOE2cz8AzOFk9sbTJShJbkRyrQfYVrmTvyPQEHyIHlsVPjAM/xTObOi5Y/dmXgQnxY61BD7Cj/VcRvaT+g+RIrSftAezo5e7hKynAQy1PkL8SXa3FBtp5Z7raV2Qo9yk+6Ts7BJ3GK+4rk9gnli8Y5drfKZ83Iixy780rAIPzB8qskipsTaHtdZ35u80BLMl0QzXNsVw21OXLIr1FhMo2EoK+ZxxQG+VCB7yldOwFQN42cQpXEjOX78+0qNBZR9Ht8dR6tMAk7V1I51HqrXTsOvLs43asev8AfLmG7XYbrcZzyiCWoji1rPc8ytfpJqR/Av2bJTc9m/8AElhgNtFLkezpWHOZXcF8jpoH+oCQfMkdKRQU2GgyPdd35oPNCXPyWxPZDwyZifC36Xc2HI869yTOWy4NKbb5QhsEeRKEhWvLmqFmdfzwyX+95379yum9czuI8WVC4gZNbpUdxqb91peo5G3CVurUgADqeYKSRruCKwweYzTyPdqbFJBYBdEeGv8ARzjP90Rf3KayCrNgkV+BhFhgymy3Ij22O06g/wBVSWkgj84q81zj/eKtGi5o8R/5+5R/fE39+uukGP8A4ht/1Vr9kVzl4oR34/E/J7c8w43MVeZSUsEbWSt5RQAB1PMFJI132Nd66OWJC27JAbcSULTGbCkkaIISNgit7jX+nF4+Srj3qspSlaBWpSlKIqO+fiWd9Wc/ZNcw66eXz8STvqzn7JrmHXR4DpJ4eaqkW2vZD/p5tH1WV+7NTuqCPsh/082j6rK/dmp3V5Mb/wAgdPVTHolKUrTqxKUpREpSlEVrexzHn3VOvWG1uOKO1KXEbJJ9SSK+msfsLTzb7VktjbragpC0xUBSSOxB10NXKlZbR4olKUrFF+KSlSSlQCkkaII6EValYzjajtWP2kn4w2/8qu1KkEjRFQwLNaLe940C1QYjpTy87MdCFa9Ngdq+1QLa3MVclQoiZQG1SS0kLA1rqrW+36Kq61xx1u8uHZ4lsjLU2iaV+Ood1ISB7m/QlQ38via8eIVoo6d87s7Be3DqJ1dUsgabbX/pWI8Us0VkEs223LULUyrqrt46wfvj/ZHkPt9KseGYzPyi6CLF5mo6CDJk8u0tJ/xUdaA+09BVLjdln3+7N263tlS1+8tzXutI31Wr4D9NSLxy0RLFZ2LZCTptpPVXmtR7qPxJrg8Lw+bG6o1dV7g+fIchv9V32K4jDgVK2kpff+n/AGPM7vTJelmtkKz21m3W5gMRmhpKQd9zskk9SSeu6rKUr6M1oaA1osAvmznFxLnG5KV5TY0ebEeiSmkPMPIKHG1DYUkjRBr1pUkXyKgEg3CjdnVgXjORu23nK46x4sZZ7qbJ7H4g9D9h86vnCfLTYroLbNc/4OmLA2pXRhzyV8j2P2HyNbO4i4oxlNmDWgmdGJciO/kqI0R8j/lUe3mnGXnY77a23W1lDjaxpSSPIivm2K0cuC1ramn90nLzaeR/NF9NwmtixyhdS1GbwM/Jw5+fVSrpWv8AgrkMi62V62TCVu2/lShw91NnfKD8Roj5arYFd/RVbKyBs7ND+EeBXzyvo30VQ6B+rfwHxCUpSvUvIlKUoiUpSiJVC9Z7Q9c0XN61wnJzeuSSphJdTrtpWt1XUqQbIlKUqEVE7aLU9ckXJ22QnJyPvJKmEl1PyVrdVtKVNyUSlKVCJSlKIvl5tDrS2nEhSFpKVJI2CD3Fcw7xDftt5uFtlNqbfhy3o7iFDRCkLUk9Psrp9UNPbJ4ePWLMBm9vYJtV5UEyuRPRiUB3PoHAAf8AvBXqK3eCTtZKYz/byVcgyutb8DsqiYXxUseQXFRRBaeUzKcH/wANpxJQVn4J2FH4JOutdD4shiVGbkxXm32HUhbbjagpK0nqCCO4rl3WT4vxDzzF4At+O5ddbdDH3sdDiXGkf9xLgUEf+ECtniOGmqIe02I4rBr9ldIaVz0PGji0f/mBdf8AdR//AG6/P9M3Fn/7gXf/AHbH/t1rf0Gb/cPn6LPvAuhlK56jjTxa2Cc/up15eDH/APbqTPsq8W7pxBg3Cx5Iltd5taEOCU2gITJZVtIKk+TgUDzaAB5kkAdRXnqcJmp4zISCBwUh4Jst40rHOJeTKw/C5uRIhiYYqmh4Jc5OYKcSg9dHsFb7eVX2dLiwYb0ybJZixmUFbrzywhDaR3KlHoB8TWt2TYHis17Uq0YtlGOZVCcm41fLfd47S/DcchyEupQrvo8p6GvLJMwxTGpcSJkOR2q1SJh1GblykNKd6gdAojY2QN1Pdu2tm2aXV8pX4FpKOcKBQRvm30161ZMczDFMjmy4VgyO1XSTDOpDUSUh1TXUjqEntsEbqA0kEgaIr5SrPlOU41isVmVkt+ttnZeX4bS5slLQWrvocxG6ucSRHlxWpUR9qRHeQFtOtLCkLSRsEEdCD6ioLSBe2SL1q2ZFYbVf4iY10iJfSgktq3pTZI1tJHUV72Wcm52xmchLaUu7ICHkujoSPvkkpPbyNUMrLcXi5G1jcnIbW1eXteHBXKQHlbBIHLveyASB3OjrtWL4RKCxzbjeNVkyR0bg9hsRvC+8Zxu0Y5HW1a43IXFbccWeZa/gVHyHp2q71S3e42+0WyRc7rNjwoUZBcfkPuBDbaR5lR6Cv21XCDdrbHuVslszIUlsOsPsrCkOII2FAjuDURwtiYGsbZo4aKZJXyvL3m5O86qppVlseW4vfblMtllyK1XGbCOpMeNKQ440d695IOx1BFVGSX+yY3bfulf7tCtcPnDfjSnktpKj2SCe5PpVmw6+zbNYXVypXlDkMTIjMuK82/HfbS404hW0rSobCgfMEHdep6DdYola94j8PPu9PN1tLjEac6kIe8TYQvXZZ13IHSvvh9lGcZU/EvLmOWSBi0wuqZdXcXFTvDHMG1FoNcm1EJOufolXqNVluR3+x43bjccgu8G1QwoJL8t9LSNnsNqI6/CsKuhZO0wTN2gd2v03q+lq5aWQSwusQrdgOKsYraVRg/8ASZLygt97l5Qo61pI66A+Z7msjryhSo02I1MhyGpMZ5AW060sLQtJ6ggjoQfUVaf4XYt/CYYx/CK1fdsp5hA+lI8f1+83veuuu+utRT0zYYxFE2wbu4LGeokqJDLKbuOpV7pVJebnbrNbXrndp0eDCYG3X33AhCBvQ2T8SB9tLPc7febYxc7VMYmwnxzNPsrCkLG9dCPiCKt2Ta+5VKrpVI3dLY4mOpFxiKTJdUzHIeSQ64nm5kJ6+8oci9gdRyn0NWfMspRjt1xmAqGqQb7dRbwoLCQz/Euuc59fwetfGpaxzjYBLrI6VjfErKmsMxR3IZDTa47EmO2+XF8iW2nHkNrcJ/spUVfZV+hSo06GxNhvtyIz7aXWXW1cyVoUNpUCO4IINNg7O1uS69qVZbdlmL3K+ybDb8itUu6xfw8NmWhbzfzSDvp5+lVl+vFqsFpfu17uMW3QGAC7IkuhttGzobJ9SQB6k02HA2tmirqVTW2fCuVtYuUCU1JhyGw6y82raFoI2FA+mqt2P5bi+QTZUKxZDa7nJiHUhqLKQ4tvrrZAPbexvtsEdwabLs8tEV6pVnybKMcxlEdeQ3u32sSV+Gx9KfS34igNkDffQ6n0q7trQ42lxtQUhQBSoHYIPnUFpAuQi/aUpUIlKUoiVQZFZbXkNkl2W8w2pkCW2W3mXBsKB/UR3BHUHqKr6VIJBuEUKOK3s4Zdjc9yViTLuR2ZaipCUECXHHflUnoFgflJ6nzT5nTkuy3uGvkmWK7xlb1p6C6g79Oqe9dOqVuocclY2z23+SrMYXL4wpwGzb5oHqY6/wDKvNLL6iEpjvknoAGlbP6K6i1+cqenujp26Vd+vf8Az+f2Ud3zXL5cSYgbXCloH9phY/wqTPsMYjMRcb3m0tqSwyWPubEC2yhLu1IccWN/faKGwCOn3w6+UqaV56rGHTxGMNtfn9lIZY3WFccLNdL/AMMbrabNFMuc+WfCaCgnm08hR6noOgJry482G4ZNwuuNktkIzZEmTC5o4WE+I0mWyp0EnprkSvY8xsedZ1StWyZzC0jcb/T0WZCwLGsaftnGnJ73HtbUS1zrNb2kOtJShLzza5HNsDqSlKmxs+RA+WuuOcabjeRZzlVzxWRkNku2JphNymktK+5qm/FC0rCyCEK8VK9pB6g9OlSCqgv9ltV/tptt5gszoZcbdUy6NpKkKC0kjz0pIOu3SrYqktkDnC4sAegt6KCMljONW+bO4FWy1MktTpGMtR0FzaShxUUJG/MaJrA/Zv4fTLP9z71kjORxr3Z7QmztR57cVEZtskKX4JY95xPMgaU4SrWt7reI6DQpWIqXBrmj+ymywTIMck3LjRjt7kWxuVaoVknsqec5VJafcdj8o5T12UJX1HkD9tVwVslwxzhnabJc4oiSYvjJ8ALCg2gvOFCQR00EFOh5dqzGlYOmc5gZu/8AfVLLEOEltu1kxRdjvEJMd2BNfaZdQ6FoksqWXEOp80gheik9ikjqNE65gcO7lcOKuRMZA3kTNnlZAxfojkQRfoLxZba8MOLIL6VhbZBSnSdAdtne9aVm2oc0ucN6WWGcYrJcMgxaFbrfCRN1fLY/JaWUgFhqY046SFdCAlJJHmAe/arxnVomXrB71ZLVMNvmTYD0aM+glPgrUgpSoFPUaJHar3SqxIQABuN/z4JZaIxPHr7ccmwJpnhonDUYsVquE9TrADqSwtr6Ox4Wy4hayFqKuUDlB71lntCWGVd8Zt8yz2e8XG/2ycJFpXbVsBUd/kUErdDx5FNb0FDROj013rZdKtNU4yNfbTr681GzkrdjAuqcbtib6mOm7CG0Jwj/AIIP8g8Tk/s829fCrieoIpSvOTc3WS1twfm3+z2i2YVesOu8V6AlyOq5JU0uE4lBUUOBXic/vjXTl2CdH1r54k2u5xuItiy9vFHMrt8SC/DXFZWjxobji0EPNtuEJXzBJQeoIAGuhNbLpV3f/vLwNeu9RbJYPwXsFwsOMzPp9ubswuFxfnR7O0tKm7a04RpoFPu7JBWoJ90KWoDp1OFQ8BvIxNxL1iaN2HEX7tNOEtlxMf7ppWp4L3vrH5vPmKTy68q3bSpFS8OLuJv8EssN4yWhq84O6wu13m5PMSmJMZu0uNIktvNuJUhxHikIPKRzaVsHXY1ceGwyUYNahmCI6L74J+lpYCQkHmPL977vNy8vNrpzb10rIaVX3h7vYtvuls7rR2KWTK2rvieLysPlRo2OZDPuLt2U819FcYcErwy2ArnK1fSUggpGiFegrO+K1iuV0Vi91tMQTJNivzE9UfxAguNFC2nNE9OZKXSsDzKdedZtSrHVDnPDrfh1+qWWH8ZLVc7zw/mRbRCE+a29HktxSsJ8fwn0OFAKugJCCBvpV4bVMvuHK1Gl2KZOhKSlp7l8aItSSBvkJG0k76Hyq8UqrbOyG8DdLLQmKYre3EYLjzXDZvG5OMy0vTrz4rJaIQkhfgKSS46Xyok8wT3PMd1s7ifYpGQQrHFZgtzWmL7DlSW3OXl8JtfMpRCuh10Oqy2lWvqHPeHcOqWVFeoq5NinQ4yUpcdjONtjsNlJA+XU1p72dcCmWtNrvOSR8jjXqyWZFlajz0RUR0IJSpZZLA24nmQNFwlWu+yd1u6lYsncxjmDels7rVXHSy5BJu1hveF2i5ScnjJejxZTa2PoLTbhbK0S0unmLauUEFscwKehHntGN430dv6T4fjcg8Tw98vNrrrfXW69KVi6UuY1pGiWSlKVWpSlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlESlKURKUpREpSlEX//Z" style="height:30px;object-fit:contain" alt="Creaxxion Ingenieros Consultores"></div><div class="top-btns">
+    <button class="tbtn tbtn-green" onclick="sincronizar()">🔄 Sincronizar Registros</button>
+    <button class="tbtn tbtn-blue" onclick="abrirPDF()">📄 Ver Ficha PDF</button>
+    <button class="tbtn tbtn-outline" onclick="limpiarFicha()">🧹 Limpiar</button>
+  </div></div>
+</div>
+
+<!-- BANNER ESTADO FUENTES -->
+<div class="card">
+  <div class="card-hdr" style="background:#1A3A5C">Estado de Fuentes de Datos — Última Sincronización</div>
+  <div class="status-bar" id="statusBar">
+    <span style="font-size:11px;color:#aaa">Presiona "Sincronizar Registros" para cargar los datos de los registros ITE</span>
+  </div>
+</div>
+
+<!-- IDENTIFICACION -->
+<div class="card">
+  <div class="card-hdr" style="background:#0F6E56">Identificación del Registro</div>
+  <div class="g4">
+    <div class="fi auto"><label>Fecha</label>
+      <div style="display:flex;align-items:center;gap:6px">
+        <input type="text" id="fm_fecha" readonly style="flex:1">
+        <input type="date" id="fm_fecha_picker" style="border:1.5px solid #1D9E75;border-radius:6px;padding:3px 6px;font-size:11px;color:#0F6E56;background:white;outline:none;cursor:pointer" onchange="cambiarFechaFicha(this.value)" title="Seleccionar fecha específica">
+      </div>
+    </div>
+    <div class="fi auto"><label>Semana</label><input type="text" id="fm_semana" readonly></div>
+    <div class="fi auto"><label>Establecimiento</label><input type="text" id="fm_estab" readonly></div>
+    <div class="fi auto"><label>Supervisor ITE</label><input type="text" id="fm_supervisor" readonly></div>
+  </div>
+</div>
+
+<!-- SERVICIOS - FICHA MADRE PRINCIPAL -->
+<div class="card">
+  <div class="card-hdr" style="background:#7B3F00">Servicios del Día — Entrega de Alimentos (Ficha Modificada VV)</div>
+  <div class="srv-grid">
+    <!-- SERVICIO 1: GENCHI / DESAYUNO -->
+    <div class="srv-col">
+<div style="background:#1A3A5C;padding:6px 10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.7);margin-bottom:4px;font-weight:bold;text-transform:uppercase;letter-spacing:.05em">Servicio 1</div><select id="s1_tipo" style="width:100%;background:white;color:#1A3A5C;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:bold;font-family:Arial,sans-serif;outline:none;cursor:pointer">
+      <option value="">— Seleccionar servicio —</option>
+      <option value="Desayuno GENCHI">Desayuno GENCHI</option>
+      <option value="Desayuno Internos">Desayuno Internos</option>
+      <option value="Almuerzo Internos">Almuerzo Internos</option>
+      <option value="Almuerzo GENCHI">Almuerzo GENCHI</option>
+      <option value="Cena Internos">Cena Internos</option>
+      <option value="Cena GENCHI">Cena GENCHI</option>
+      <option value="Retermalizado">Retermalizado</option>
+      <option value="Central de Alimentación (CAL)">Central de Alimentación (CAL)</option>
+    </select></div>
+      <div class="srv-body" id="srv1_body">
+        <div class="srv-row"><span class="srv-lbl section">Información General</span></div>
+        <div class="srv-row"><span class="srv-lbl">Repostería</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s1_rep" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl">N° Comensales</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s1_com" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl">N° Ración Común</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s1_rc" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl">N° Ración Especial</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s1_re" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl section">Entrega</span></div>
+        <div class="srv-row"><span class="srv-lbl">Horario establecido</span><div class="cnc" id="s1_he"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Horario fiscalizado</span><div class="cnc" id="s1_hf"></div></div>
+        <div class="srv-row"><span class="srv-lbl section">Minuta / Gramajes</span></div>
+        <div class="srv-row"><span class="srv-lbl">Minuta Programada</span><div class="cnc" id="s1_mp"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Gramajes</span><div class="cnc" id="s1_gr"></div></div>
+    <div class="srv-row" style="grid-column:1/-1"><span class="srv-lbl" style="font-size:9px;color:#aaa">Detalle Minuta</span><input type="text" id="s1_minuta" placeholder="—" style="width:100%;border:none;font-size:11px;color:#555;outline:none;background:transparent"></div>
+        <div class="srv-row"><span class="srv-lbl section">Manipulador</span></div>
+        <div class="srv-row"><span class="srv-lbl">Uniforme</span><div class="cnc" id="s1_uni"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Guantes</span><div class="cnc" id="s1_gua"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Manos / Uñas</span><div class="cnc" id="s1_man"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Cofia</span><div class="cnc" id="s1_cof"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Maquillaje discreto</span><div class="cnc" id="s1_maq"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Mascarilla</span><div class="cnc" id="s1_mas"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Higiene personal</span><div class="cnc" id="s1_hig"></div></div>
+        <div class="srv-row"><span class="srv-lbl">BPM</span><div class="cnc" id="s1_bpm"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Pechera</span><div class="cnc" id="s1_pec"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Zapatos seguridad</span><div class="cnc" id="s1_zap"></div></div>
+        <div class="srv-row"><span class="srv-lbl section">Higiene Instalaciones</span></div>
+        <div class="srv-row"><span class="srv-lbl">Pisos</span><div class="cnc" id="s1_pis"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Toalla papel</span><div class="cnc" id="s1_toa"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Paredes</span><div class="cnc" id="s1_par"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Mesones</span><div class="cnc" id="s1_mes"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Baño María</span><div class="cnc" id="s1_bm"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Carro Bandeja</span><div class="cnc" id="s1_cb"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Hervidor</span><div class="cnc" id="s1_her"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Ventilador</span><div class="cnc" id="s1_ven"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Ausencia vectores</span><div class="cnc" id="s1_av"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Mallas mosqueteras</span><div class="cnc" id="s1_mm"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Jabón desinfectante</span><div class="cnc" id="s1_jab"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Desagüe</span><div class="cnc" id="s1_des"></div></div>
+        <div class="srv-row"><span class="srv-lbl section">Temperatura del Alimento</span></div>
+        <div class="srv-row"><span class="srv-lbl">Temp. Alimento OK</span><div class="cnc" id="s1_temp"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Varios</span><div class="cnc" id="s1_var"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Stock C&amp;C</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s1_stk" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl">N° Jarros</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s1_jar" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl">N° Bandejas</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s1_ban" placeholder="—"></div>
+      </div>
+      <div class="obs-area"><label>Observaciones Servicio 1</label><textarea id="s1_obs" placeholder="Observaciones..."></textarea></div>
+    </div>
+    <!-- SERVICIO 2: CASINO / ALMUERZO -->
+    <div class="srv-col">
+<div style="background:#1A3A5C;padding:6px 10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.7);margin-bottom:4px;font-weight:bold;text-transform:uppercase;letter-spacing:.05em">Servicio 2</div><select id="s2_tipo" style="width:100%;background:white;color:#1A3A5C;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:bold;font-family:Arial,sans-serif;outline:none;cursor:pointer">
+      <option value="">— Seleccionar servicio —</option>
+      <option value="Desayuno GENCHI">Desayuno GENCHI</option>
+      <option value="Desayuno Internos">Desayuno Internos</option>
+      <option value="Almuerzo Internos">Almuerzo Internos</option>
+      <option value="Almuerzo GENCHI">Almuerzo GENCHI</option>
+      <option value="Cena Internos">Cena Internos</option>
+      <option value="Cena GENCHI">Cena GENCHI</option>
+      <option value="Retermalizado">Retermalizado</option>
+      <option value="Central de Alimentación (CAL)">Central de Alimentación (CAL)</option>
+    </select></div>
+      <div class="srv-body">
+        <div class="srv-row"><span class="srv-lbl section">Información General</span></div>
+        <div class="srv-row"><span class="srv-lbl">Repostería</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s2_rep" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl">N° Comensales</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s2_com" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl">N° Ración Común</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s2_rc" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl">N° Ración Especial</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s2_re" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl section">Entrega</span></div>
+        <div class="srv-row"><span class="srv-lbl">Horario establecido</span><div class="cnc" id="s2_he"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Horario fiscalizado</span><div class="cnc" id="s2_hf"></div></div>
+        <div class="srv-row"><span class="srv-lbl section">Minuta / Gramajes</span></div>
+        <div class="srv-row"><span class="srv-lbl">Minuta Programada</span><div class="cnc" id="s2_mp"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Gramajes</span><div class="cnc" id="s2_gr"></div></div>
+    <div class="srv-row" style="grid-column:1/-1"><span class="srv-lbl" style="font-size:9px;color:#aaa">Detalle Minuta</span><input type="text" id="s2_minuta" placeholder="—" style="width:100%;border:none;font-size:11px;color:#555;outline:none;background:transparent"></div>
+        <div class="srv-row"><span class="srv-lbl section">Manipulador</span></div>
+        <div class="srv-row"><span class="srv-lbl">Uniforme</span><div class="cnc" id="s2_uni"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Guantes</span><div class="cnc" id="s2_gua"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Manos / Uñas</span><div class="cnc" id="s2_man"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Cofia</span><div class="cnc" id="s2_cof"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Maquillaje discreto</span><div class="cnc" id="s2_maq"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Mascarilla</span><div class="cnc" id="s2_mas"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Higiene personal</span><div class="cnc" id="s2_hig"></div></div>
+        <div class="srv-row"><span class="srv-lbl">BPM</span><div class="cnc" id="s2_bpm"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Pechera</span><div class="cnc" id="s2_pec"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Zapatos seguridad</span><div class="cnc" id="s2_zap"></div></div>
+        <div class="srv-row"><span class="srv-lbl section">Higiene Instalaciones</span></div>
+        <div class="srv-row"><span class="srv-lbl">Pisos</span><div class="cnc" id="s2_pis"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Toalla papel</span><div class="cnc" id="s2_toa"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Paredes</span><div class="cnc" id="s2_par"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Mesones</span><div class="cnc" id="s2_mes"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Baño María</span><div class="cnc" id="s2_bm"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Carro Bandeja</span><div class="cnc" id="s2_cb"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Hervidor</span><div class="cnc" id="s2_her"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Ventilador</span><div class="cnc" id="s2_ven"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Ausencia vectores</span><div class="cnc" id="s2_av"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Mallas mosqueteras</span><div class="cnc" id="s2_mm"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Jabón desinfectante</span><div class="cnc" id="s2_jab"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Desagüe</span><div class="cnc" id="s2_des"></div></div>
+        <div class="srv-row"><span class="srv-lbl section">Temperatura del Alimento</span></div>
+        <div class="srv-row"><span class="srv-lbl">Temp. Alimento OK</span><div class="cnc" id="s2_temp"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Varios</span><div class="cnc" id="s2_var"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Stock C&amp;C</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s2_stk" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl">N° Jarros</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s2_jar" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl">N° Bandejas</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s2_ban" placeholder="—"></div>
+      </div>
+      <div class="obs-area"><label>Observaciones Servicio 2</label><textarea id="s2_obs" placeholder="Observaciones..."></textarea></div>
+    </div>
+    <!-- SERVICIO 3: CASINO / CENA -->
+    <div class="srv-col">
+<div style="background:#1A3A5C;padding:6px 10px;text-align:center"><div style="font-size:9px;color:rgba(255,255,255,.7);margin-bottom:4px;font-weight:bold;text-transform:uppercase;letter-spacing:.05em">Servicio 3</div><select id="s3_tipo" style="width:100%;background:white;color:#1A3A5C;border:none;border-radius:6px;padding:5px 8px;font-size:11px;font-weight:bold;font-family:Arial,sans-serif;outline:none;cursor:pointer">
+      <option value="">— Seleccionar servicio —</option>
+      <option value="Desayuno GENCHI">Desayuno GENCHI</option>
+      <option value="Desayuno Internos">Desayuno Internos</option>
+      <option value="Almuerzo Internos">Almuerzo Internos</option>
+      <option value="Almuerzo GENCHI">Almuerzo GENCHI</option>
+      <option value="Cena Internos">Cena Internos</option>
+      <option value="Cena GENCHI">Cena GENCHI</option>
+      <option value="Retermalizado">Retermalizado</option>
+      <option value="Central de Alimentación (CAL)">Central de Alimentación (CAL)</option>
+    </select></div>
+      <div class="srv-body">
+        <div class="srv-row"><span class="srv-lbl section">Información General</span></div>
+        <div class="srv-row"><span class="srv-lbl">Repostería</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s3_rep" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl">N° Comensales</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s3_com" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl">N° Ración Común</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s3_rc" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl">N° Ración Especial</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s3_re" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl section">Entrega</span></div>
+        <div class="srv-row"><span class="srv-lbl">Horario establecido</span><div class="cnc" id="s3_he"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Horario fiscalizado</span><div class="cnc" id="s3_hf"></div></div>
+        <div class="srv-row"><span class="srv-lbl section">Minuta / Gramajes</span></div>
+        <div class="srv-row"><span class="srv-lbl">Minuta Programada</span><div class="cnc" id="s3_mp"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Gramajes</span><div class="cnc" id="s3_gr"></div></div>
+    <div class="srv-row" style="grid-column:1/-1"><span class="srv-lbl" style="font-size:9px;color:#aaa">Detalle Minuta</span><input type="text" id="s3_minuta" placeholder="—" style="width:100%;border:none;font-size:11px;color:#555;outline:none;background:transparent"></div>
+        <div class="srv-row"><span class="srv-lbl section">Manipulador</span></div>
+        <div class="srv-row"><span class="srv-lbl">Uniforme</span><div class="cnc" id="s3_uni"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Guantes</span><div class="cnc" id="s3_gua"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Manos / Uñas</span><div class="cnc" id="s3_man"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Cofia</span><div class="cnc" id="s3_cof"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Maquillaje discreto</span><div class="cnc" id="s3_maq"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Mascarilla</span><div class="cnc" id="s3_mas"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Higiene personal</span><div class="cnc" id="s3_hig"></div></div>
+        <div class="srv-row"><span class="srv-lbl">BPM</span><div class="cnc" id="s3_bpm"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Pechera</span><div class="cnc" id="s3_pec"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Zapatos seguridad</span><div class="cnc" id="s3_zap"></div></div>
+        <div class="srv-row"><span class="srv-lbl section">Higiene Instalaciones</span></div>
+        <div class="srv-row"><span class="srv-lbl">Pisos</span><div class="cnc" id="s3_pis"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Toalla papel</span><div class="cnc" id="s3_toa"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Paredes</span><div class="cnc" id="s3_par"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Mesones</span><div class="cnc" id="s3_mes"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Baño María</span><div class="cnc" id="s3_bm"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Carro Bandeja</span><div class="cnc" id="s3_cb"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Hervidor</span><div class="cnc" id="s3_her"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Ventilador</span><div class="cnc" id="s3_ven"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Ausencia vectores</span><div class="cnc" id="s3_av"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Mallas mosqueteras</span><div class="cnc" id="s3_mm"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Jabón desinfectante</span><div class="cnc" id="s3_jab"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Desagüe</span><div class="cnc" id="s3_des"></div></div>
+        <div class="srv-row"><span class="srv-lbl section">Temperatura del Alimento</span></div>
+        <div class="srv-row"><span class="srv-lbl">Temp. Alimento OK</span><div class="cnc" id="s3_temp"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Varios</span><div class="cnc" id="s3_var"></div></div>
+        <div class="srv-row"><span class="srv-lbl">Stock C&amp;C</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s3_stk" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl">N° Jarros</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s3_jar" placeholder="—"></div>
+        <div class="srv-row"><span class="srv-lbl">N° Bandejas</span><input style="width:70px;border:1px solid #ddd;border-radius:5px;padding:3px 6px;font-size:11px;text-align:center" id="s3_ban" placeholder="—"></div>
+      </div>
+      <div class="obs-area"><label>Observaciones Servicio 3</label><textarea id="s3_obs" placeholder="Observaciones..."></textarea></div>
+    </div>
+  </div>
+</div>
+
+<!-- TEMPERATURAS AUTO -->
+<div class="card">
+  <div class="card-hdr" style="background:#1C7C3E">Control de Temperatura Equipos de Frío <span style="font-size:9px;opacity:.7;font-weight:normal">(desde Registro Control Temperatura)</span></div>
+  <div id="tempGrid" class="temp-grid">
+    <div style="padding:16px;text-align:center;color:#aaa;font-size:12px;grid-column:1/-1">Sin datos de temperatura. Sincroniza para cargar.</div>
+  </div>
+</div>
+
+<!-- HACCP AUTO -->
+<div class="card">
+  <div class="card-hdr" style="background:#6A1A2E">HACCP — Puntos Críticos de Control <span style="font-size:9px;opacity:.7;font-weight:normal">(desde Registro HACCP PCC)</span></div>
+  <div id="haccpGrid" class="pcc-grid">
+    <div style="padding:16px;text-align:center;color:#aaa;font-size:12px;grid-column:1/-1">Sin datos HACCP. Sincroniza para cargar.</div>
+  </div>
+</div>
+
+
+
+<!-- RESUMEN GLOBAL -->
+<div class="card">
+  <div class="card-hdr" style="background:#1A3A5C">Resumen Global del Día</div>
+  <div class="kpi-grid">
+    <div class="kpi"><div class="kpi-val" id="kpi_temp">—</div><div class="kpi-lbl">Equipos Frío OK</div></div>
+    <div class="kpi"><div class="kpi-val" id="kpi_haccp">—</div><div class="kpi-lbl">PCC Conformes</div></div>
+    <div class="kpi"><div class="kpi-val" id="kpi_bpm">—</div><div class="kpi-lbl">BPM % Cumpl.</div></div>
+    <div class="kpi"><div class="kpi-val" id="kpi_chk">—</div><div class="kpi-lbl">Checklist Higiene</div></div>
+    <div class="kpi"><div class="kpi-val" id="kpi_global">—</div><div class="kpi-lbl">Resultado Global</div></div>
+  </div>
+</div>
+
+<!-- VALIDACIONES REGISTROS -->
+<div class="card">
+  <div class="card-hdr" style="background:#1A3A5C">Estado de Validación de Registros</div>
+  <div class="val-grid">
+    <div class="val-box">
+      <div class="val-icon">🌡️</div>
+      <div class="val-name">Control Temperatura</div>
+      <div class="val-sub" id="val_temp_fisc">—</div>
+      <div class="val-badge pend" id="val_temp_badge">Sin datos</div>
+    </div>
+    <div class="val-box">
+      <div class="val-icon">🦠</div>
+      <div class="val-name">HACCP PCC</div>
+      <div class="val-sub" id="val_haccp_fisc">—</div>
+      <div class="val-badge pend" id="val_haccp_badge">Sin datos</div>
+    </div>
+    <div class="val-box">
+      <div class="val-icon">📋</div>
+      <div class="val-name">Módulos BPM</div>
+      <div class="val-sub" id="val_bpm_fisc">—</div>
+      <div class="val-badge pend" id="val_bpm_badge">Sin datos</div>
+    </div>
+  </div>
+  <div class="val-grid" style="border-top:1px solid #f2f2f2">
+    <div class="val-box">
+      <div class="val-icon">🏥</div>
+      <div class="val-name">Checklist Higiene Casino</div>
+      <div class="val-sub" id="val_chk_fisc">—</div>
+      <div class="val-badge pend" id="val_chk_badge">Sin datos</div>
+    </div>
+    <div class="val-box" style="grid-column:span 2">
+      <div class="val-name" style="font-size:13px">Nombre Supervisor</div>
+      <input type="text" id="fm_nombre" placeholder="Nombre completo del supervisor..."
+        style="width:100%;border:1px solid #ddd;border-radius:6px;padding:8px 10px;font-size:13px;color:#1a56a0;outline:none;text-align:center;margin-top:4px">
+      <div style="font-size:10px;color:#aaa;margin-top:4px">Timbre / Firma — ver sección Firma</div>
+    </div>
+  </div>
+</div>
+
+<!-- FIRMA -->
+<div class="card">
+  <div class="card-hdr" style="background:#0F6E56">Nombre, Timbre y Firma</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;padding:24px 16px 12px">
+    <div class="firma-box">Nombre</div>
+    <div class="firma-box">Timbre</div>
+    <div class="firma-box">Firma</div>
+  </div>
+  <div style="padding:8px 16px 14px;text-align:center;font-size:10px;color:#aaa">
+    Declaro que la información registrada es fiel reflejo de la fiscalización realizada. HACCP/ISO 22000/Decreto 977 RSA Chile.
+  </div>
+</div>
+
+<!-- REGISTRO FOTOGRÁFICO -->
+<div class="card">
+  <div class="card-hdr" style="background:#1A3A5C">Registro Fotográfico y Validación de Datos</div>
+  <div style="padding:10px 12px;display:grid;grid-template-columns:1fr 1fr;gap:10px">
+    <div>
+      <label style="font-size:9px;color:#aaa;font-weight:bold;text-transform:uppercase;display:block;margin-bottom:4px">Registro Fotográfico</label>
+      <div style="border:2px dashed #ddd;border-radius:8px;padding:20px;text-align:center;color:#aaa;font-size:12px">
+        📷 Adjuntar fotos del registro<br>
+        <input type="file" accept="image/*" multiple style="margin-top:8px;font-size:11px">
+      </div>
+    </div>
+    <div>
+      <label style="font-size:9px;color:#aaa;font-weight:bold;text-transform:uppercase;display:block;margin-bottom:4px">Validación de Datos — Módulos</label>
+      <div id="modValidacion" style="font-size:11px;color:#555;line-height:1.8">
+        Sincroniza para ver validación de módulos.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PDF -->
+<div id="pdfModal">
+  <div id="pdfWrap">
+    <div class="pm-bar">
+      <span>Ficha Madre — Servicio de Alimentación ITE</span>
+      <div class="pm-btns">
+        <button class="pm-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+        <button class="pm-close" onclick="cerrarPDF()">✕ Cerrar</button>
+      </div>
+    </div>
+    <div id="pdfContent"></div>
+  </div>
+</div>
 
 <script>
-// CONFIGURACIÓN SUPABASE
-var supabaseClient = {
-  url: function() { return localStorage.getItem('supabase_url') || ''; },
-  key: function() { return localStorage.getItem('supabase_key') || ''; },
-  async fetch(table) {
-    var url = this.url();
-    var key = this.key();
-    if (!url || !key) return [];
-    try {
-      var res = await fetch(url + '/rest/v1/' + table + '?select=*', {
-        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
-      });
-      return await res.json();
-    } catch(e) { console.error(e); return []; }
-  }
+// ═══════════════════════════════════════════════════════════════════════════
+// FICHA MADRE — INTEGRACIÓN AUTOMÁTICA
+// Fuentes: localStorage de cada registro ITE abierto en el mismo navegador
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Keys de localStorage de cada registro
+var KEYS = {
+  temp:  { hist: "cft_hist",    anual: "cft_anual"  },
+  chk:   { hist: "chk_hist2",   anual: null          },
+  bpm:   { hist: "bpm_hist",    anual: "bpm_anual"   },
+  haccp: { hist: "haccp_hist",  anual: "haccp_anual" }
 };
 
-// ... (Resto de la lógica original de integración) ...
+// ── Leer localStorage seguro ──────────────────────────────────────────────
+function lsGet(key){
+  try{ var v=localStorage.getItem(key); return v?JSON.parse(v):null; }catch(e){return null;}
+}
+
+// ── Formatear fecha ISO → dd/mm/aaaa ─────────────────────────────────────
+function fmtF(iso){
+  if(!iso)return"-";
+  var p=iso.split("-");
+  return p.length>2?p[2]+"/"+p[1]+"/"+p[0]:iso;
+}
+
+// ── Número de semana ──────────────────────────────────────────────────────
+function semana(iso){
+  if(!iso)return"-";
+  var d=new Date(iso);
+  d.setHours(0,0,0,0);
+  d.setDate(d.getDate()+4-(d.getDay()||7));
+  var y=new Date(d.getFullYear(),0,1);
+  return"Semana "+Math.ceil((((d-y)/86400000)+1)/7)+" — "+d.getFullYear();
+}
+
+// ── Crear botón C/NC/NA ───────────────────────────────────────────────────
+function cncBtn(containerId, value){
+  var el=document.getElementById(containerId);
+  if(!el)return;
+  el.innerHTML="";
+  ["C","NC","NA"].forEach(function(v){
+    var btn=document.createElement("button");
+    btn.className="cnc-btn"+(value===v?" "+v:"");
+    btn.textContent=v;
+    btn.onclick=function(){
+      el.querySelectorAll(".cnc-btn").forEach(function(b){b.className="cnc-btn";});
+      btn.className="cnc-btn "+v;
+    };
+    el.appendChild(btn);
+  });
+  if(value) el.setAttribute("data-val",value);
+}
+
+// ── Inicializar todos los botones C/NC en blanco ──────────────────────────
+function initCNC(){
+  var cncs=["he","hf","mp","gr","uni","gua","man","cof","maq","mas","hig","bpm","pec","zap",
+            "pis","toa","par","mes","bm","cb","her","ven","av","mm","jab","des","temp","var"];
+  ["s1","s2","s3"].forEach(function(s){
+    cncs.forEach(function(k){cncBtn(s+"_"+k, null);});
+  });
+}
+
+// ── Limpiar todos los campos de un servicio ───────────────────────────────
+function limpiarServicio(srv){
+  // Todos los campos de texto y numéricos
+  ["rep","com","rc","re","stk","jar","ban","minuta","obs"].forEach(function(f){
+    var el=document.getElementById(srv+"_"+f);
+    if(el) el.value="";
+  });
+  // Botones C/NC/NA — resetear a sin selección
+  ["he","hf","mp","gr","eo","uni","gua","man","cof","maq","mas","hig","bpm","pec","zap",
+   "pis","toa","par","mes","bm","cb","her","ven","av","mm","jab","des","temp","var"].forEach(function(f){
+    cncBtn(srv+"_"+f, null);
+  });
+  // Observaciones
+  var obs=document.getElementById(srv+"_obs");
+  if(obs) obs.value="";
+}
+
+// ═══════════════════════════════════════════════════════════════════════════
+// SINCRONIZAR — por servicio seleccionado en cada columna
+// ═══════════════════════════════════════════════════════════════════════════
+function sincronizar(){
+  var sources={temp:null, chk:null, bpm:null, haccp:null};
+
+  var histTemp  = lsGet("cft_hist");
+  var histChk   = lsGet("chk_hist2");
+  var histBPM   = lsGet("bpm_hist");
+  var histHaccp = lsGet("haccp_hist");
+
+  if(histTemp  && histTemp.length)  sources.temp  = histTemp[0];
+  if(histChk   && histChk.length)   sources.chk   = histChk[0];
+  if(histBPM   && histBPM.length)   sources.bpm   = histBPM[0];
+  if(histHaccp && histHaccp.length) sources.haccp = histHaccp[0];
+
+  actualizarBanner(sources);
+
+  // Identificación
+  var fechas=[sources.temp, sources.chk, sources.bpm, sources.haccp]
+    .filter(Boolean).map(function(r){return r.fecha||"";}).filter(Boolean).sort().reverse();
+  var fechaHoy=fechas.length?fechas[0]:"";
+  var supervisors=[sources.temp, sources.chk, sources.bpm, sources.haccp]
+    .filter(Boolean).map(function(r){return r.fisc||r.fn0||r.fn2||"";}).filter(Boolean);
+
+  document.getElementById("fm_fecha").value      = fmtF(fechaHoy);
+  document.getElementById("fm_semana").value     = semana(fechaHoy);
+  document.getElementById("fm_estab").value      = (sources.temp||sources.bpm||sources.chk||sources.haccp||{}).estab||"E.P. Santiago 1";
+  document.getElementById("fm_supervisor").value = supervisors[0]||"";
+  document.getElementById("fm_nombre").value     = supervisors[0]||"";
+
+  // Temperaturas y HACCP (independientes del servicio)
+  cargarTemperaturas(sources.temp);
+  cargarHACCP(sources.haccp);
+  cargarValidaciones(sources);
+  cargarKPI(sources);
+  cargarModValidacion(sources.bpm);
+
+  // ── Sincronizar cada servicio según su selector ───────────────────────
+  ["s1","s2","s3"].forEach(function(srv){
+    var tipoEl = document.getElementById(srv+"_tipo");
+    var tipo   = tipoEl ? tipoEl.value : "";
+
+    // Limpiar SIEMPRE los campos del servicio antes de cargar
+    limpiarServicio(srv);
+
+    if(!tipo) return; // sin selección, dejar en blanco
+
+    var esGenchi   = tipo.indexOf("GENCHI") >= 0;
+    var esInternos = tipo.indexOf("Internos") >= 0 || tipo.indexOf("Retermalizado") >= 0 || tipo.indexOf("CAL") >= 0;
+
+    var srvSlot = tipo.toLowerCase().indexOf("desayuno") >= 0 ? "s1"
+                : tipo.toLowerCase().indexOf("almuerzo") >= 0 ? "s2"
+                : tipo.toLowerCase().indexOf("cena")     >= 0 ? "s3"
+                : "s1";
+
+    if(esGenchi && sources.chk){
+      cargarServicioDesdeChk(srv, srvSlot, sources.chk);
+    } else if(esInternos && sources.bpm){
+      cargarServicioDesdeBPM(srv, srvSlot, sources.bpm);
+    }
+
+    // Agregar acciones correctivas consolidadas en Observaciones
+    if(tipo) cargarAccionesEnObs(srv, sources);
+  });
+
+  toast("✅ Registros sincronizados correctamente","#0F6E56");
+}
+
+// ── Llenar un servicio de la FM desde el Checklist (GENCHI) ──────────────
+function cargarServicioDesdeChk(srv, srvSlot, chk){
+  // Determinar slot correcto usando el nombre del servicio guardado en checklist
+  var slotFinal = srvSlot;
+  if(chk.entrega && chk.entrega.nombre){
+    var nom = chk.entrega.nombre.toLowerCase();
+    var slotGuardado = nom.indexOf("desayuno")>=0 ? "s1"
+                     : nom.indexOf("almuerzo")>=0 ? "s2"
+                     : nom.indexOf("cena")>=0     ? "s3" : "s1";
+    // Solo cargar si el servicio guardado coincide con el pedido por la FM
+    slotFinal = (slotGuardado === srvSlot) ? srvSlot : "___ninguno___";
+  }
+  var ea = chk.entrega && chk.entrega[slotFinal] ? chk.entrega[slotFinal] : null;
+
+  if(ea){
+    // sv acepta 0 y strings vacíos con valor real
+    var sv=function(id,v){
+      var e=document.getElementById(srv+"_"+id);
+      if(e && v!==undefined && v!==null && v!=="") e.value=v;
+    };
+    sv("rep",ea.rep); sv("com",ea.com); sv("rc",ea.rc); sv("re",ea.re);
+    sv("stk",ea.stk); sv("jar",ea.jar); sv("ban",ea.ban);
+    if(ea.he) cncBtn(srv+"_he",ea.he);
+    if(ea.hf) cncBtn(srv+"_hf",ea.hf);
+    if(ea.mp) cncBtn(srv+"_mp",ea.mp);
+    if(ea.gr) cncBtn(srv+"_gr",ea.gr);
+    if(ea.eo) cncBtn(srv+"_eo",ea.eo);
+    if(ea.temp) cncBtn(srv+"_temp",ea.temp);
+    if(ea.minuta){var mel=document.getElementById(srv+"_minuta");if(mel)mel.value=ea.minuta;}
+  }
+
+  // Construir mapa de ítems con NC u OBS
+  var accsMap={};
+  if(chk.accs) chk.accs.forEach(function(a){
+    accsMap[(a.item||"").toLowerCase()] = a.estado;
+  });
+
+  // Hay datos evaluados en el checklist?
+  var hayDatos = (chk.tot > 0 || chk.ok > 0 || chk.par > 0 || chk.nc > 0);
+
+  function est(keyword){
+    var kw = keyword.toLowerCase();
+    // Buscar si este ítem tiene NC u OBS
+    var keys = Object.keys(accsMap);
+    for(var i=0;i<keys.length;i++){
+      var k = keys[i];
+      if(k.indexOf(kw)>=0 || kw.indexOf(k.substring(0,8))>=0){
+        var e = accsMap[k];
+        return (e==="NC"||e==="No Cumple") ? "NC" : "NA";
+      }
+    }
+    // No está en NC/OBS → si hay datos evaluados = C, sino NA
+    return hayDatos ? "C" : "NA";
+  }
+
+  // Aplicar C/NC a todos los campos del servicio
+  CHK_MAPEO.forEach(function(m){
+    var estado = est(m.key);
+    m.campos.forEach(function(campoId){
+      if(campoId.startsWith(srv+"_")) cncBtn(campoId, estado);
+    });
+  });
+
+  // Horario fiscalizado según cumplimiento global
+  cncBtn(srv+"_hf", chk.pct>=75 ? "C" : "NC");
+}
+
+// ── Llenar un servicio de la FM desde el BPM (Internos) ──────────────────
+function cargarServicioDesdeBPM(srv, srvSlot, bpm){
+  // Usar SIEMPRE el slot calculado desde el nombre del servicio
+  var ea = bpm.entrega && bpm.entrega[srvSlot] ? bpm.entrega[srvSlot] : null;
+
+  if(ea){
+    var sv=function(id,v){
+      var e=document.getElementById(srv+"_"+id);
+      if(e && v!==undefined && v!==null && v!=="") e.value=v;
+    };
+    sv("rep",ea.rep); sv("com",ea.com); sv("rc",ea.rc); sv("re",ea.re);
+    sv("stk",ea.stk); sv("jar",ea.jar); sv("ban",ea.ban);
+    if(ea.he) cncBtn(srv+"_he",ea.he);
+    if(ea.hf) cncBtn(srv+"_hf",ea.hf);
+    if(ea.mp) cncBtn(srv+"_mp",ea.mp);
+    if(ea.gr) cncBtn(srv+"_gr",ea.gr);
+    if(ea.eo) cncBtn(srv+"_eo",ea.eo);
+    if(ea.minuta){var mel=document.getElementById(srv+"_minuta");if(mel)mel.value=ea.minuta;}
+  }
+  // C/NC desde parámetros BPM
+  BPM_MAPEO.forEach(function(m){
+    var idx=m[0], campos=m[1];
+    var estado=getParamEstado(bpm, idx);
+    campos.forEach(function(campoId){
+      if(campoId.startsWith(srv+"_")) cncBtn(campoId, estado);
+    });
+  });
+}
+
+// ── Consolidar acciones correctivas en Observaciones del servicio ─────────
+function cargarAccionesEnObs(srv, sources){
+  var lineas = [];
+
+  // ── Temperatura: equipos con desviación ──────────────────────────────
+  if(sources.temp && sources.temp.desvios && sources.temp.desvios.length){
+    lineas.push("🌡️ TEMPERATURAS:");
+    sources.temp.desvios.forEach(function(d){
+      var txt = "  • "+d.eq+" ("+d.prom+"°C) — "+d.estado;
+      if(d.obs && d.obs.trim()) txt += ": "+d.obs;
+      lineas.push(txt);
+    });
+  }
+
+  // ── Checklist GENCHI: NC/OBS por ítem ────────────────────────────────
+  if(sources.chk){
+    var chkAcc = [];
+    if(sources.chk.accs && sources.chk.accs.length){
+      sources.chk.accs.forEach(function(a){
+        var txt = "  • ["+a.estado+"] "+a.item;
+        if(a.obs && a.obs.trim()&&a.obs!=="Sin descripcion") txt += ": "+a.obs;
+        chkAcc.push(txt);
+      });
+    }
+    if(sources.chk.accGen && sources.chk.accGen.trim())
+      chkAcc.push("  • General: "+sources.chk.accGen);
+    if(chkAcc.length){
+      lineas.push("🏥 HIGIENE CASINO (GENCHI):");
+      lineas = lineas.concat(chkAcc);
+    }
+  }
+
+  // ── BPM: no conformidades con acciones ───────────────────────────────
+  if(sources.bpm){
+    var bpmAcc = [];
+    if(sources.bpm.ncDetails && sources.bpm.ncDetails.length){
+      sources.bpm.ncDetails.forEach(function(n){
+        var txt = "  • [NC] "+n.param;
+        if(n.mods && n.mods.length) txt += " (Mods: "+n.mods.join(", ")+")";
+        // Buscar acción individual
+        if(Array.isArray(sources.bpm.accGen)){
+          sources.bpm.accGen.forEach(function(a){
+            if(a.param===n.param && a.acc && a.acc.trim()) txt += ": "+a.acc;
+          });
+        }
+        bpmAcc.push(txt);
+      });
+    }
+    if(sources.bpm.obs && sources.bpm.obs.trim())
+      bpmAcc.push("  • Obs. generales: "+sources.bpm.obs);
+    if(bpmAcc.length){
+      lineas.push("📋 MÓDULOS BPM (INTERNOS):");
+      lineas = lineas.concat(bpmAcc);
+    }
+  }
+
+  // ── HACCP: PCC con no conformidades ──────────────────────────────────
+  if(sources.haccp && sources.haccp.accs && sources.haccp.accs.length){
+    lineas.push("🦠 HACCP PCC:");
+    sources.haccp.accs.forEach(function(a){
+      var txt = "  • ["+a.estado+"] "+a.pcc+" — "+a.eta;
+      if(a.val!==undefined && a.val!==null) txt += " ("+a.val+"°C)";
+      if(a.acc && a.acc.trim()) txt += ": "+a.acc;
+      lineas.push(txt);
+    });
+  }
+
+  if(!lineas.length) return;
+
+  var obsEl = document.getElementById(srv+"_obs");
+  if(obsEl){
+    var existing = obsEl.value.trim();
+    var nuevo = lineas.join("\n");
+    obsEl.value = existing ? existing+"\n\n"+nuevo : nuevo;
+  }
+}
+
+// ── Cambiar fecha y sincronizar con registros de esa fecha ────────────────
+function cambiarFechaFicha(fechaISO){
+  if(!fechaISO) return;
+
+  // Actualizar campos de fecha
+  document.getElementById("fm_fecha").value  = fmtF(fechaISO);
+  document.getElementById("fm_semana").value = semana(fechaISO);
+
+  // Buscar registros de esa fecha en cada historial
+  var histTemp  = lsGet("cft_hist");
+  var histChk   = lsGet("chk_hist2");
+  var histBPM   = lsGet("bpm_hist");
+  var histHaccp = lsGet("haccp_hist");
+
+  function buscarPorFecha(hist, fecha){
+    if(!hist || !hist.length) return null;
+    var encontrado = hist.find(function(r){ return r.fecha === fecha; });
+    return encontrado || null;
+  }
+
+  var sources = {
+    temp:  buscarPorFecha(histTemp,  fechaISO),
+    chk:   buscarPorFecha(histChk,   fechaISO),
+    bpm:   buscarPorFecha(histBPM,   fechaISO),
+    haccp: buscarPorFecha(histHaccp, fechaISO)
+  };
+
+  // Informar qué se encontró
+  var encontrados = Object.keys(sources).filter(function(k){ return sources[k]; });
+  var nombres = {temp:"🌡️ Temperatura", chk:"🏥 Checklist", bpm:"📋 BPM", haccp:"🦠 HACCP"};
+
+  if(!encontrados.length){
+    toast("📅 Sin registros para "+ fmtF(fechaISO) +" — campos en blanco","#854F0B");
+    actualizarBanner(sources);
+    return;
+  }
+
+  // Cargar datos de esa fecha
+  actualizarBanner(sources);
+  var supervisor = encontrados.map(function(k){
+    var r=sources[k]; return r.fisc||r.fn0||r.fn2||"";
+  }).filter(Boolean)[0]||"";
+  document.getElementById("fm_estab").value      = (sources.temp||sources.bpm||sources.chk||sources.haccp||{}).estab||"E.P. Santiago 1";
+  document.getElementById("fm_supervisor").value = supervisor;
+  document.getElementById("fm_nombre").value     = supervisor;
+
+  cargarTemperaturas(sources.temp);
+  cargarHACCP(sources.haccp);
+  cargarBPM(sources.bpm);
+  cargarValidaciones(sources);
+  cargarKPI(sources);
+  cargarModValidacion(sources.bpm);
+
+  ["s1","s2","s3"].forEach(function(srv){
+    var tipoEl = document.getElementById(srv+"_tipo");
+    var tipo   = tipoEl ? tipoEl.value : "";
+    limpiarServicio(srv);
+    if(!tipo) return;
+    var esGenchi   = tipo.indexOf("GENCHI") >= 0;
+    var esInternos = tipo.indexOf("Internos") >= 0 || tipo.indexOf("Retermalizado") >= 0 || tipo.indexOf("CAL") >= 0;
+    var srvSlot = tipo.toLowerCase().indexOf("desayuno")>=0 ? "s1"
+                : tipo.toLowerCase().indexOf("almuerzo")>=0 ? "s2"
+                : tipo.toLowerCase().indexOf("cena")>=0     ? "s3" : "s1";
+    if(esGenchi && sources.chk)    cargarServicioDesdeChk(srv, srvSlot, sources.chk);
+    else if(esInternos && sources.bpm) cargarServicioDesdeBPM(srv, srvSlot, sources.bpm);
+    if(tipo) cargarAccionesEnObs(srv, sources);
+  });
+
+  toast("📅 Sincronizado con registros del "+ fmtF(fechaISO),"#0F6E56");
+}
+
+// ── Sincronizar ────────────────────────────────────────────────────────────
+// ── cargarChecklistEnServicios ya no se usa en sincronizar ───────────────
+
+// ── Banner de estado ──────────────────────────────────────────────────────
+function actualizarBanner(src){
+  var bar=document.getElementById("statusBar");
+  var d=new Date();
+  var ts=d.getDate()+"/"+(d.getMonth()+1)+"/"+d.getFullYear()+" "+
+    (d.getHours()<10?"0":"")+d.getHours()+":"+(d.getMinutes()<10?"0":"")+d.getMinutes();
+
+  var items=[
+    {label:"🌡️ Control Temperatura", src:src.temp},
+    {label:"🏥 Checklist Higiene",    src:src.chk},
+    {label:"📋 BPM Módulos",          src:src.bpm},
+    {label:"🦠 HACCP PCC",            src:src.haccp}
+  ];
+
+  bar.innerHTML="";
+  items.forEach(function(it){
+    var sp=document.createElement("span");
+    if(it.src){
+      sp.className="src-badge ok";
+      sp.textContent=it.label+" ✓ "+fmtF(it.src.fecha||"");
+    } else {
+      sp.className="src-badge empty";
+      sp.textContent=it.label+" — Sin datos";
+    }
+    bar.appendChild(sp);
+  });
+
+  var t=document.createElement("span");
+  t.className="sync-time";
+  t.textContent="Última sync: "+ts;
+  bar.appendChild(t);
+}
+
+// ── Temperaturas — Gráfico de barras compacto ────────────────────────────
+function cargarTemperaturas(r){
+  var grid=document.getElementById("tempGrid");
+  if(!r||!r.eqs){
+    grid.innerHTML='<div style="padding:16px;text-align:center;color:#aaa;font-size:12px;grid-column:1/-1">Sin datos de temperatura. Sincroniza para cargar.</div>';
+    return;
+  }
+  var conDatos=r.eqs.filter(function(e){return e.pm!==""||e.pt!=="";});
+  if(!conDatos.length){
+    grid.innerHTML='<div style="padding:16px;text-align:center;color:#aaa;font-size:12px;grid-column:1/-1">Sin temperaturas ingresadas en el último registro.</div>';
+    return;
+  }
+
+  var ok=r.ok||0,al=r.al||0,nc=r.nc||0,tot=r.tot||0;
+  var pct=tot>0?Math.round(ok/tot*100):0;
+  var colPct=nc>0?"#A32D2D":al>0?"#854F0B":"#0F6E56";
+  var bgPct=nc>0?"#fcebeb":al>0?"#fff3cd":"#e1f5ee";
+
+  var kpiEl=document.getElementById("kpi_temp");
+  kpiEl.textContent=pct+"%";
+  kpiEl.style.color=colPct;
+
+  // Dimensiones compactas para caber en A4
+  var W=540, H=90;
+  var padL=32, padR=8, padT=8, padB=18;
+  var drawW=W-padL-padR, drawH=H-padT-padB;
+  var n=conDatos.length;
+  var bw=Math.max(3, Math.floor((drawW-(n-1)*1.5)/n));
+
+  // Rango: incluir 0 siempre como referencia
+  var vals=conDatos.map(function(e){return parseFloat(e.prom)||0;});
+  var minV=Math.min(Math.min.apply(null,vals)-2, -2);
+  var maxV=Math.max(Math.max.apply(null,vals)+2, 6);
+  var range=maxV-minV||1;
+
+  function toY(v){ return padT + drawH - ((v-minV)/range*drawH); }
+  function barColor(cls){
+    if(cls&&cls.indexOf(" cr")>=0) return "#A32D2D";
+    if(cls&&cls.indexOf(" al")>=0) return "#e09000";
+    return "#1D9E75";
+  }
+
+  var svg="";
+  // Líneas de referencia
+  var refs=[{v:0,c:"#1A3A5C",lbl:"0°"},{v:-18,c:"#6A1A2E",lbl:"-18°"},{v:5,c:"#1D9E75",lbl:"5°"}];
+  refs.forEach(function(ref){
+    if(ref.v<minV||ref.v>maxV) return;
+    var y=toY(ref.v).toFixed(1);
+    svg+='<line x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+
+         '" stroke="'+ref.c+'" stroke-width="0.6" stroke-dasharray="3,2" opacity="0.5"/>';
+    svg+='<text x="'+(padL-2)+'" y="'+(parseFloat(y)+3).toFixed(1)+
+         '" text-anchor="end" font-size="7" fill="'+ref.c+'" font-family="Arial" opacity="0.8">'+ref.lbl+'</text>';
+  });
+
+  // Barras
+  var y0=toY(0);
+  conDatos.forEach(function(eq,i){
+    var v=parseFloat(eq.prom)||0;
+    var x=padL+i*(bw+1.5);
+    var yv=toY(v);
+    // Barra desde 0°C hacia arriba o abajo
+    var barTop=Math.min(y0,yv);
+    var barH=Math.abs(y0-yv)||1;
+    var col=barColor(eq.cls);
+    svg+='<rect x="'+x.toFixed(1)+'" y="'+barTop.toFixed(1)+
+         '" width="'+bw+'" height="'+barH.toFixed(1)+
+         '" fill="'+col+'" rx="1" opacity="0.85"/>';
+    // Punto en la punta
+    svg+='<circle cx="'+(x+bw/2).toFixed(1)+'" cy="'+yv.toFixed(1)+
+         '" r="1.5" fill="'+col+'" stroke="white" stroke-width="0.8"/>';
+  });
+
+  // Ejes
+  svg+='<line x1="'+padL+'" y1="'+padT+'" x2="'+padL+'" y2="'+(H-padB)+
+       '" stroke="#ddd" stroke-width="1"/>';
+  svg+='<line x1="'+padL+'" y1="'+(H-padB)+'" x2="'+(W-padR)+'" y2="'+(H-padB)+
+       '" stroke="#ddd" stroke-width="1"/>';
+
+  // Labels equipos (solo nombre corto cada 3)
+  conDatos.forEach(function(eq,i){
+    if(i%4!==0) return;
+    var x=(padL+i*(bw+1.5)+bw/2).toFixed(1);
+    var lbl=eq.name.replace("Camara ","C.").replace("Abatidor ","Ab.").replace("Container ","Cont.").substring(0,7);
+    svg+='<text x="'+x+'" y="'+(H-padB+10).toFixed(1)+
+         '" text-anchor="middle" font-size="6" fill="#aaa" font-family="Arial">'+lbl+'</text>';
+  });
+
+  var html=
+    '<div style="grid-column:1/-1;padding:10px 12px 4px">'+
+    // Chips resumen compactos
+    '<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:8px">'+
+      '<span style="font-size:10px;font-weight:bold;padding:2px 8px;border-radius:20px;background:'+bgPct+';color:'+colPct+'">'+pct+'% conformidad</span>'+
+      '<span style="font-size:10px;padding:2px 8px;border-radius:20px;background:#e1f5ee;color:#0F6E56">'+ok+' ✓</span>'+
+      (al>0?'<span style="font-size:10px;padding:2px 8px;border-radius:20px;background:#fff3cd;color:#854F0B">'+al+' ⚠</span>':'')+
+      (nc>0?'<span style="font-size:10px;padding:2px 8px;border-radius:20px;background:#fcebeb;color:#A32D2D">'+nc+' ✗</span>':'')+
+      '<span style="font-size:10px;color:#bbb;margin-left:auto">'+tot+' equipos</span>'+
+    '</div>'+
+    // Gráfico
+    '<div style="background:#fafbff;border:1px solid #eee;border-radius:6px;overflow:hidden">'+
+      '<svg viewBox="0 0 '+W+' '+H+'" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block">'+svg+'</svg>'+
+    '</div>'+
+    // Leyenda mini
+    '<div style="display:flex;gap:10px;margin-top:4px;font-size:9px">'+
+      '<span style="color:#1D9E75">■ Conforme</span>'+
+      '<span style="color:#e09000">■ Alerta</span>'+
+      '<span style="color:#A32D2D">■ Crítico</span>'+
+      '<span style="color:#aaa;margin-left:auto">Barras desde 0°C · ref: 5° y -18°C</span>'+
+    '</div>'+
+    '</div>'+
+    // Desviaciones compactas (solo si hay)
+    (function(){
+      var dev=conDatos.filter(function(e){return e.cls&&(e.cls.indexOf(" al")>=0||e.cls.indexOf(" cr")>=0);});
+      if(!dev.length) return '';
+      var t='<div style="grid-column:1/-1;padding:2px 12px 8px"><div style="font-size:9px;font-weight:bold;color:#854F0B;margin-bottom:3px">Equipos con desviación:</div><div style="display:flex;flex-wrap:wrap;gap:4px">';
+      dev.forEach(function(e){
+        var isCr=e.cls.indexOf(" cr")>=0;
+        var col=isCr?"#A32D2D":"#854F0B";
+        var bg=isCr?"#fcebeb":"#fff3cd";
+        t+='<span style="font-size:9px;font-weight:bold;padding:1px 7px;border-radius:10px;background:'+bg+';color:'+col+'">'+e.name+' '+e.prom+'</span>';
+      });
+      return t+'</div></div>';
+    })();
+
+  grid.innerHTML=html;
+
+  // Sync C/NC temperaturas en servicios
+  var tempOk=r.pct>=75;
+  ["s1","s2","s3"].forEach(function(s){cncBtn(s+"_temp",tempOk?"C":"NC");});
+}
+
+// ── HACCP ─────────────────────────────────────────────────────────────────
+function cargarHACCP(r){
+  var grid=document.getElementById("haccpGrid");
+  if(!r){
+    grid.innerHTML='<div style="padding:16px;text-align:center;color:#aaa;font-size:12px;grid-column:1/-1">Sin datos HACCP registrados.</div>';
+    return;
+  }
+  // Usar pccData si existe, si no usar accs
+  var pccs=r.pccData||[];
+  if(!pccs.length&&r.nc===0&&r.co>0){
+    // Solo resumen disponible
+    grid.innerHTML='<div style="padding:12px;text-align:center;font-size:12px;color:#0F6E56;grid-column:1/-1">'+
+      '✅ HACCP: '+r.co+' PCC conformes | Riesgo: '+(r.risk||"BAJO")+'</div>';
+  } else if(pccs.length){
+    var html="";
+    var IDS=["PCC1","PCC2","PCC3","PCC4","PCC5","PCC6","PCC7"];
+    var ETAS=["Recepción Mat. Prima","Almacenamiento Refrigerado","Almacenamiento Congelado",
+              "Precocción","Cocción","Enfriamiento Rápido","Servicio / Distribución"];
+    pccs.forEach(function(p,i){
+      var col=p.st==="conf"?"#0F6E56":p.st==="alert"?"#854F0B":p.st==="noconf"?"#A32D2D":"#aaa";
+      var pc=p.st==="conf"?"conf":p.st==="alert"?"alert":p.st==="noconf"?"noconf":"nd";
+      var pt=p.st==="conf"?"Conforme":p.st==="alert"?"Alerta":p.st==="noconf"?"NC":"Sin dato";
+      html+='<div class="pcc-item">'+
+        '<div class="pcc-name">'+(IDS[i]||"PCC"+i)+' — '+(ETAS[i]||"")+'</div>'+
+        '<div class="pcc-val">'+
+          '<span class="pcc-temp" style="color:'+col+'">'+(p.val!==null&&p.val!==undefined?p.val+"°C":"—")+'</span>'+
+          '<span class="pcc-pill '+pc+'">'+pt+'</span>'+
+        '</div>'+
+      '</div>';
+    });
+    grid.innerHTML=html;
+  } else {
+    grid.innerHTML='<div style="padding:12px;text-align:center;font-size:12px;color:#aaa;grid-column:1/-1">'+
+      'HACCP: '+r.co+' C | '+r.al+' AL | '+r.nc+' NC | Riesgo: '+(r.risk||"—")+'</div>';
+  }
+
+  var kpiEl=document.getElementById("kpi_haccp");
+  kpiEl.textContent=(r.co||0)+"/"+(r.ev||0);
+  kpiEl.style.color=r.risk==="ALTO"?"#A32D2D":r.risk==="MEDIO"?"#854F0B":"#0F6E56";
+}
+
+// ── BPM ───────────────────────────────────────────────────────────────────
+// Mapeo exacto: índice parámetro BPM → campos C/NC en ficha madre (por servicio)
+// Mapeo EXACTO BPM → ficha madre
+// PARAMS del BPM:
+// 0: "Los medios de transporte se encuentran limpios."     → mallas mosqueteras (transporte limpio)
+// 1: "Los desagues se encuentran limpios y en buen estado."→ desagüe
+// 2: "Disponibilidad de recursos higienicos..."            → jabón desinfectante + toalla papel
+// 3: "Cielo y muros limpios y en buen estado."            → paredes + pisos
+// 4: "Ventilacion adecuada y en buen estado."             → ventilador
+// 5: "Iluminacion adecuada y en buen estado."             → (sin equiv. directo en ficha madre)
+// 6: "Bano Maria en funcionamiento y limpio."             → baño maría
+// 7: "Manipuladora...mascarilla, cofia, etc."             → mascarilla + cofia + uniforme + higiene
+// 8: "Manipuladora cuenta con guantes termicos..."        → guantes
+// 9: "Temperatura sobre los 65C..."                       → temperaturas C/NC
+// 10:"Gramajes correspondientes..."                       → gramajes
+var BPM_MAPEO = [
+  [0,  ["s1_mm",  "s2_mm",  "s3_mm" ]],  // Transporte → Mallas mosqueteras
+  [1,  ["s1_des", "s2_des", "s3_des"]],  // Desagüe → Desagüe
+  [2,  ["s1_jab", "s2_jab", "s3_jab",
+         "s1_toa","s2_toa","s3_toa" ]],  // Recursos higiénicos → Jabón + Toalla
+  [3,  ["s1_par", "s2_par", "s3_par",
+         "s1_pis","s2_pis","s3_pis" ]],  // Cielo/muros → Paredes + Pisos
+  [4,  ["s1_ven", "s2_ven", "s3_ven"]],  // Ventilación → Ventilador
+  // [5] Iluminación — sin equivalente directo
+  [6,  ["s1_bm",  "s2_bm",  "s3_bm" ]],  // Baño María → Baño María
+  [7,  ["s1_mas", "s2_mas", "s3_mas",
+         "s1_cof","s2_cof","s3_cof",
+         "s1_uni","s2_uni","s3_uni",
+         "s1_hig","s2_hig","s3_hig",
+         "s1_bpm","s2_bpm","s3_bpm" ]],  // Mascarilla/cofia → Mascarilla+Cofia+Uniforme+Higiene+BPM
+  [8,  ["s1_gua", "s2_gua", "s3_gua"]],  // Guantes → Guantes
+  [9,  ["s1_temp","s2_temp","s3_temp"]],  // Temp 65°C → Temperaturas
+  [10, ["s1_gr",  "s2_gr",  "s3_gr" ]]   // Gramajes → Gramajes
+];
+
+// Mapeo Checklist Higiene → campos ficha madre
+// Items del checklist (índice) → campos C/NC ficha madre
+// Mapeo EXACTO checklist → ficha madre
+// INAMES del checklist:
+// 0:"Utensilios limpios"       → mesones, carro bandeja
+// 1:"Pisos, paredes y techos"  → pisos + paredes
+// 2:"Iluminacion y ventilacion"→ ventilador
+// 3:"Linea de servicio"        → baño maría, mesones
+// 4:"Mesas del comedor"        → pisos (superficie)
+// 5:"Carros bandejeros"        → carro bandeja
+// 6:"Malla mosquitera"         → mallas mosqueteras, ausencia vectores
+// 7:"Insumos desinfectantes"   → jabón desinfectante, toalla papel
+// 8:"Microondas"               → hervidor (equipos de calor)
+// 9:"Estacion de alinado"      → mesones
+// 10:"Dispensador de jugo y agua" → hervidor
+// 11:"Vidrios"                 → paredes (superficies)
+// 12:"Higiene del personal"    → uniforme, guantes, cofia, mascarilla, manos, maquillaje, higiene, bpm, pechera, zapatos
+var CHK_MAPEO = [
+  {key:"Utensilios",      campos:["s1_mes","s2_mes","s3_mes","s1_cb","s2_cb","s3_cb"]},
+  {key:"Pisos, paredes",  campos:["s1_pis","s2_pis","s3_pis","s1_par","s2_par","s3_par"]},
+  {key:"Iluminacion",     campos:["s1_ven","s2_ven","s3_ven"]},
+  {key:"Linea de servicio",campos:["s1_bm","s2_bm","s3_bm","s1_mes","s2_mes","s3_mes"]},
+  {key:"Mesas del comedor",campos:["s1_pis","s2_pis","s3_pis"]},
+  {key:"Carros bandejeros",campos:["s1_cb","s2_cb","s3_cb"]},
+  {key:"Malla mosquitera", campos:["s1_mm","s2_mm","s3_mm","s1_av","s2_av","s3_av"]},
+  {key:"Insumos desinfectantes",campos:["s1_jab","s2_jab","s3_jab","s1_toa","s2_toa","s3_toa"]},
+  {key:"Microondas",       campos:["s1_her","s2_her","s3_her"]},
+  {key:"Estacion de alinado",campos:["s1_mes","s2_mes","s3_mes","s1_des","s2_des","s3_des"]},
+  {key:"Dispensador",      campos:["s1_her","s2_her","s3_her"]},
+  {key:"Vidrios",          campos:["s1_par","s2_par","s3_par"]},
+  {key:"Higiene del personal",campos:[
+    "s1_uni","s2_uni","s3_uni",
+    "s1_gua","s2_gua","s3_gua",
+    "s1_cof","s2_cof","s3_cof",
+    "s1_mas","s2_mas","s3_mas",
+    "s1_man","s2_man","s3_man",
+    "s1_maq","s2_maq","s3_maq",
+    "s1_hig","s2_hig","s3_hig",
+    "s1_bpm","s2_bpm","s3_bpm",
+    "s1_pec","s2_pec","s3_pec",
+    "s1_zap","s2_zap","s3_zap"
+  ]}
+];
+
+function getParamEstado(r, paramIdx){
+  // Determina si el parámetro paramIdx cumple (C), no cumple (NC) o no aplica (NA)
+  // Primero chequea si está en ncDetails
+  if(!r) return "NA";
+  var ncDetails = r.ncDetails || [];
+  var PARAM_NAMES = [
+    "Los medios de transporte","Los desagues","recursos higienicos",
+    "Cielo y muros","Ventilacion","Iluminacion","Bano Maria",
+    "mascarilla, cofia","guantes termicos","Temperatura sobre","Gramajes"
+  ];
+  var nombre = PARAM_NAMES[paramIdx]||"";
+  // Buscar en ncDetails
+  var esNC = ncDetails.some(function(n){
+    return n.param && n.param.toLowerCase().indexOf(nombre.toLowerCase()) >= 0;
+  });
+  if(esNC) return "NC";
+  // Si el registro tiene datos (tot > 0) y no está en NC, asumimos C
+  if(r.tot > 0) return "C";
+  return "NA";
+}
+
+function cargarBPM(r){
+  var grid = document.getElementById("bpmGrid");
+  if(!r){
+    grid.innerHTML = '<div style="padding:16px;text-align:center;color:#aaa;font-size:12px;grid-column:1/-1">Sin datos BPM registrados.</div>';
+    return;
+  }
+  var pct = r.pct||0;
+  var col = pct>=75?"#0F6E56":pct>=50?"#854F0B":"#A32D2D";
+
+  // Mostrar grid de parámetros con su estado
+  var PARAM_LABELS = [
+    "Transporte limpio","Desagüe limpio","Recursos higiénicos","Paredes/Cielo",
+    "Ventilación","Iluminación","Baño María","Mascarilla/Cofia",
+    "Guantes térmicos","Temp. 65°C","Gramajes"
+  ];
+  var html = "";
+  PARAM_LABELS.forEach(function(label, idx){
+    var estado = getParamEstado(r, idx);
+    var c = estado==="C"?"#0F6E56":estado==="NC"?"#A32D2D":"#888";
+    var bg2 = estado==="C"?"#e1f5ee":estado==="NC"?"#fcebeb":"#f0f0f0";
+    html += '<div class="bpm-item" style="background:'+bg2+'">'+
+      '<span class="bpm-name">'+label+'</span>'+
+      '<span class="bpm-pct" style="color:'+c+'">'+estado+'</span>'+
+    '</div>';
+  });
+  // Totales
+  html += '<div class="bpm-item" style="background:#1A3A5C">'+
+    '<span class="bpm-name" style="color:white;font-weight:bold">Cumplimiento Total</span>'+
+    '<span class="bpm-pct" style="color:white">'+pct+'%</span>'+
+  '</div>';
+  grid.innerHTML = html;
+
+  // ── AUTOCOMPLETAR FICHA MADRE DESDE BPM ──────────────────────────────
+  BPM_MAPEO.forEach(function(m){
+    var idx = m[0], campos = m[1];
+    var estado = getParamEstado(r, idx);
+    campos.forEach(function(campoId){
+      cncBtn(campoId, estado);
+    });
+  });
+
+  // KPI
+  var kpiEl = document.getElementById("kpi_bpm");
+  kpiEl.textContent = pct+"%";
+  kpiEl.style.color = col;
+
+  // ── Datos de entrega desde BPM (3 servicios) ─────────────────────────
+  if(r.entrega){
+    ["s1","s2","s3"].forEach(function(srv){
+      var ea = r.entrega[srv];
+      if(!ea) return;
+      var setV=function(id,v){var el=document.getElementById(id);if(el&&v)el.value=v;};
+      setV(srv+"_rep",ea.rep); setV(srv+"_com",ea.com);
+      setV(srv+"_rc", ea.rc);  setV(srv+"_re", ea.re);
+      setV(srv+"_stk",ea.stk); setV(srv+"_jar",ea.jar);
+      setV(srv+"_ban",ea.ban);
+      setV(srv+"_minuta",ea.minuta);
+      if(ea.he) cncBtn(srv+"_he",ea.he);
+      if(ea.hf) cncBtn(srv+"_hf",ea.hf);
+      if(ea.mp) cncBtn(srv+"_mp",ea.mp);
+      if(ea.gr) cncBtn(srv+"_gr",ea.gr);
+      if(ea.eo) cncBtn(srv+"_eo",ea.eo);
+    });
+  }
+}
+
+// ── Validaciones ──────────────────────────────────────────────────────────
+function cargarValidaciones(src){
+  var registros={
+    temp:  {icon:"🌡️", src:src.temp,  badgeId:"val_temp_badge",  fiscId:"val_temp_fisc"},
+    haccp: {icon:"🦠", src:src.haccp, badgeId:"val_haccp_badge", fiscId:"val_haccp_fisc"},
+    bpm:   {icon:"📋", src:src.bpm,   badgeId:"val_bpm_badge",   fiscId:"val_bpm_fisc"},
+    chk:   {icon:"🏥", src:src.chk,   badgeId:"val_chk_badge",   fiscId:"val_chk_fisc"}
+  };
+  Object.keys(registros).forEach(function(k){
+    var r=registros[k];
+    var badge=document.getElementById(r.badgeId);
+    var fisc=document.getElementById(r.fiscId);
+    if(!r.src){
+      badge.className="val-badge pend"; badge.textContent="Sin datos";
+      fisc.textContent="—"; return;
+    }
+    fisc.textContent=(r.src.fisc||r.src.fn0||r.src.fn2||"—")+(r.src.nreg||r.src.nvis?" | "+(r.src.nreg||r.src.nvis):"");
+    var val=r.src.validado;
+    var valNom=r.src.valNom||r.src.validadoPor||"";
+    if(val){
+      badge.className="val-badge ok";
+      badge.textContent="✓ Validado"+(valNom?" por "+valNom:"");
+    } else {
+      badge.className="val-badge pend";
+      badge.textContent="Pendiente validación";
+    }
+  });
+}
+
+// ── KPI Global ────────────────────────────────────────────────────────────
+function cargarKPI(src){
+  // Checklist
+  var chkEl=document.getElementById("kpi_chk");
+  if(src.chk){
+    chkEl.textContent=(src.chk.pct||0)+"%";
+    chkEl.style.color=src.chk.pct>=75?"#0F6E56":src.chk.pct>=50?"#854F0B":"#A32D2D";
+  }
+
+  // Global combinado
+  var scores=[];
+  if(src.temp&&src.temp.pct!==null) scores.push(src.temp.pct||0);
+  if(src.chk&&src.chk.pct)  scores.push(src.chk.pct||0);
+  if(src.bpm&&src.bpm.pct)  scores.push(src.bpm.pct||0);
+  if(src.haccp&&src.haccp.pct) scores.push(src.haccp.pct||0);
+
+  var globalEl=document.getElementById("kpi_global");
+  if(scores.length){
+    var avg=Math.round(scores.reduce(function(a,b){return a+b;},0)/scores.length);
+    globalEl.textContent=avg+"%";
+    globalEl.style.color=avg>=75?"#0F6E56":avg>=50?"#854F0B":"#A32D2D";
+  }
+}
+
+// ── Módulos de Validación de Datos ────────────────────────────────────────
+function cargarModValidacion(bpm){
+  var el=document.getElementById("modValidacion");
+  if(!bpm){ el.textContent="Sin datos BPM disponibles."; return; }
+  var modulos=["Módulo 1","Módulo 2","Módulo 3","Módulo 4","Módulo 11","Módulo 12",
+               "Casino","CAL","Retermalizado","Camara MAP"];
+  var html=modulos.map(function(m){
+    var nc=bpm.ncDetails&&bpm.ncDetails.some(function(n){return n.mods&&n.mods.some(function(mod){return mod.toLowerCase().includes(m.toLowerCase().replace("módulo ",""));});});
+    var col=nc?"#A32D2D":"#0F6E56";
+    var sym=nc?"NC":"C";
+    return'<span style="font-size:10px;font-weight:bold;padding:2px 7px;border-radius:20px;background:'+(nc?"#fcebeb":"#e1f5ee")+';color:'+col+';display:inline-block;margin:2px">'+m+' '+sym+'</span>';
+  }).join("");
+  el.innerHTML=html;
+}
+
+// ── Autocompletar servicios desde checklist (mapeo por ítem) ─────────────
+function cargarChecklistEnServicios(chk){
+  if(!chk) return;
+  // Determinar servicio según turno
+  var turno = (chk.turno||"").toLowerCase();
+  var srv = turno.includes("mañana")?"s1":turno.includes("tarde")?"s2":"s3";
+  // Si hay datos de items individuales en accs (NC/OBS), usarlos
+  // Si no, usar el resultado general
+  var accsMap = {};
+  if(chk.accs && chk.accs.length){
+    chk.accs.forEach(function(a){
+      accsMap[(a.item||"").toLowerCase()] = a.estado; // "NC" o "OBS"
+    });
+  }
+
+  function getChkEstado(keyword){
+    // Buscar coincidencia en las NC/OBS del checklist
+    // accsMap tiene como clave el nombre exacto del ítem (INAMES[i])
+    var kw = keyword.toLowerCase();
+    var keys = Object.keys(accsMap);
+    for(var i=0;i<keys.length;i++){
+      // Coincidencia: la clave empieza con el keyword O el keyword empieza con la clave
+      var k = keys[i].toLowerCase();
+      if(k.indexOf(kw)>=0 || kw.indexOf(k)>=0){
+        var est = accsMap[keys[i]];
+        return (est==="NC"||est==="No Cumple") ? "NC" : "NA";
+      }
+    }
+    // No está en desviaciones: si hay datos evaluados → C
+    return (chk.ok !== undefined && chk.tot > 0) ? "C" : "NA";
+  }
+
+  // Aplicar mapeo por ítem al servicio correspondiente
+  CHK_MAPEO.forEach(function(m){
+    var estado = getChkEstado(m.key);
+    // Solo completar el campo del servicio del turno
+    m.campos.forEach(function(campoId){
+      if(campoId.startsWith(srv+"_")){
+        cncBtn(campoId, estado);
+      }
+    });
+  });
+
+  // Horario fiscalizado — si pct es bueno, asumir C
+  var pct = chk.pct||0;
+  cncBtn(srv+"_hf", pct>=75?"C":"NC");
+
+  // ── Datos de entrega desde checklist ─────────────────────────────────
+  if(chk.entrega){
+    var ea = chk.entrega;
+    var setV = function(id,v){var el=document.getElementById(id);if(el&&v)el.value=v;};
+    setV(srv+"_rep", ea.rep); setV(srv+"_com", ea.com);
+    setV(srv+"_rc",  ea.rc);  setV(srv+"_re",  ea.re);
+    setV(srv+"_stk", ea.stk); setV(srv+"_jar", ea.jar);
+    setV(srv+"_ban", ea.ban);
+    if(ea.he)  cncBtn(srv+"_he",  ea.he);
+    if(ea.hf)  cncBtn(srv+"_hf",  ea.hf);
+    if(ea.mp)  cncBtn(srv+"_mp",  ea.mp);
+    if(ea.gr)  cncBtn(srv+"_gr",  ea.gr);
+    if(ea.eo)  cncBtn(srv+"_eo",  ea.eo);
+  }
+}
+
+// ── Limpiar ficha ──────────────────────────────────────────────────────────
+function limpiarFicha(){
+  if(!confirm("¿Limpiar toda la ficha? Los datos cargados se perderán.")) return;
+  ["fm_fecha","fm_semana","fm_estab","fm_supervisor","fm_nombre"].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.value="";
+  });
+  // Limpiar los 3 servicios completos (numéricos + C/NC + obs)
+  ["s1","s2","s3"].forEach(function(srv){ limpiarServicio(srv); });
+  document.getElementById("tempGrid").innerHTML='<div style="padding:16px;text-align:center;color:#aaa;font-size:12px;grid-column:1/-1">Sin datos. Sincroniza para cargar.</div>';
+  document.getElementById("haccpGrid").innerHTML='<div style="padding:16px;text-align:center;color:#aaa;font-size:12px;grid-column:1/-1">Sin datos. Sincroniza para cargar.</div>';
+  if(document.getElementById("bpmGrid")) document.getElementById("bpmGrid").innerHTML='<div style="padding:16px;text-align:center;color:#aaa;font-size:12px;grid-column:1/-1">Sin datos. Sincroniza para cargar.</div>';
+  ["kpi_temp","kpi_haccp","kpi_bpm","kpi_chk","kpi_global"].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.textContent="—";
+  });
+  document.getElementById("statusBar").innerHTML='<span style="font-size:11px;color:#aaa">Presiona "Sincronizar Registros" para cargar los datos.</span>';
+  toast("🧹 Ficha limpiada","#1A3A5C");
+}
+
+// ── PDF ───────────────────────────────────────────────────────────────────
+function abrirPDF(){
+  var d=new Date(),m=d.getMonth()+1,dy=d.getDate();
+  var hoy=dy+"/"+(m<10?"0"+m:m)+"/"+d.getFullYear();
+  var html='<div style="font-family:Arial,sans-serif;font-size:8pt;padding:0">'+
+    '<div style="background:linear-gradient(135deg,#1A3A5C,#0F6E56);color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center">'+
+      '<div><div style="font-size:11pt;font-weight:bold">Ficha Madre — Servicio de Alimentación ITE</div>'+
+      '<div style="font-size:7.5pt;opacity:.85">Servicio de Alimentación Inspección Entrega de Alimentos — Infraestructura Penitenciaria Grupo 3</div></div>'+
+      '<div style="background:rgba(255,255,255,.2);padding:5px 12px;border-radius:20px;font-size:9pt;font-weight:bold">'+
+        document.getElementById("fm_fecha").value+'</div>'+
+    '</div>'+
+    '<div style="display:grid;grid-template-columns:repeat(4,1fr);border:1px solid #ddd;border-top:none">'+
+      pdfFi("Fecha",    document.getElementById("fm_fecha").value)+
+      pdfFi("Semana",   document.getElementById("fm_semana").value)+
+      pdfFi("Establecimiento", document.getElementById("fm_estab").value)+
+      pdfFi("Supervisor ITE",  document.getElementById("fm_supervisor").value)+
+    '</div>';
+
+  // KPIs
+  html+='<div style="display:grid;grid-template-columns:repeat(5,1fr);border:1px solid #ddd;border-top:none">';
+  [
+    ["Temp. Frío", "kpi_temp"],["HACCP PCC","kpi_haccp"],
+    ["BPM %","kpi_bpm"],["Checklist","kpi_chk"],["Global","kpi_global"]
+  ].forEach(function(k){
+    var el=document.getElementById(k[1]);
+    html+='<div style="padding:8px 4px;text-align:center;border-right:1px solid #ddd">'+
+      '<div style="font-size:16pt;font-weight:bold;color:'+(el?el.style.color:"#1A3A5C")+'">'+(el?el.textContent:"—")+'</div>'+
+      '<div style="font-size:6.5pt;color:#aaa;text-transform:uppercase;font-weight:bold">'+k[0]+'</div>'+
+    '</div>';
+  });
+  html+='</div>';
+
+  // Tabla servicios simplificada
+  html+='<div style="border:1px solid #ddd;border-top:none;border-bottom:none;padding:5px 12px;background:#f5f7fa;font-size:7pt;font-weight:bold;color:#1A3A5C;text-transform:uppercase">Servicios del Día</div>';
+  html+='<table style="width:100%;border-collapse:collapse;border:1px solid #ddd;border-top:none;font-size:7pt"><thead><tr>'+
+    '<th style="background:#1A3A5C;color:white;padding:4px 6px;text-align:left">Ítem</th>'+
+    '<th style="background:#1A3A5C;color:white;padding:4px 6px;text-align:center">Serv.1 GENCHI</th>'+
+    '<th style="background:#1A3A5C;color:white;padding:4px 6px;text-align:center">Serv.2 Casino</th>'+
+    '<th style="background:#1A3A5C;color:white;padding:4px 6px;text-align:center">Serv.3 Casino</th>'+
+  '</tr></thead><tbody>';
+  var rows=[
+    ["Horario establecido","s1_he","s2_he","s3_he"],
+    ["Horario fiscalizado","s1_hf","s2_hf","s3_hf"],
+    ["Minuta Programada","s1_mp","s2_mp","s3_mp"],
+    ["Gramajes","s1_gr","s2_gr","s3_gr"],
+    ["Uniforme","s1_uni","s2_uni","s3_uni"],
+    ["Guantes","s1_gua","s2_gua","s3_gua"],
+    ["Manos / Uñas","s1_man","s2_man","s3_man"],
+    ["Cofia","s1_cof","s2_cof","s3_cof"],
+    ["Maquillaje discreto","s1_maq","s2_maq","s3_maq"],
+    ["Mascarilla","s1_mas","s2_mas","s3_mas"],
+    ["Higiene personal","s1_hig","s2_hig","s3_hig"],
+    ["BPM","s1_bpm","s2_bpm","s3_bpm"],
+    ["Pechera","s1_pec","s2_pec","s3_pec"],
+    ["Zapatos seguridad","s1_zap","s2_zap","s3_zap"],
+    ["Pisos","s1_pis","s2_pis","s3_pis"],
+    ["Toalla papel","s1_toa","s2_toa","s3_toa"],
+    ["Paredes","s1_par","s2_par","s3_par"],
+    ["Mesones","s1_mes","s2_mes","s3_mes"],
+    ["Baño María","s1_bm","s2_bm","s3_bm"],
+    ["Temperaturas","s1_temp","s2_temp","s3_temp"]
+  ];
+  rows.forEach(function(r,i){
+    var bg=i%2===0?"white":"#f9f9f9";
+    html+='<tr style="background:'+bg+'"><td style="padding:3px 6px;font-weight:500">'+r[0]+'</td>';
+    [r[1],r[2],r[3]].forEach(function(id){
+      var el=document.getElementById(id);
+      var val=el?el.getAttribute("data-val")||getCNCVal(el):"—";
+      var col=val==="C"?"#0F6E56":val==="NC"?"#A32D2D":"#888";
+      var bg2=val==="C"?"#e1f5ee":val==="NC"?"#fcebeb":"transparent";
+      html+='<td style="text-align:center;font-weight:bold;color:'+col+';background:'+bg2+'">'+( val||"—")+'</td>';
+    });
+    html+='</tr>';
+  });
+  html+='</tbody></table>';
+
+  // Observaciones
+  var obs1=document.getElementById("s1_obs").value;
+  var obs2=document.getElementById("s2_obs").value;
+  var obs3=document.getElementById("s3_obs").value;
+  if(obs1||obs2||obs3){
+    html+='<div style="border:1px solid #ddd;border-top:none;padding:6px 12px"><div style="font-size:6.5pt;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:4px">Observaciones</div>';
+    if(obs1)html+='<div style="font-size:7pt;margin-bottom:3px"><b>Serv.1:</b> '+obs1+'</div>';
+    if(obs2)html+='<div style="font-size:7pt;margin-bottom:3px"><b>Serv.2:</b> '+obs2+'</div>';
+    if(obs3)html+='<div style="font-size:7pt;"><b>Serv.3:</b> '+obs3+'</div>';
+    html+='</div>';
+  }
+
+  // Firma
+  html+='<div style="border:1px solid #ddd;border-top:none;display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;padding:24px 16px 12px">'+
+    '<div style="border-top:1.5px solid #333;text-align:center;padding-top:4px;font-size:6pt;color:#888">Nombre: '+(document.getElementById("fm_nombre").value||"—")+'</div>'+
+    '<div style="border-top:1.5px solid #333;text-align:center;padding-top:4px;font-size:6pt;color:#888">Timbre</div>'+
+    '<div style="border-top:1.5px solid #333;text-align:center;padding-top:4px;font-size:6pt;color:#888">Firma</div>'+
+  '</div>';
+
+  html+='<div style="background:#1A3A5C;color:rgba(255,255,255,.7);font-size:6.5pt;padding:5px 12px;text-align:center">'+
+    'Ficha Madre — Servicio de Alimentación ITE | E.P. Santiago 1 | Generado el '+hoy+' | Decreto 977 RSA Chile</div>';
+  html+='</div>';
+
+  document.getElementById("pdfContent").innerHTML=html;
+  document.getElementById("pdfModal").classList.add("open");
+  document.body.style.overflow="hidden";
+}
+function cerrarPDF(){
+  document.getElementById("pdfModal").classList.remove("open");
+  document.body.style.overflow="";
+}
+function pdfFi(lbl,val){
+  return'<div style="padding:5px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd">'+
+    '<div style="font-size:6.5pt;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:1px">'+lbl+'</div>'+
+    '<div style="font-size:8.5pt;font-weight:bold;color:#1A3A5C">'+(val||"—")+'</div>'+
+  '</div>';
+}
+function getCNCVal(el){
+  if(!el)return"—";
+  var active=el.querySelector(".cnc-btn.C");
+  if(active)return"C";
+  active=el.querySelector(".cnc-btn.NC");
+  if(active)return"NC";
+  active=el.querySelector(".cnc-btn.NA");
+  if(active)return"NA";
+  return"—";
+}
+
+
+// ─── SELECTOR TIPO SERVICIO ───────────────────────────────────────────────
+function actualizarHeaderSrv(srv){
+  // Solo actualiza el label visual — los datos siguen en los campos del servicio
+  // También actualiza el encabezado de la columna en el PDF
+}
+// Leer tipo de servicio seleccionado
+function getTipoSrv(srv){
+  var el=document.getElementById(srv+"_tipo");
+  return el?el.value:"";
+}
+
+// ── Toast ─────────────────────────────────────────────────────────────────
+function toast(msg,color){
+  var t=document.createElement("div");
+  t.className="fm-toast";t.textContent=msg;t.style.background=color||"#1A3A5C";
+  document.body.appendChild(t);
+  setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},3200);
+}
+
+// ── Tecla ESC cierra modal ────────────────────────────────────────────────
+document.addEventListener("keydown",function(e){if(e.key==="Escape")cerrarPDF();});
+
+// ── INIT ──────────────────────────────────────────────────────────────────
+initCNC();
+// Sincronizar automáticamente al abrir si hay datos
+(function(){
+  var tieneData=["cft_hist","chk_hist2","bpm_hist","haccp_hist"].some(function(k){
+    try{var v=localStorage.getItem(k);return v&&JSON.parse(v).length>0;}catch(e){return false;}
+  });
+  if(tieneData) sincronizar();
+})();
 </script>
 </body>
 </html>
