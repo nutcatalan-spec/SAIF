@@ -424,172 +424,408 @@ body.proceso-ze .zona-ze { display: block; }
             <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:140px">Ingrediente / Producto</th>
             <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:110px">Proveedor</th>
             <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">N° Factura</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Fecha Venc.</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Lote</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Temp. (°C)</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Cond.</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Sens.</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Acción</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Lote</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:100px">F. Elaboración</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:100px">F. Vencimiento</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:100px">F. Recepción</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Hora Recep.</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:120px">Encargado Recep.</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:95px">Cantidad</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">T° Recep. ⚠️<br><span style="font-weight:400;font-size:10px;opacity:0.9">(≤ 5°C)</span></th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:100px">Raciones Est.</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;min-width:130px">Obs. / AC</th>
+            <th style="padding:8px 6px;min-width:36px"></th>
           </tr>
         </thead>
-        <tbody id="tbody-mp">
-          <!-- Filas de materias primas se insertarán aquí -->
-        </tbody>
+        <tbody id="tbody-mp"></tbody>
       </table>
     </div>
-    <div class="btn-row" style="justify-content:flex-end;margin-top:10px">
-      <button class="btn btn-limpiar" onclick="agregarFilaMP()">➕ Agregar Fila</button>
+
+    <div style="margin-top:10px;padding:0 4px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-limpiar" style="font-size:12px;padding:6px 14px" onclick="agregarFilaRecepUltimoComp()">
+        ＋ Agregar ingrediente
+      </button>
     </div>
+
   </div>
 </div>
 
-<!-- ZONA INTERNA (ZI) -->
-<div class="zona-zi">
-  <!-- REGISTRO DE TEMPERATURAS -->
-  <div class="card">
-    <div class="card-header azul" onclick="toggleCard(this)">
-      🌡️ Registro de Temperaturas — Zona Interna
-      <span class="toggle-icon">▼</span>
-    </div>
-    <div class="card-body">
-      <div class="grid-3">
-        <div class="campo">
-          <label>Cámara Frigorífica</label>
-          <input type="number" id="temp-camara" placeholder="°C">
-        </div>
-        <div class="campo">
-          <label>Refrigerador</label>
-          <input type="number" id="temp-refrigerador" placeholder="°C">
-        </div>
-        <div class="campo">
-          <label>Congelador</label>
-          <input type="number" id="temp-congelador" placeholder="°C">
-        </div>
-      </div>
-      <div class="seccion-titulo">Temperaturas de Preparaciones</div>
-      <div class="grid-3">
-        <div class="campo">
-          <label>Enfriamiento Rápido</label>
-          <input type="number" id="temp-enfriamiento" placeholder="°C">
-        </div>
-        <div class="campo">
-          <label>Mantenimiento Caliente</label>
-          <input type="number" id="temp-mantenimiento" placeholder="°C">
-        </div>
-        <div class="campo">
-          <label>Servicio</label>
-          <input type="number" id="temp-servicio" placeholder="°C">
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- REGISTRO DE RACIONES -->
-  <div class="card">
-    <div class="card-header azul" onclick="toggleCard(this)">
-      🍽️ Registro de Raciones — Zona Interna
-      <span class="toggle-icon">▼</span>
-    </div>
-    <div class="card-body">
-      <div class="grid-3">
-        <div class="campo">
-          <label>N° Raciones Producidas</label>
-          <input type="number" id="raciones-producidas" value="0" oninput="calcularRaciones()">
-        </div>
-        <div class="campo">
-          <label>N° Raciones Servidas</label>
-          <input type="number" id="raciones-servidas" value="0" oninput="calcularRaciones()">
-        </div>
-        <div class="campo">
-          <label>N° Raciones Desechadas</label>
-          <input type="number" id="raciones-desechadas" value="0" oninput="calcularRaciones()">
-        </div>
-      </div>
-      <div class="raciones-box">
-        <div class="raciones-titulo">Resumen de Raciones</div>
-        <div class="raciones-resultado" id="resumen-raciones">0</div>
-        <div class="raciones-sub">Raciones disponibles para el servicio</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ZONA EXTERNA (ZE) -->
-<div class="zona-ze">
-  <!-- REGISTRO DE TEMPERATURAS -->
-  <div class="card">
-    <div class="card-header verde" onclick="toggleCard(this)">
-      🌡️ Registro de Temperaturas — Zona Externa
-      <span class="toggle-icon">▼</span>
-    </div>
-    <div class="card-body">
-      <div class="grid-3">
-        <div class="campo">
-          <label>Temperatura Ambiente</label>
-          <input type="number" id="temp-ambiente-ze" placeholder="°C">
-        </div>
-        <div class="campo">
-          <label>Temperatura Transporte</label>
-          <input type="number" id="temp-transporte-ze" placeholder="°C">
-        </div>
-        <div class="campo">
-          <label>Temperatura Servicio</label>
-          <input type="number" id="temp-servicio-ze" placeholder="°C">
-        </div>
-      </div>
-      <div class="seccion-titulo">Horarios de Servicio</div>
-      <div class="horarios-grid">
-        <div class="campo">
-          <label>Inicio Servicio</label>
-          <input type="time" id="hora-inicio-ze">
-        </div>
-        <div class="campo">
-          <label>Fin Servicio</label>
-          <input type="time" id="hora-fin-ze">
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- DESVÍOS Y ACCIONES CORRECTIVAS -->
+<!-- SANITIZACIÓN -->
 <div class="card">
-  <div class="card-header rojo" onclick="toggleCard(this)">
-    ⚠️ Desvíos y Acciones Correctivas
+  <div class="card-header gris" onclick="toggleCard(this)">
+    🧴 Registro de Sanitización de Frutas y Verduras
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="card-body" style="padding:10px 8px">
+
+    <!-- Datos comunes -->
+    <div class="grid-4" style="margin-bottom:12px;padding:0 8px">
+      <div class="campo">
+        <label>Área</label>
+        <input type="text" id="san-area" placeholder="Casino / Bodega">
+      </div>
+      <div class="campo">
+        <label>Fecha</label>
+        <input type="date" id="san-fecha">
+      </div>
+      <div class="campo">
+        <label>pH Sanitizante (común)</label>
+        <input type="number" step="0.1" id="san-ph" placeholder="6.5–7.5">
+      </div>
+      <div class="campo">
+        <label>Servicio</label>
+        <input type="text" id="san-servicio" placeholder="Almuerzo / Cena">
+      </div>
+    </div>
+
+    <!-- Tabla de productos sanitizados -->
+    <div style="overflow-x:auto;">
+      <table id="tabla-san" style="width:100%;border-collapse:collapse;font-size:12px;min-width:780px">
+        <thead>
+          <tr style="background:var(--verde);color:#fff;">
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:50px">N°</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:140px">Producto / Materia Prima</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:100px">Lote / F. Recepción</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Hora Inicio</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Hora Término</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Tiempo (min)</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:120px">Responsable</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;min-width:140px">Obs. / Acción Correctiva</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;min-width:40px"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody-san"></tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:10px;padding:0 4px">
+      <button class="btn btn-limpiar" style="font-size:12px;padding:6px 14px" onclick="agregarFilaSan()">
+        ＋ Agregar producto sanitizado
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- PRODUCCIÓN -->
+<div class="card">
+  <div class="card-header gris" onclick="toggleCard(this)">
+    🍳 Registro de Producción — Servicio Completo
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="card-body" style="padding:10px 8px">
+
+    <div style="overflow-x:auto;">
+      <table id="tabla-prod" style="width:100%;border-collapse:collapse;font-size:12px;min-width:1100px">
+        <thead>
+          <tr style="background:var(--azul);color:#fff;">
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:110px">Componente</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:100px">Tipo cocción</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Lote</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:100px">F. Elaboración</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:100px">F. Vencimiento</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:75px">H. Inicio</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:72px">T° Ini (°C)</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:75px">H. Final</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">T° Final ⚠️<br><span style="font-weight:400;font-size:10px">(≥74°C)</span></th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:75px">H. Entrega</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">T° Entrega<br><span style="font-weight:400;font-size:10px">(≥63°C)</span></th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:180px">Evaluación Sensorial</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;min-width:130px">Obs. / AC</th>
+            <th style="padding:8px 6px;min-width:36px"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody-prod"></tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:10px;padding:0 4px">
+      <button class="btn btn-limpiar" style="font-size:12px;padding:6px 14px" onclick="agregarFilaProd()">
+        ＋ Agregar componente
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ABATIMIENTO -->
+<div class="card">
+  <div class="card-header gris" onclick="toggleCard(this)">
+    ❄️ Registro de Enfriamiento / Abatimiento — Servicio Completo
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="card-body" style="padding:10px 8px">
+    <div style="overflow-x:auto;">
+      <table id="tabla-abat" style="width:100%;border-collapse:collapse;font-size:12px;min-width:920px">
+        <thead>
+          <tr style="background:#1565A0;color:#fff;">
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:120px">Componente</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Equipo N°</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">T° Equipo (°C)</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Cantidad</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Hora Inicio</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:75px">T° Inicial (°C)</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Hora Final</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">T° Final ⚠️<br><span style="font-weight:400;font-size:10px">(≤ 5°C)</span></th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:120px">Responsable</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;min-width:130px">Obs. / AC</th>
+            <th style="padding:8px 6px;min-width:36px"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody-abat"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px;padding:0 4px">
+      <button class="btn btn-limpiar" style="font-size:12px;padding:6px 14px" onclick="agregarFilaAbat()">
+        ＋ Agregar componente
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ENVASADO — solo ZI -->
+<div class="card zona-zi">
+  <div class="card-header gris" onclick="toggleCard(this)">
+    📦 Registro de Envasado — Servicio Completo <small style="font-weight:400;font-size:10px;opacity:0.8">(Zona Interna)</small>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="card-body" style="padding:10px 8px">
+    <div style="overflow-x:auto;">
+      <table id="tabla-env" style="width:100%;border-collapse:collapse;font-size:12px;min-width:880px">
+        <thead>
+          <tr style="background:var(--azul);color:#fff;">
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:120px">Componente</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Lote Envasado</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Cantidad</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Hora Inicio</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">T° Inicial ⚠️<br><span style="font-weight:400;font-size:10px">(≤ 5°C)</span></th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Hora Final</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">T° Final ⚠️<br><span style="font-weight:400;font-size:10px">(≤ 5°C)</span></th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:120px">Responsable</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;min-width:130px">Obs. / AC</th>
+            <th style="padding:8px 6px;min-width:36px"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody-env"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px;padding:0 4px">
+      <button class="btn btn-limpiar" style="font-size:12px;padding:6px 14px" onclick="agregarFilaEnv()">
+        ＋ Agregar componente
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- DESPACHO — solo ZI -->
+<div class="card zona-zi">
+  <div class="card-header gris" onclick="toggleCard(this)">
+    🚛 Registro de Despacho — Servicio Completo <small style="font-weight:400;font-size:10px;opacity:0.8">(Zona Interna)</small>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="card-body" style="padding:10px 8px">
+
+    <!-- Vehículo — campo común -->
+    <div class="grid-2" style="margin-bottom:12px;padding:0 8px">
+      <div class="campo">
+        <label>Condiciones Vehículo (común)</label>
+        <select id="desp-vehiculo">
+          <option value="">—</option>
+          <option>✅ Adecuadas</option>
+          <option>⚠️ Con observaciones</option>
+          <option>❌ Inadecuadas</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label>Obs. Vehículo</label>
+        <input type="text" id="desp-obs-vehiculo" placeholder="Observaciones del vehículo">
+      </div>
+    </div>
+
+    <!-- Tabla por componente -->
+    <div style="overflow-x:auto;">
+      <table id="tabla-desp" style="width:100%;border-collapse:collapse;font-size:12px;min-width:820px">
+        <thead>
+          <tr style="background:var(--azul);color:#fff;">
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:120px">Componente</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Lote</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">F. Vencimiento</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Cantidad</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:100px">Fecha Despacho</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Hora Despacho</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:85px">T° Despacho ⚠️<br><span style="font-weight:400;font-size:10px">(≤ 5°C)</span></th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;min-width:130px">Obs. / AC</th>
+            <th style="padding:8px 6px;min-width:36px"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody-desp"></tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:10px;padding:0 4px">
+      <button class="btn btn-limpiar" style="font-size:12px;padding:6px 14px" onclick="agregarFilaDesp()">
+        ＋ Agregar componente
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- RECEPCIÓN RETERMALIZADO — solo ZI -->
+<div class="card zona-zi">
+  <div class="card-header gris" onclick="toggleCard(this)">
+    📥 Recepción en Retermalizado — Por Producto <small style="font-weight:400;font-size:10px;opacity:0.8">(Zona Interna)</small>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="card-body" style="padding:10px 8px">
+    <div style="overflow-x:auto;">
+      <table id="tabla-rr" style="width:100%;border-collapse:collapse;font-size:12px;min-width:820px">
+        <thead>
+          <tr style="background:var(--azul);color:#fff;">
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:130px">Componente / Producto</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Lote</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Cantidad</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:100px">Fecha Recepción</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Hora Recepción</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:85px">T° Recepción ⚠️<br><span style="font-weight:400;font-size:10px">(≤ 5°C)</span></th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:100px">Condición Vehículo</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;min-width:130px">Obs. / AC</th>
+            <th style="padding:8px 6px;min-width:36px"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody-rr"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px;padding:0 4px">
+      <button class="btn btn-limpiar" style="font-size:12px;padding:6px 14px" onclick="agregarFilaRR()">
+        ＋ Agregar producto
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- RETERMALIZACIÓN — solo ZI -->
+<div class="card zona-zi">
+  <div class="card-header gris" onclick="toggleCard(this)">
+    🔥 Retermalización y Despacho a Reposteros — Por Producto <small style="font-weight:400;font-size:10px;opacity:0.8">(Zona Interna)</small>
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="card-body" style="padding:10px 8px">
+    <div style="overflow-x:auto;">
+      <table id="tabla-rt" style="width:100%;border-collapse:collapse;font-size:12px;min-width:1050px">
+        <thead>
+          <tr style="background:#8B1A1A;color:#fff;">
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:120px">Componente</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Lote</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">F. Vencimiento</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Cantidad</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">N° Equipo</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:75px">H. Inicio</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:72px">T° Inicial</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:75px">H. Final</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:82px">T° Final ⚠️<br><span style="font-weight:400;font-size:10px">(≥74°C)</span></th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:82px">T° Repostero<br><span style="font-weight:400;font-size:10px">(≥63°C)</span></th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;min-width:130px">Obs. / AC</th>
+            <th style="padding:8px 6px;min-width:36px"></th>
+          </tr>
+        </thead>
+        <tbody id="tbody-rt"></tbody>
+      </table>
+    </div>
+    <div style="margin-top:10px;padding:0 4px">
+      <button class="btn btn-limpiar" style="font-size:12px;padding:6px 14px" onclick="agregarFilaRT()">
+        ＋ Agregar producto
+      </button>
+    </div>
+
+    <!-- BAÑOS MARÍA — control de equipo -->
+    <div style="margin-top:14px;padding:0 4px">
+      <div style="font-size:11px;font-weight:700;color:#8B1A1A;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #F0DADA;">
+        🌡️ Control de Baños María — Reposteros
+      </div>
+      <div style="overflow-x:auto;">
+        <table id="tabla-bm" style="width:100%;border-collapse:collapse;font-size:12px;min-width:600px">
+          <thead>
+            <tr style="background:#8B1A1A;color:#fff;">
+              <th style="padding:7px 8px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:130px">Identificación Baño María</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Hora Medición</th>
+              <th style="padding:7px 8px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">T° Medida ⚠️<br><span style="font-weight:400;font-size:10px">(≥63°C)</span></th>
+              <th style="padding:7px 8px;text-align:left;font-weight:700;font-size:11px;min-width:160px">Obs. / AC</th>
+              <th style="padding:7px 8px;min-width:36px"></th>
+            </tr>
+          </thead>
+          <tbody id="tbody-bm"></tbody>
+        </table>
+      </div>
+      <div style="margin-top:8px">
+        <button class="btn btn-limpiar" style="font-size:12px;padding:5px 12px" onclick="agregarFilaBM()">
+          ＋ Agregar baño maría
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- TEMPERATURAS CASINO ZE — solo ZE -->
+<div class="card zona-ze">
+  <div class="card-header gris" onclick="toggleCard(this)">
+    🌡️ Registro de Temperaturas Casino <small style="font-weight:400;font-size:10px;opacity:0.8">(Zona Externa)</small>
     <span class="toggle-icon">▼</span>
   </div>
   <div class="card-body">
-    <div class="campo">
-      <label>¿Se detectaron desvíos?</label>
-      <select id="desvios-detectados" onchange="mostrarOcultarDesvios()">
-        <option value="no">No</option>
-        <option value="si">Sí</option>
-      </select>
-    </div>
-    <div id="panel-desvios" style="display:none;margin-top:10px">
-      <div class="seccion-titulo">Detalle de Desvíos</div>
-      <div class="grid-2">
-        <div class="campo">
-          <label>Tipo de Desvío</label>
-          <select id="tipo-desvio">
-            <option value="">Seleccionar...</option>
-            <option>Temperatura</option>
-            <option>Higiene</option>
-            <option>Materia Prima</option>
-            <option>Proceso</option>
-            <option>Otro</option>
-          </select>
-        </div>
-        <div class="campo">
-          <label>Descripción del Desvío</label>
-          <input type="text" id="desc-desvio" placeholder="Detalle del desvío">
-        </div>
-      </div>
-      <div class="seccion-titulo" style="margin-top:15px">Acción Correctiva Implementada</div>
+    <div class="seccion-titulo">Mediciones Horarias ⚠️ PCC (≥ 63°C)</div>
+    <div class="horarios-grid">
       <div class="campo">
-        <label>Acción Correctiva</label>
-        <textarea id="accion-correctiva" placeholder="Describa la acción tomada..."></textarea>
+        <label>11:30 hrs</label>
+        <input type="number" step="0.1" id="ze-t-1130" data-limite="63" data-tipo="min"
+          placeholder="°C" oninput="validarTempId('ze-t-1130','≥ 63°C','lim-ze-1130')">
+        <span class="limite" id="lim-ze-1130">≥ 63°C</span>
       </div>
+      <div class="campo">
+        <label>12:30 hrs</label>
+        <input type="number" step="0.1" id="ze-t-1230" data-limite="63" data-tipo="min"
+          placeholder="°C" oninput="validarTempId('ze-t-1230','≥ 63°C','lim-ze-1230')">
+        <span class="limite" id="lim-ze-1230">≥ 63°C</span>
+      </div>
+      <div class="campo">
+        <label>13:30 hrs</label>
+        <input type="number" step="0.1" id="ze-t-1330" data-limite="63" data-tipo="min"
+          placeholder="°C" oninput="validarTempId('ze-t-1330','≥ 63°C','lim-ze-1330')">
+        <span class="limite" id="lim-ze-1330">≥ 63°C</span>
+      </div>
+      <div class="campo">
+        <label>14:30 hrs</label>
+        <input type="number" step="0.1" id="ze-t-1430" data-limite="63" data-tipo="min"
+          placeholder="°C" oninput="validarTempId('ze-t-1430','≥ 63°C','lim-ze-1430')">
+        <span class="limite" id="lim-ze-1430">≥ 63°C</span>
+      </div>
+    </div>
+    <div class="seccion-titulo" style="margin-top:12px">Baños María</div>
+    <div class="grid-2">
+      <div class="campo">
+        <label>T° Baño María 1 promedio (°C)</label>
+        <input type="number" step="0.1" id="ze-bm1" data-limite="63" data-tipo="min"
+          placeholder="°C" oninput="validarTempId('ze-bm1','≥ 63°C','lim-ze-bm1')">
+        <span class="limite" id="lim-ze-bm1">≥ 63°C</span>
+      </div>
+      <div class="campo">
+        <label>T° Baño María 2 promedio (°C)</label>
+        <input type="number" step="0.1" id="ze-bm2" data-limite="63" data-tipo="min"
+          placeholder="°C" oninput="validarTempId('ze-bm2','≥ 63°C','lim-ze-bm2')">
+        <span class="limite" id="lim-ze-bm2">≥ 63°C</span>
+      </div>
+    </div>
+
+    <div class="seccion-titulo" style="margin-top:12px">Control de Comensales del Día</div>
+    <div class="grid-3">
+      <div class="campo"><label>Común (raciones)</label><input type="number" id="ze-com-comun" placeholder="N°"></div>
+      <div class="campo"><label>Liviano (raciones)</label><input type="number" id="ze-com-liviano" placeholder="N°"></div>
+      <div class="campo"><label>Hipo (raciones)</label><input type="number" id="ze-com-hipo" placeholder="N°"></div>
+    </div>
+    <div class="campo" style="margin-top:8px">
+      <label>Obs. / Acción Correctiva</label>
+      <textarea id="ze-obs-casino" rows="2" placeholder="Observaciones o acciones correctivas"></textarea>
     </div>
   </div>
 </div>
@@ -597,13 +833,12 @@ body.proceso-ze .zona-ze { display: block; }
 <!-- OBSERVACIONES GENERALES -->
 <div class="card">
   <div class="card-header gris" onclick="toggleCard(this)">
-    📝 Observaciones Generales
+    📝 Observaciones Generales en Trazabilidad
     <span class="toggle-icon">▼</span>
   </div>
   <div class="card-body">
     <div class="campo">
-      <label>Observaciones</label>
-      <textarea id="observaciones-generales" placeholder="Notas adicionales..."></textarea>
+      <textarea id="obs-generales" rows="3" placeholder="Observaciones generales del ejercicio de trazabilidad..."></textarea>
     </div>
   </div>
 </div>
@@ -611,445 +846,2618 @@ body.proceso-ze .zona-ze { display: block; }
 <!-- BOTONES DE ACCIÓN -->
 <div class="btn-row">
   <button class="btn btn-guardar" onclick="guardarRegistro()">💾 Guardar Registro</button>
-  <button class="btn btn-pdf" onclick="generarPDF()">📄 Generar PDF</button>
-  <button class="btn btn-limpiar" onclick="limpiarFormulario()">🧹 Limpiar Formulario</button>
-  <button class="btn btn-danger" onclick="eliminarRegistro()">🗑️ Eliminar Registro</button>
-</div>
-
-<!-- MODAL ACCIÓN CORRECTIVA -->
-<div id="modalAccionCorrectiva" class="modal-overlay">
-  <div class="modal-box">
-    <div class="modal-header">
-      ⚠️ Acción Correctiva Requerida
-    </div>
-    <div class="modal-body">
-      <p>Se han detectado los siguientes desvíos:</p>
-      <div id="lista-desvios-modal" class="modal-desvios"></div>
-      <p>Por favor, describa la acción correctiva implementada:</p>
-      <div class="campo">
-        <textarea id="accion-correctiva-modal" placeholder="Describa la acción tomada..."></textarea>
-      </div>
-    </div>
-    <div class="modal-footer">
-      <button class="btn btn-limpiar" onclick="cerrarModalAccionCorrectiva()">Cancelar</button>
-      <button class="btn btn-danger" onclick="confirmarAccionCorrectiva()">Confirmar Acción</button>
-    </div>
-  </div>
+  <button class="btn btn-pdf" onclick="generarPDF()">📄 Exportar PDF</button>
+  <button class="btn btn-limpiar" onclick="limpiarFormulario()">🔄 Nuevo Registro</button>
 </div>
 
 <!-- HISTORIAL -->
-<div class="card">
+<!-- PANEL CONFIGURACIÓN SUPABASE -->
+<div class="card" style="margin-top:20px;border:2px solid #1A6B3C">
   <div class="card-header verde" onclick="toggleCard(this)">
-    ⏳ Historial de Registros
+    ☁️ Configuración Supabase — Guardado en la Nube
     <span class="toggle-icon">▼</span>
   </div>
-  <div class="card-body">
-    <div id="historial-registros"></div>
+  <div class="card-body hidden">
+    <div style="background:#E6F4EC;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#1A6B3C;line-height:1.6">
+      <strong>¿Cómo conectar?</strong><br>
+      1. Crea tu proyecto gratuito en <a href="https://supabase.com" target="_blank" style="color:#1A6B3C">supabase.com</a><br>
+      2. Ve a <strong>Project Settings → API</strong><br>
+      3. Copia la <strong>Project URL</strong> y la <strong>anon public key</strong><br>
+      4. Pégalas aquí y presiona Guardar Configuración
+    </div>
+    <div class="grid-2" style="margin-bottom:10px">
+      <div class="campo">
+        <label>Project URL</label>
+        <input type="text" id="config-sb-url" placeholder="https://xxxx.supabase.co"
+          value="${localStorage.getItem('sb_url')||''}"
+          style="font-size:12px">
+      </div>
+      <div class="campo">
+        <label>Anon Public Key</label>
+        <input type="text" id="config-sb-key" placeholder="eyJhbGciOiJIUzI1..."
+          value="${localStorage.getItem('sb_key')||''}"
+          style="font-size:12px">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <button class="btn btn-guardar" style="font-size:12px;padding:8px 16px" onclick="guardarConfigSupabase()">
+        💾 Guardar Configuración
+      </button>
+      <button class="btn btn-limpiar" style="font-size:12px;padding:8px 16px" onclick="probarConexionSupabase()">
+        🔌 Probar Conexión
+      </button>
+      <span id="sb-status" style="font-size:12px;font-weight:600"></span>
+    </div>
   </div>
 </div>
 
-<!-- TOAST CONTAINER -->
-<div id="toast-container"></div>
-
+<div class="card" style="margin-top:20px">
+  <div class="card-header azul" onclick="toggleCard(this)">
+    📚 Historial de Registros
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="card-body" id="historial-container">
+    <p style="color:#888;font-size:13px;text-align:center;padding:20px 0;">No hay registros guardados aún.</p>
+  </div>
 </div>
 
+<!-- DASHBOARD GRÁFICOS -->
+<div class="card" style="margin-top:20px">
+  <div class="card-header azul" onclick="toggleCard(this)">
+    📊 Dashboard — Análisis de Registros
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="card-body" id="dashboard-body">
+
+    <!-- KPI CARDS -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:18px">
+      <div style="background:#E8F0F8;border-radius:8px;padding:12px 10px;text-align:center;">
+        <div style="font-size:10px;font-weight:700;color:#0B3D6B;text-transform:uppercase;margin-bottom:4px">Total Registros</div>
+        <div style="font-size:26px;font-weight:800;color:#0B3D6B" id="kpi-total">0</div>
+      </div>
+      <div style="background:#E6F4EC;border-radius:8px;padding:12px 10px;text-align:center;">
+        <div style="font-size:10px;font-weight:700;color:#1A6B3C;text-transform:uppercase;margin-bottom:4px">Cumplimiento PCC</div>
+        <div style="font-size:26px;font-weight:800;color:#1A6B3C" id="kpi-cump">0%</div>
+      </div>
+      <div style="background:#FDECEA;border-radius:8px;padding:12px 10px;text-align:center;">
+        <div style="font-size:10px;font-weight:700;color:#C0392B;text-transform:uppercase;margin-bottom:4px">Con Desvíos NC</div>
+        <div style="font-size:26px;font-weight:800;color:#C0392B" id="kpi-nc">0</div>
+      </div>
+      <div style="background:#E8F0F8;border-radius:8px;padding:12px 10px;text-align:center;">
+        <div style="font-size:10px;font-weight:700;color:#0B3D6B;text-transform:uppercase;margin-bottom:4px">Zona Interna</div>
+        <div style="font-size:26px;font-weight:800;color:#0B3D6B" id="kpi-zi">0</div>
+      </div>
+      <div style="background:#E6F4EC;border-radius:8px;padding:12px 10px;text-align:center;">
+        <div style="font-size:10px;font-weight:700;color:#1A6B3C;text-transform:uppercase;margin-bottom:4px">Zona Externa</div>
+        <div style="font-size:26px;font-weight:800;color:#1A6B3C" id="kpi-ze">0</div>
+      </div>
+    </div>
+
+    <!-- FILTROS -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap;">
+      <label style="font-size:11px;font-weight:700;color:#4A5568;text-transform:uppercase;">Período:</label>
+      <select id="dash-periodo" onchange="renderDashboard()" style="font-size:12px;padding:5px 10px;border:1px solid #D0D7E2;border-radius:6px;">
+        <option value="7">Últimos 7 días</option>
+        <option value="30" selected>Últimos 30 días</option>
+        <option value="90">Últimos 90 días</option>
+        <option value="365">Último año</option>
+        <option value="0">Todos</option>
+      </select>
+      <select id="dash-proceso" onchange="renderDashboard()" style="font-size:12px;padding:5px 10px;border:1px solid #D0D7E2;border-radius:6px;">
+        <option value="todos">Todos los procesos</option>
+        <option value="zi">Solo Zona Interna</option>
+        <option value="ze">Solo Zona Externa</option>
+      </select>
+      <button class="btn btn-limpiar" style="padding:5px 14px;font-size:12px" onclick="renderDashboard()">🔄 Actualizar</button>
+    </div>
+
+    <!-- GRÁFICO 1A: TEMPERATURAS CALIENTES -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:12px;font-weight:700;color:#C0392B;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;padding-bottom:4px;border-bottom:2px solid #FDECEA;">
+        🌡️ Temperaturas Calientes — Valor Mínimo vs Límite Crítico
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px;font-size:11px;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:16px;height:3px;background:#E74C3C;display:inline-block;border-radius:2px"></span>T° Cocción (mín.)</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:16px;height:3px;background:#E74C3C;display:inline-block;border-radius:2px;opacity:0.4"></span>Límite cocción 74°C</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:16px;height:3px;background:#F39C12;display:inline-block;border-radius:2px"></span>T° Retermalización (mín.)</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:16px;height:3px;background:#27AE60;display:inline-block;border-radius:2px"></span>T° Casino/Repostero (mín.)</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:16px;height:3px;background:#27AE60;display:inline-block;border-radius:2px;opacity:0.4"></span>Límite casino 63°C</span>
+      </div>
+      <div style="position:relative;width:100%;height:240px;">
+        <canvas id="chart-caliente" role="img" aria-label="Temperaturas calientes vs límites críticos"></canvas>
+      </div>
+    </div>
+
+    <!-- GRÁFICO 1B: TEMPERATURAS FRÍAS -->
+    <div style="margin-bottom:20px;">
+      <div style="font-size:12px;font-weight:700;color:#2980B9;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:6px;padding-bottom:4px;border-bottom:2px solid #E8F0F8;">
+        ❄️ Temperaturas Frías — Valor Mínimo vs Límite Crítico
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px;font-size:11px;">
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:16px;height:3px;background:#3498DB;display:inline-block;border-radius:2px"></span>T° Abatimiento (mín.)</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:16px;height:3px;background:#8E44AD;display:inline-block;border-radius:2px"></span>T° Despacho (mín.)</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:16px;height:3px;background:#1ABC9C;display:inline-block;border-radius:2px"></span>T° Recepción MP (mín.)</span>
+        <span style="display:flex;align-items:center;gap:4px;"><span style="width:16px;height:3px;background:#E74C3C;display:inline-block;border-radius:2px;opacity:0.5;border-top:2px dashed #E74C3C"></span>Límite frío 5°C</span>
+      </div>
+      <div style="position:relative;width:100%;height:240px;">
+        <canvas id="chart-frio" role="img" aria-label="Temperaturas frías vs límite crítico 5°C"></canvas>
+      </div>
+    </div>
+
+    <!-- GRÁFICO 2 y 3 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:4px;">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#0B3D6B;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #E8F0F8;">
+          🟢 Cumplimiento PCC
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:6px;font-size:11px;">
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#27AE60;display:inline-block"></span>Sin desvíos</span>
+          <span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:2px;background:#E74C3C;display:inline-block"></span>Con NC</span>
+        </div>
+        <div style="position:relative;width:100%;height:200px;">
+          <canvas id="chart-torta" role="img" aria-label="Gráfico cumplimiento PCC"></canvas>
+        </div>
+        <div style="text-align:center;margin-top:6px;font-size:11px;color:#4A5568" id="torta-label"></div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:#0B3D6B;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;padding-bottom:4px;border-bottom:2px solid #E8F0F8;">
+          📋 Motivos frecuentes en observaciones
+        </div>
+        <div style="position:relative;width:100%;height:200px;">
+          <canvas id="chart-barras" role="img" aria-label="Motivos frecuentes en observaciones"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div id="dash-vacio" style="display:none;text-align:center;padding:30px;color:#888;font-size:13px;">
+      Sin registros en el período seleccionado. Guarda registros para ver el dashboard.
+    </div>
+
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- MODAL ACCIÓN CORRECTIVA -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      ⚠️ Temperatura fuera de rango — Acción Correctiva Obligatoria
+    </div>
+    <div class="modal-body">
+      <p>Se detectaron los siguientes desvíos de temperatura en este registro. Debe registrar la acción correctiva antes de guardar.</p>
+      <div class="modal-desvios" id="modal-desvios-lista"></div>
+      <div class="campo">
+        <label>Acción Correctiva Registrada</label>
+        <textarea id="modal-accion" rows="3" placeholder="Describa la acción correctiva tomada para cada desvío..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-limpiar" onclick="cerrarModal()">Cancelar</button>
+      <button class="btn btn-danger" onclick="confirmarAccionCorrectiva()">✅ Confirmar y Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- SUPABASE CONFIG — Editar con tus credenciales -->
 <script>
-// ==============================================================================
-// CONFIGURACIÓN SUPABASE (INYECCIÓN QUIRÚRGICA)
-// ==============================================================================
-var supabaseClient = {
-  url: function() { return localStorage.getItem('supabase_url') || ''; },
-  key: function() { return localStorage.getItem('supabase_key') || ''; },
+// ============================================================
+// CONFIGURACIÓN SUPABASE
+// 1. Crea tu proyecto en https://supabase.com (gratis)
+// 2. Ve a Project Settings > API
+// 3. Copia la URL y la anon key aquí
+// ============================================================
+const SUPABASE_URL = localStorage.getItem('sb_url') || '';
+const SUPABASE_KEY = localStorage.getItem('sb_key') || '';
+
+// Cliente Supabase simplificado (sin SDK — usa fetch directo)
+const sb = {
+  url: SUPABASE_URL,
+  key: SUPABASE_KEY,
+  configured: () => !!(sb.url && sb.key),
+
   async insert(table, data) {
-    var url = this.url();
-    var key = this.key();
-    if (!url || !key) {
-      showToast('❌ Error: Configuración Supabase incompleta.', 'rojo');
-      return;
-    }
+    if(!sb.configured()) return { error: 'No configurado' };
     try {
-      showToast('☁️ Sincronizando con la nube...', 'verde');
-      const response = await fetch(url + '/rest/v1/' + table, {
+      const r = await fetch(`${sb.url}/rest/v1/${table}`, {
         method: 'POST',
-        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
+        headers: {
+          'apikey': sb.key,
+          'Authorization': `Bearer ${sb.key}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
         body: JSON.stringify(data)
       });
-      if (response.ok) {
-        showToast('✅ Guardado en Local y Nube', 'verde');
-      } else {
-        const errorData = await response.json();
-        showToast('❌ Error Supabase: ' + (errorData.message || response.statusText), 'rojo');
-        console.error('Error Supabase:', errorData);
-      }
-    } catch(e) {
-      showToast('❌ Error de red o Supabase: ' + e.message, 'rojo');
-      console.error('Error de red o Supabase:', e);
-    }
+      const json = await r.json();
+      return r.ok ? { data: json } : { error: json };
+    } catch(e) { return { error: e.message }; }
   },
-  async fetchAll(table) {
-    var url = this.url();
-    var key = this.key();
-    if (!url || !key) {
-      showToast('❌ Error: Configuración Supabase incompleta.', 'rojo');
-      return [];
-    }
+
+  async select(table, query = '') {
+    if(!sb.configured()) return { error: 'No configurado' };
     try {
-      const response = await fetch(url + '/rest/v1/' + table + '?select=*', {
-        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+      const r = await fetch(`${sb.url}/rest/v1/${table}?${query}&order=created_at.desc`, {
+        headers: {
+          'apikey': sb.key,
+          'Authorization': `Bearer ${sb.key}`
+        }
       });
-      if (response.ok) {
-        return await response.json();
-      } else {
-        const errorData = await response.json();
-        showToast('❌ Error al cargar de Supabase: ' + (errorData.message || response.statusText), 'rojo');
-        console.error('Error al cargar de Supabase:', errorData);
-        return [];
-      }
-    } catch(e) {
-      showToast('❌ Error de red o Supabase al cargar: ' + e.message, 'rojo');
-      console.error('Error de red o Supabase al cargar:', e);
-      return [];
-    }
+      const json = await r.json();
+      return r.ok ? { data: json } : { error: json };
+    } catch(e) { return { error: e.message }; }
+  },
+
+  async delete(table, id) {
+    if(!sb.configured()) return { error: 'No configurado' };
+    try {
+      const r = await fetch(`${sb.url}/rest/v1/${table}?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': sb.key,
+          'Authorization': `Bearer ${sb.key}`
+        }
+      });
+      return r.ok ? { ok: true } : { error: await r.json() };
+    } catch(e) { return { error: e.message }; }
   }
 };
+</script>
 
-// ==============================================================================
-// FUNCIONES DE UTILIDAD (RESTO DEL CÓDIGO ORIGINAL)
-// ==============================================================================
+<script>
+// =============================================
+// INICIALIZACIÓN
+// =============================================
+const KEY = 'trazabilidad_ep_v1';
+let procesoActual = 'zi';
+let desviosActuales = [];
+let _guardarPendiente = false;
 
-// Variables globales
-let nroRegistroCounter = parseInt(localStorage.getItem('nroRegistroCounter')) || 1;
-let currentProceso = 'zi'; // 'zi' para Zona Interna, 'ze' para Zona Externa
-
-// Función para mostrar toasts
-function showToast(message, type) {
-  const toastContainer = document.getElementById('toast-container');
-  if (!toastContainer) {
-    console.warn('Toast container not found.');
-    return;
-  }
-  const toast = document.createElement('div');
-  toast.className = `toast ${type} visible`;
-  toast.textContent = message;
-  toastContainer.appendChild(toast);
-
-  setTimeout(() => {
-    toast.classList.remove('visible');
-    toast.addEventListener('transitionend', () => toast.remove());
-  }, 3000);
+function init() {
+  generarMetadatos();
+  generarTablaMPs();
+  cargarHistorial();
+  setInterval(actualizarHora, 1000);
+  // Inicializar tabla sanitización con 1 fila por defecto
+  iniciarTablaSan();
+  // Inicializar tabla producción con 1 fila por defecto
+  iniciarTablaProd();
+  iniciarTablaAbat();
+  iniciarTablaEnv();
+  iniciarTablaDesp();
+  iniciarTablaRR();
+  iniciarTablaRT();
+  iniciarTablaBM();
+  iniciarTablaDesp();
 }
 
-// Función para alternar la visibilidad de las tarjetas
+function generarMetadatos() {
+  const ahora = new Date();
+  const fecha = ahora.toLocaleDateString('es-CL');
+  const hora = ahora.toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'});
+  const anio = ahora.getFullYear();
+  const registros = JSON.parse(localStorage.getItem(KEY) || '[]');
+  const nroAnio = registros.filter(r => r.fecha && r.fecha.includes(String(anio))).length + 1;
+  const nro = `TRAZ-${anio}-${String(nroAnio).padStart(4,'0')}`;
+  const lote = `L${ahora.getFullYear()}${String(ahora.getMonth()+1).padStart(2,'0')}${String(ahora.getDate()).padStart(2,'0')}-${String(nroAnio).padStart(3,'0')}`;
+
+  document.getElementById('nro-registro').value = nro;
+  document.getElementById('fecha-reg').value = fecha;
+  document.getElementById('hora-reg').value = hora;
+  document.getElementById('hdr-fecha').textContent = fecha;
+  document.getElementById('hdr-hora').textContent = hora;
+  document.getElementById('hdr-reg').textContent = nro;
+  document.getElementById('proceso-display').value = 'Zona Interna — Internos';
+}
+
+function actualizarHora() {
+  const ahora = new Date();
+  const hora = ahora.toLocaleTimeString('es-CL', {hour:'2-digit', minute:'2-digit'});
+  document.getElementById('hdr-hora').textContent = hora;
+}
+
+// =============================================
+// PROCESO ZI / ZE
+// =============================================
+function setProceso(p) {
+  procesoActual = p;
+  document.body.className = `proceso-${p}`;
+  document.querySelectorAll('.proceso-btn').forEach(b => b.classList.remove('activo'));
+  document.querySelector(`.proceso-btn.${p}`).classList.add('activo');
+  document.getElementById('proceso-display').value = p === 'zi'
+    ? 'Zona Interna — Internos'
+    : 'Zona Externa — Funcionarios GENCHI';
+  // Actualizar opciones de régimen según proceso
+  const sel = document.getElementById('regimen-reg');
+  if(!sel) return;
+  const optsZI = ['Régimen Común','Régimen Liviano','Hipoglucídico'];
+  const optsZE = ['Régimen Común','Régimen Liviano','Hipocalórico'];
+  const opts = p === 'zi' ? optsZI : optsZE;
+  const current = sel.value;
+  sel.innerHTML = opts.map(o => `<option value="${o}"${o===current?' selected':''}>${o}</option>`).join('');
+  // Si el valor actual no existe en nuevas opciones, resetear al primero
+  if(!opts.includes(sel.value)) sel.value = opts[0];
+  // Actualizar header
+  const hdrReg = document.getElementById('hdr-regimen');
+  if(hdrReg) hdrReg.textContent = sel.value;
+}
+
+// =============================================
+// TABLA MATERIAS PRIMAS — UNIFICADA
+// =============================================
+// =============================================
+// RECEPCIÓN — tabla dinámica por ingrediente
+// =============================================
+const CONV = { bolsa: 3000, kg: 1000, gn: 4000 };
+const COMPONENTES_MP = ['Ensalada','Proteína','Acompañamiento','Postre','Otro'];
+const RACION_POR_COMP = { 'Ensalada':80, 'Proteína':120, 'Acompañamiento':220, 'Postre':150, 'Otro':100 };
+let recepFilaCount = 0;
+
+function iniciarTablaRecep() {
+  recepFilaCount = 0;
+  const tbody = document.getElementById('tbody-mp');
+  if(!tbody) { return; }
+  tbody.innerHTML = '';
+  // Iniciar con 4 filas predeterminadas (una por componente principal)
+  COMPONENTES_MP.slice(0,4).forEach(comp => agregarFilaRecep(comp));
+}
+
+// Alias para compatibilidad con llamada original en init
+function generarTablaMPs() { iniciarTablaRecep(); }
+
+function agregarFilaRecep(componenteDefecto) {
+  const tbody = document.getElementById('tbody-mp');
+  if(!tbody) return;
+  const idx = recepFilaCount++;
+  const esImpar = idx % 2 === 1;
+  const tr = document.createElement('tr');
+  tr.id = 'recep-fila-' + idx;
+  tr.style.background = esImpar ? '#F8FAFD' : '#fff';
+
+  const compOpts = COMPONENTES_MP.map(c =>
+    `<option value="${c}" ${c === componenteDefecto ? 'selected' : ''}>${c}</option>`
+  ).join('');
+
+  tr.innerHTML = `
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <select data-recep="${idx}" data-field="componente"
+        onchange="calcRacionRecep(${idx})"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 5px;font-size:12px;background:#fff;font-weight:600;color:var(--azul)">
+        ${compOpts}
+      </select>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <input type="text" data-recep="${idx}" data-field="producto"
+        placeholder="Ej: Lechuga, Tomate..."
+        style="width:100%;min-width:130px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 7px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <input type="text" data-recep="${idx}" data-field="proveedor"
+        placeholder="Proveedor"
+        style="width:100%;min-width:100px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 7px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <input type="text" data-recep="${idx}" data-field="factura"
+        placeholder="N° factura"
+        style="width:100%;min-width:80px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 7px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <input type="text" data-recep="${idx}" data-field="lote"
+        placeholder="Lote"
+        style="width:100%;min-width:70px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 7px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <input type="date" data-recep="${idx}" data-field="fecha-elab"
+        style="width:100%;min-width:110px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 7px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <input type="date" data-recep="${idx}" data-field="fecha-venc"
+        style="width:100%;min-width:110px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 7px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <input type="date" data-recep="${idx}" data-field="fecha-recep"
+        style="width:100%;min-width:110px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <input type="time" data-recep="${idx}" data-field="hora-recep"
+        style="width:90px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <input type="text" data-recep="${idx}" data-field="encargado"
+        placeholder="Nombre encargado"
+        style="width:100%;min-width:110px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 7px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <input type="text" data-recep="${idx}" data-field="cantidad"
+        placeholder="Ej: 3 bolsas"
+        style="width:100%;min-width:85px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 7px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <input type="number" step="0.1" data-recep="${idx}" data-field="t-recep"
+        placeholder="°C" id="recep-t-${idx}"
+        oninput="validarTempTablaGen(this, 'recep-nc-${idx}', 5, 'max')"
+        style="width:68px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;background:#fff">
+      <div id="recep-nc-${idx}" style="display:none;font-size:10px;color:var(--rojo);font-weight:700;margin-top:2px">⚠ NC</div>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <div style="display:flex;gap:3px;align-items:center;min-width:105px">
+        <input type="number" step="0.1" id="rac-cant-${idx}"
+          placeholder="Cant."
+          oninput="calcRacionRecep(${idx})"
+          style="width:48px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 4px;font-size:11px;text-align:center;background:#fff">
+        <select id="rac-unit-${idx}" onchange="calcRacionRecep(${idx})"
+          style="font-size:10px;padding:5px 2px;border:1px solid #D0D7E2;border-radius:5px;background:#fff">
+          <option value="bolsa">Bol</option>
+          <option value="kg">Kg</option>
+          <option value="gn">GN</option>
+        </select>
+      </div>
+      <div id="rac-result-${idx}" style="font-size:11px;font-weight:700;color:var(--azul);margin-top:3px">—</div>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <textarea data-recep="${idx}" data-field="obs"
+        placeholder="Obs. / acción correctiva..."
+        rows="2"
+        style="width:100%;min-width:120px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 7px;font-size:11px;resize:vertical;background:#fff"></textarea>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:middle;text-align:center">
+      ${idx > 0 ? `<button onclick="eliminarFila('recep-fila-${idx}')"
+        style="background:var(--rojo-claro);color:var(--rojo);border:none;border-radius:4px;padding:3px 7px;font-size:12px;cursor:pointer">🗑</button>` : ''}
+    </td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function agregarFilaRecepUltimoComp() {
+  // Detectar el último componente seleccionado en la tabla para usarlo como defecto
+  const selects = document.querySelectorAll('[data-recep][data-field="componente"]');
+  const ultimo = selects.length > 0 ? selects[selects.length-1].value : 'Ensalada';
+  agregarFilaRecep(ultimo);
+}
+
+function actualizarRacionRecep(idx, componente) {
+  // Actualizar ración estándar al cambiar el componente
+  calcRacionRecep(idx, componente);
+}
+
+function calcRacionRecep(idx, comp) {
+  const cant = parseFloat(document.getElementById('rac-cant-' + idx)?.value) || 0;
+  const unit = document.getElementById('rac-unit-' + idx)?.value || 'bolsa';
+  const res = document.getElementById('rac-result-' + idx);
+  if(!res) return;
+  if(!cant) { res.textContent = '—'; return; }
+  // Obtener componente del select si no viene como parámetro
+  const compSel = comp || document.querySelector(`[data-recep="${idx}"][data-field="componente"]`)?.value || 'Otro';
+  const racion = RACION_POR_COMP[compSel] || 100;
+  const gramos = cant * CONV[unit];
+  res.textContent = Math.round(gramos / racion) + ' rac.';
+}
+
+function recopilarRecepcion() {
+  const items = [];
+  document.querySelectorAll('[data-recep]').forEach(el => {
+    const idx = parseInt(el.dataset.recep);
+    if(!items[idx]) items[idx] = {};
+    items[idx][el.dataset.field] = el.value;
+  });
+  return items.filter(Boolean);
+}
+
+function safeSet(id, val) {
+  const el = document.getElementById(id);
+  if(el) el.textContent = val;
+}
+
+
+// =============================================
+// VALIDACIÓN TEMPERATURAS
+// =============================================
+function validarTemp(input, desc) {
+  const val = parseFloat(input.value);
+  const limite = parseFloat(input.dataset.limite);
+  const tipo = input.dataset.tipo; // 'min' o 'max'
+  if(isNaN(val)) { input.classList.remove('alerta-rojo'); return; }
+  const fuera = tipo === 'min' ? val < limite : val > limite;
+  input.classList.toggle('alerta-rojo', fuera);
+  const mp = input.dataset.mp;
+  const alertaId = `alerta-mp${mp}-recep`;
+  const alerta = document.getElementById(alertaId);
+  if(alerta) {
+    if(fuera) {
+      alerta.textContent = `⚠️ DESVÍO: T° ${val}°C — Límite ${desc}. Registrar acción correctiva.`;
+      alerta.classList.add('visible');
+    } else {
+      alerta.classList.remove('visible');
+    }
+  }
+}
+
+function validarTempId(inputId, desc, limId) {
+  const input = document.getElementById(inputId);
+  if(!input) return;
+  const val = parseFloat(input.value);
+  const limite = parseFloat(input.dataset.limite);
+  const tipo = input.dataset.tipo;
+  if(isNaN(val)) { input.classList.remove('alerta-rojo'); return; }
+  const fuera = tipo === 'min' ? val < limite : val > limite;
+  input.classList.toggle('alerta-rojo', fuera);
+  const limEl = document.getElementById(limId);
+  if(limEl) limEl.classList.toggle('rojo', fuera);
+}
+
+function detectarDesvios() {
+  const desvios = [];
+  document.querySelectorAll('input.alerta-rojo').forEach(inp => {
+    const label = inp.closest('.campo')?.querySelector('label')?.textContent?.trim() || inp.id;
+    const val = inp.value;
+    const limite = inp.dataset.limite;
+    const tipo = inp.dataset.tipo;
+    desvios.push(`${label}: ${val}°C (Límite: ${tipo==='min'?'≥':'≤'} ${limite}°C)`);
+  });
+  return desvios;
+}
+
+// =============================================
+// SANITIZACIÓN — tabla dinámica multi-producto
+// =============================================
+let sanFilaCount = 0;
+
+function iniciarTablaSan() {
+  sanFilaCount = 0;
+  const tbody = document.getElementById('tbody-san');
+  if(tbody) { tbody.innerHTML = ''; agregarFilaSan(); }
+}
+
+function agregarFilaSan() {
+  const tbody = document.getElementById('tbody-san');
+  if(!tbody) return;
+  const idx = sanFilaCount++;
+  const esImpar = idx % 2 === 1;
+  const tr = document.createElement('tr');
+  tr.id = 'san-fila-' + idx;
+  tr.style.background = esImpar ? '#F8FAFD' : '#fff';
+  tr.innerHTML = `
+    <td style="padding:6px;border-bottom:1px solid #E8ECF2;text-align:center;vertical-align:middle">
+      <span style="font-size:12px;font-weight:700;color:var(--verde)">${idx+1}</span>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <input type="text" data-san="${idx}" data-field="producto"
+        placeholder="Ej: Tomate, Lechuga..."
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 7px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <input type="text" data-san="${idx}" data-field="lote"
+        placeholder="Lote o fecha"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 7px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <input type="time" data-san="${idx}" data-field="hora-ini" id="san-ini-${idx}"
+        oninput="calcTiempoSanFila(${idx})"
+        style="width:90px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <input type="time" data-san="${idx}" data-field="hora-fin" id="san-fin-${idx}"
+        oninput="calcTiempoSanFila(${idx})"
+        style="width:90px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <input type="number" data-san="${idx}" data-field="tiempo" id="san-tiempo-${idx}"
+        readonly placeholder="auto"
+        style="width:65px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:12px;text-align:center;background:#F0F4FA;font-weight:700;color:var(--azul)">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <input type="text" data-san="${idx}" data-field="responsable"
+        placeholder="Nombre responsable"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 7px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <textarea data-san="${idx}" data-field="obs"
+        placeholder="Obs. / acción correctiva"
+        rows="2"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 7px;font-size:11px;resize:vertical;background:#fff"></textarea>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:middle;text-align:center">
+      ${idx > 0 ? `<button onclick="eliminarFilaSan(${idx})"
+        style="background:var(--rojo-claro);color:var(--rojo);border:none;border-radius:4px;padding:3px 7px;font-size:12px;cursor:pointer">🗑</button>` : ''}
+    </td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function eliminarFilaSan(idx) {
+  const fila = document.getElementById('san-fila-' + idx);
+  if(fila) fila.remove();
+}
+
+function calcTiempoSanFila(idx) {
+  const ini = document.getElementById('san-ini-' + idx)?.value;
+  const fin = document.getElementById('san-fin-' + idx)?.value;
+  const campo = document.getElementById('san-tiempo-' + idx);
+  if(!ini || !fin || !campo) return;
+  const [h1,m1] = ini.split(':').map(Number);
+  const [h2,m2] = fin.split(':').map(Number);
+  const mins = (h2*60+m2) - (h1*60+m1);
+  campo.value = mins > 0 ? mins : 0;
+}
+
+function recopilarSanitizacion() {
+  const productos = [];
+  document.querySelectorAll('[data-san]').forEach(el => {
+    const idx = el.dataset.san;
+    if(!productos[idx]) productos[idx] = {};
+    productos[idx][el.dataset.field] = el.value;
+  });
+  return productos.filter(Boolean);
+}
+
+// =============================================
+// PRODUCCIÓN — tabla dinámica multi-componente
+// =============================================
+let prodFilaCount = 0;
+
+function iniciarTablaProd() {
+  prodFilaCount = 0;
+  const tbody = document.getElementById('tbody-prod');
+  if(tbody) { tbody.innerHTML = ''; agregarFilaProd(); }
+}
+
+function agregarFilaProd() {
+  const tbody = document.getElementById('tbody-prod');
+  if(!tbody) return;
+  const idx = prodFilaCount++;
+  const esImpar = idx % 2 === 1;
+  const tr = document.createElement('tr');
+  tr.id = 'prod-fila-' + idx;
+  tr.style.background = esImpar ? '#F8FAFD' : '#fff';
+
+  const sensOpts = '<option value="">—</option><option>✅ Aceptable</option><option>⚠️ Regular</option><option>❌ Inaceptable</option>';
+  const tipoCoccOpts = '<option value="">—</option><option>Cocción húmeda</option><option>Frito</option><option>Salteado</option><option>Horneado</option><option>Vapor</option><option>Grillado</option><option>Sin cocción</option>';
+
+  const inp = (field, type='text', placeholder='', extra='') =>
+    `<input type="${type}" data-prod="${idx}" data-field="${field}" placeholder="${placeholder}" ${extra}
+      style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:12px;background:#fff">`;
+
+  const sel = (field, opts, style='') =>
+    `<select data-prod="${idx}" data-field="${field}"
+      style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 4px;font-size:11px;background:#fff;${style}">${opts}</select>`;
+
+  tr.innerHTML = `
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('componente','text','Ej: Pescado frito')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${sel('tipo-cocc', tipoCoccOpts)}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('lote','text','Lote')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('fecha-elab','date')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('fecha-venc','date')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      ${inp('hora-ini','time','','style="min-width:80px"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      ${inp('t-ini','number','°C','step="0.1" style="width:70px;text-align:center"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      ${inp('hora-fin','time','','style="min-width:80px"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <input type="number" step="0.1" data-prod="${idx}" data-field="t-fin"
+        placeholder="°C" id="prod-t-fin-${idx}"
+        oninput="validarTempProd(this, ${idx}, 74, 'min')"
+        style="width:70px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;background:#fff">
+      <div id="prod-nc-${idx}" style="display:none;font-size:10px;color:var(--rojo);font-weight:700;margin-top:2px">⚠ NC</div>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      ${inp('hora-entrega','time','','style="min-width:80px"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <input type="number" step="0.1" data-prod="${idx}" data-field="t-entrega"
+        placeholder="°C" id="prod-t-ent-${idx}"
+        oninput="validarTempProd(this, ${idx}, 63, 'min', 'ent')"
+        style="width:70px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;background:#fff">
+      <div id="prod-nc-ent-${idx}" style="display:none;font-size:10px;color:var(--rojo);font-weight:700;margin-top:2px">⚠ NC</div>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
+        <div style="font-size:10px;color:#888;text-align:center">Color</div>
+        <div style="font-size:10px;color:#888;text-align:center">Aroma</div>
+        ${sel('sens-color', sensOpts, 'font-size:10px')}
+        ${sel('sens-aroma', sensOpts, 'font-size:10px')}
+        <div style="font-size:10px;color:#888;text-align:center">Sabor</div>
+        <div style="font-size:10px;color:#888;text-align:center">Textura</div>
+        ${sel('sens-sabor', sensOpts, 'font-size:10px')}
+        ${sel('sens-textura', sensOpts, 'font-size:10px')}
+      </div>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <textarea data-prod="${idx}" data-field="obs"
+        placeholder="Obs. / acción correctiva..." rows="3"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:11px;resize:vertical;background:#fff"></textarea>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:middle;text-align:center">
+      ${idx > 0 ? `<button onclick="eliminarFilaProd(${idx})"
+        style="background:var(--rojo-claro);color:var(--rojo);border:none;border-radius:4px;padding:3px 7px;font-size:12px;cursor:pointer">🗑</button>` : ''}
+    </td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function eliminarFilaProd(idx) {
+  const fila = document.getElementById('prod-fila-' + idx);
+  if(fila) fila.remove();
+}
+
+function validarTempProd(input, idx, limite, tipo, sufijo) {
+  const val = parseFloat(input.value);
+  const alertId = sufijo ? 'prod-nc-ent-' + idx : 'prod-nc-' + idx;
+  const alerta = document.getElementById(alertId);
+  if(isNaN(val)) {
+    input.style.background = '#fff';
+    input.style.color = '#1a2233';
+    input.style.borderColor = '#D0D7E2';
+    if(alerta) alerta.style.display = 'none';
+    return;
+  }
+  const fuera = tipo === 'min' ? val < limite : val > limite;
+  input.style.background = fuera ? '#FDECEA' : '#F0FBF4';
+  input.style.color = fuera ? '#C0392B' : '#1A6B3C';
+  input.style.borderColor = fuera ? '#C0392B' : '#27AE60';
+  if(alerta) alerta.style.display = fuera ? 'block' : 'none';
+}
+
+function recopilarProduccion() {
+  const componentes = [];
+  document.querySelectorAll('[data-prod]').forEach(el => {
+    const idx = parseInt(el.dataset.prod);
+    if(!componentes[idx]) componentes[idx] = {};
+    componentes[idx][el.dataset.field] = el.value;
+  });
+  return componentes.filter(Boolean);
+}
+
+// =============================================
+// ABATIMIENTO — tabla dinámica multi-componente
+// =============================================
+let abatFilaCount = 0;
+
+function iniciarTablaAbat() {
+  abatFilaCount = 0;
+  const tbody = document.getElementById('tbody-abat');
+  if(tbody) { tbody.innerHTML = ''; agregarFilaAbat(); }
+}
+
+function agregarFilaAbat() {
+  const tbody = document.getElementById('tbody-abat');
+  if(!tbody) return;
+  const idx = abatFilaCount++;
+  const esImpar = idx % 2 === 1;
+  const tr = document.createElement('tr');
+  tr.id = 'abat-fila-' + idx;
+  tr.style.background = esImpar ? '#F8FAFD' : '#fff';
+
+  const equipoOpts = '<option value="">—</option>' +
+    Array.from({length:10},(_,i)=>`<option value="${i+1}">Equipo N° ${i+1}</option>`).join('');
+
+  const inp = (field, type='text', placeholder='', extra='') =>
+    `<input type="${type}" data-abat="${idx}" data-field="${field}" placeholder="${placeholder}" ${extra}
+      style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:12px;background:#fff">`;
+
+  tr.innerHTML = `
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('componente','text','Ej: Pescado frito')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <select data-abat="${idx}" data-field="equipo"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 4px;font-size:12px;background:#fff">
+        ${equipoOpts}
+      </select>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      ${inp('t-equipo','number','°C','step="0.1" style="width:70px;text-align:center"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('cantidad','text','GN / kg / bolsas')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      ${inp('hora-ini','time','','style="min-width:80px"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      ${inp('t-ini','number','°C','step="0.1" style="width:70px;text-align:center"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      ${inp('hora-fin','time','','style="min-width:80px"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <input type="number" step="0.1" data-abat="${idx}" data-field="t-fin"
+        placeholder="°C" id="abat-t-fin-${idx}"
+        oninput="validarTempTablaGen(this, 'abat-nc-${idx}', 5, 'max')"
+        style="width:70px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;background:#fff">
+      <div id="abat-nc-${idx}" style="display:none;font-size:10px;color:var(--rojo);font-weight:700;margin-top:2px">⚠ NC</div>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('responsable','text','Nombre responsable')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <textarea data-abat="${idx}" data-field="obs" placeholder="Obs. / acción correctiva..." rows="2"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:11px;resize:vertical;background:#fff"></textarea>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:middle;text-align:center">
+      ${idx > 0 ? `<button onclick="eliminarFila('abat-fila-${idx}')"
+        style="background:var(--rojo-claro);color:var(--rojo);border:none;border-radius:4px;padding:3px 7px;font-size:12px;cursor:pointer">🗑</button>` : ''}
+    </td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function recopilarAbatimiento() {
+  const items = [];
+  document.querySelectorAll('[data-abat]').forEach(el => {
+    const idx = parseInt(el.dataset.abat);
+    if(!items[idx]) items[idx] = {};
+    items[idx][el.dataset.field] = el.value;
+  });
+  return items.filter(Boolean);
+}
+
+// =============================================
+// ENVASADO — tabla dinámica multi-componente (ZI)
+// =============================================
+let envFilaCount = 0;
+
+function iniciarTablaEnv() {
+  envFilaCount = 0;
+  const tbody = document.getElementById('tbody-env');
+  if(tbody) { tbody.innerHTML = ''; agregarFilaEnv(); }
+}
+
+function agregarFilaEnv() {
+  const tbody = document.getElementById('tbody-env');
+  if(!tbody) return;
+  const idx = envFilaCount++;
+  const esImpar = idx % 2 === 1;
+  const tr = document.createElement('tr');
+  tr.id = 'env-fila-' + idx;
+  tr.style.background = esImpar ? '#F8FAFD' : '#fff';
+
+  const inp = (field, type='text', placeholder='', extra='') =>
+    `<input type="${type}" data-env="${idx}" data-field="${field}" placeholder="${placeholder}" ${extra}
+      style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:12px;background:#fff">`;
+
+  tr.innerHTML = `
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('componente','text','Ej: Pescado frito')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('lote','text','N° lote')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('cantidad','text','GN / kg / bolsas')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      ${inp('hora-ini','time','','style="min-width:80px"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <input type="number" step="0.1" data-env="${idx}" data-field="t-ini"
+        placeholder="°C" id="env-t-ini-${idx}"
+        oninput="validarTempTablaGen(this, 'env-nc-ini-${idx}', 5, 'max')"
+        style="width:70px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;background:#fff">
+      <div id="env-nc-ini-${idx}" style="display:none;font-size:10px;color:var(--rojo);font-weight:700;margin-top:2px">⚠ NC</div>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      ${inp('hora-fin','time','','style="min-width:80px"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <input type="number" step="0.1" data-env="${idx}" data-field="t-fin"
+        placeholder="°C" id="env-t-fin-${idx}"
+        oninput="validarTempTablaGen(this, 'env-nc-fin-${idx}', 5, 'max')"
+        style="width:70px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;background:#fff">
+      <div id="env-nc-fin-${idx}" style="display:none;font-size:10px;color:var(--rojo);font-weight:700;margin-top:2px">⚠ NC</div>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('responsable','text','Nombre responsable')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <textarea data-env="${idx}" data-field="obs" placeholder="Obs. / acción correctiva..." rows="2"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:11px;resize:vertical;background:#fff"></textarea>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:middle;text-align:center">
+      ${idx > 0 ? `<button onclick="eliminarFila('env-fila-${idx}')"
+        style="background:var(--rojo-claro);color:var(--rojo);border:none;border-radius:4px;padding:3px 7px;font-size:12px;cursor:pointer">🗑</button>` : ''}
+    </td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function recopilarEnvasado() {
+  const items = [];
+  document.querySelectorAll('[data-env]').forEach(el => {
+    const idx = parseInt(el.dataset.env);
+    if(!items[idx]) items[idx] = {};
+    items[idx][el.dataset.field] = el.value;
+  });
+  return items.filter(Boolean);
+}
+
+// =============================================
+// DESPACHO — tabla dinámica multi-componente (ZI)
+// =============================================
+let despFilaCount = 0;
+
+function iniciarTablaDesp() {
+  despFilaCount = 0;
+  const tbody = document.getElementById('tbody-desp');
+  if(tbody) { tbody.innerHTML = ''; agregarFilaDesp(); }
+}
+
+function agregarFilaDesp() {
+  const tbody = document.getElementById('tbody-desp');
+  if(!tbody) return;
+  const idx = despFilaCount++;
+  const esImpar = idx % 2 === 1;
+  const tr = document.createElement('tr');
+  tr.id = 'desp-fila-' + idx;
+  tr.style.background = esImpar ? '#F8FAFD' : '#fff';
+
+  const inp = (field, type='text', placeholder='', extra='') =>
+    `<input type="${type}" data-desp="${idx}" data-field="${field}" placeholder="${placeholder}" ${extra}
+      style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:12px;background:#fff">`;
+
+  tr.innerHTML = `
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('componente','text','Ej: Pescado frito')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('lote','text','Lote')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('fecha-venc','date')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('cantidad','text','GN / kg / bolsas')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      ${inp('fecha','date','','style="min-width:110px"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      ${inp('hora','time','','style="min-width:80px"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <input type="number" step="0.1" data-desp="${idx}" data-field="t"
+        placeholder="°C" id="desp-t-${idx}"
+        oninput="validarTempTablaGen(this, 'desp-nc-${idx}', 5, 'max')"
+        style="width:68px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;background:#fff">
+      <div id="desp-nc-${idx}" style="display:none;font-size:10px;color:var(--rojo);font-weight:700;margin-top:2px">⚠ NC</div>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <textarea data-desp="${idx}" data-field="obs"
+        placeholder="Obs. / acción correctiva..." rows="2"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:11px;resize:vertical;background:#fff"></textarea>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:middle;text-align:center">
+      ${idx > 0 ? `<button onclick="eliminarFila('desp-fila-${idx}')"
+        style="background:var(--rojo-claro);color:var(--rojo);border:none;border-radius:4px;padding:3px 7px;font-size:12px;cursor:pointer">🗑</button>` : ''}
+    </td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function recopilarDespacho() {
+  const items = [];
+  document.querySelectorAll('[data-desp]').forEach(el => {
+    const idx = parseInt(el.dataset.desp);
+    if(!items[idx]) items[idx] = {};
+    items[idx][el.dataset.field] = el.value;
+  });
+  return items.filter(Boolean);
+}
+
+// =============================================
+// RECEPCIÓN RETERMALIZADO — tabla dinámica (ZI)
+// =============================================
+let rrFilaCount = 0;
+
+function iniciarTablaRR() {
+  rrFilaCount = 0;
+  const tbody = document.getElementById('tbody-rr');
+  if(tbody) { tbody.innerHTML = ''; agregarFilaRR(); }
+}
+
+function agregarFilaRR() {
+  const tbody = document.getElementById('tbody-rr');
+  if(!tbody) return;
+  const idx = rrFilaCount++;
+  const esImpar = idx % 2 === 1;
+  const tr = document.createElement('tr');
+  tr.id = 'rr-fila-' + idx;
+  tr.style.background = esImpar ? '#F8FAFD' : '#fff';
+
+  const inp = (field, type='text', placeholder='', extra='') =>
+    `<input type="${type}" data-rr="${idx}" data-field="${field}" placeholder="${placeholder}" ${extra}
+      style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:12px;background:#fff">`;
+
+  const vehiculoOpts = '<option value="">—</option><option>✅ Adecuadas</option><option>⚠️ Con observaciones</option><option>❌ Inadecuadas</option>';
+
+  tr.innerHTML = `
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('componente','text','Ej: Pescado frito')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('lote','text','Lote')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      ${inp('cantidad','text','GN / kg / bolsas')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      ${inp('fecha','date','','style="min-width:110px"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      ${inp('hora','time','','style="min-width:80px"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <input type="number" step="0.1" data-rr="${idx}" data-field="t"
+        placeholder="°C" id="rr-t-${idx}"
+        oninput="validarTempTablaGen(this, 'rr-nc-${idx}', 5, 'max')"
+        style="width:68px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;background:#fff">
+      <div id="rr-nc-${idx}" style="display:none;font-size:10px;color:var(--rojo);font-weight:700;margin-top:2px">⚠ NC</div>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <select data-rr="${idx}" data-field="vehiculo"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 4px;font-size:12px;background:#fff">
+        ${vehiculoOpts}
+      </select>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
+      <textarea data-rr="${idx}" data-field="obs"
+        placeholder="Obs. / acción correctiva..." rows="2"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:11px;resize:vertical;background:#fff"></textarea>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:middle;text-align:center">
+      ${idx > 0 ? `<button onclick="eliminarFila('rr-fila-${idx}')"
+        style="background:var(--rojo-claro);color:var(--rojo);border:none;border-radius:4px;padding:3px 7px;font-size:12px;cursor:pointer">🗑</button>` : ''}
+    </td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function recopilarRecepcionReterm() {
+  const items = [];
+  document.querySelectorAll('[data-rr]').forEach(el => {
+    const idx = parseInt(el.dataset.rr);
+    if(!items[idx]) items[idx] = {};
+    items[idx][el.dataset.field] = el.value;
+  });
+  return items.filter(Boolean);
+}
+
+// =============================================
+// RETERMALIZACIÓN — tabla dinámica por producto (ZI)
+// =============================================
+let rtFilaCount = 0;
+
+function iniciarTablaRT() {
+  rtFilaCount = 0;
+  const tbody = document.getElementById('tbody-rt');
+  if(tbody) { tbody.innerHTML = ''; agregarFilaRT(); }
+}
+
+function agregarFilaRT() {
+  const tbody = document.getElementById('tbody-rt');
+  if(!tbody) return;
+  const idx = rtFilaCount++;
+  const esImpar = idx % 2 === 1;
+  const tr = document.createElement('tr');
+  tr.id = 'rt-fila-' + idx;
+  tr.style.background = esImpar ? '#FFF8F8' : '#fff';
+
+  const equipoOpts = '<option value="">—</option>' +
+    Array.from({length:10},(_,i)=>`<option value="${i+1}">Eq. ${i+1}</option>`).join('');
+
+  const inp = (field, type='text', placeholder='', extra='') =>
+    `<input type="${type}" data-rt="${idx}" data-field="${field}" placeholder="${placeholder}" ${extra}
+      style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:12px;background:#fff">`;
+
+  tr.innerHTML = `
+    <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top">
+      ${inp('componente','text','Ej: Pescado frito')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top">
+      ${inp('lote','text','Lote')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top">
+      ${inp('fecha-venc','date')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top">
+      ${inp('cantidad','text','GN / kg / bolsas')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top;text-align:center">
+      <select data-rt="${idx}" data-field="equipo"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 4px;font-size:12px;background:#fff">
+        ${equipoOpts}
+      </select>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top;text-align:center">
+      ${inp('hora-ini','time','','style="min-width:80px"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top;text-align:center">
+      ${inp('t-ini','number','°C','step="0.1" style="width:68px;text-align:center"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top;text-align:center">
+      ${inp('hora-fin','time','','style="min-width:80px"')}
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top;text-align:center">
+      <input type="number" step="0.1" data-rt="${idx}" data-field="t-fin"
+        placeholder="°C" id="rt-tfin-${idx}"
+        oninput="validarTempTablaGen(this, 'rt-nc-fin-${idx}', 74, 'min')"
+        style="width:68px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;background:#fff">
+      <div id="rt-nc-fin-${idx}" style="display:none;font-size:10px;color:var(--rojo);font-weight:700;margin-top:2px">⚠ NC</div>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top;text-align:center">
+      <input type="number" step="0.1" data-rt="${idx}" data-field="t-repostero"
+        placeholder="°C" id="rt-tresp-${idx}"
+        oninput="validarTempTablaGen(this, 'rt-nc-resp-${idx}', 63, 'min')"
+        style="width:68px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;background:#fff">
+      <div id="rt-nc-resp-${idx}" style="display:none;font-size:10px;color:var(--rojo);font-weight:700;margin-top:2px">⚠ NC</div>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top">
+      <textarea data-rt="${idx}" data-field="obs"
+        placeholder="Obs. / acción correctiva..." rows="2"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:11px;resize:vertical;background:#fff"></textarea>
+    </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:middle;text-align:center">
+      ${idx > 0 ? `<button onclick="eliminarFila('rt-fila-${idx}')"
+        style="background:var(--rojo-claro);color:var(--rojo);border:none;border-radius:4px;padding:3px 7px;font-size:12px;cursor:pointer">🗑</button>` : ''}
+    </td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function recopilarRetermalizado() {
+  const items = [];
+  document.querySelectorAll('[data-rt]').forEach(el => {
+    const idx = parseInt(el.dataset.rt);
+    if(!items[idx]) items[idx] = {};
+    items[idx][el.dataset.field] = el.value;
+  });
+  return items.filter(Boolean);
+}
+
+// =============================================
+// BAÑOS MARÍA — control de equipo (ZI)
+// =============================================
+let bmFilaCount = 0;
+
+function iniciarTablaBM() {
+  bmFilaCount = 0;
+  const tbody = document.getElementById('tbody-bm');
+  if(tbody) { tbody.innerHTML = ''; agregarFilaBM(); }
+}
+
+function agregarFilaBM() {
+  const tbody = document.getElementById('tbody-bm');
+  if(!tbody) return;
+  const idx = bmFilaCount++;
+  const esImpar = idx % 2 === 1;
+  const tr = document.createElement('tr');
+  tr.id = 'bm-fila-' + idx;
+  tr.style.background = esImpar ? '#FFF8F8' : '#fff';
+
+  tr.innerHTML = `
+    <td style="padding:4px 8px;border-bottom:1px solid #F0DADA;vertical-align:top">
+      <input type="text" data-bm="${idx}" data-field="identificacion"
+        placeholder="Ej: Baño María N°1 / Repostero A"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 7px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 8px;border-bottom:1px solid #F0DADA;vertical-align:top;text-align:center">
+      <input type="time" data-bm="${idx}" data-field="hora"
+        style="width:90px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:12px;background:#fff">
+    </td>
+    <td style="padding:4px 8px;border-bottom:1px solid #F0DADA;vertical-align:top;text-align:center">
+      <input type="number" step="0.1" data-bm="${idx}" data-field="t"
+        placeholder="°C" id="bm-t-${idx}"
+        oninput="validarTempTablaGen(this, 'bm-nc-${idx}', 63, 'min')"
+        style="width:70px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;background:#fff">
+      <div id="bm-nc-${idx}" style="display:none;font-size:10px;color:var(--rojo);font-weight:700;margin-top:2px">⚠ NC</div>
+    </td>
+    <td style="padding:4px 8px;border-bottom:1px solid #F0DADA;vertical-align:top">
+      <textarea data-bm="${idx}" data-field="obs"
+        placeholder="Obs. / acción correctiva..." rows="2"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:11px;resize:vertical;background:#fff"></textarea>
+    </td>
+    <td style="padding:4px 8px;border-bottom:1px solid #F0DADA;vertical-align:middle;text-align:center">
+      ${idx > 0 ? `<button onclick="eliminarFila('bm-fila-${idx}')"
+        style="background:var(--rojo-claro);color:var(--rojo);border:none;border-radius:4px;padding:3px 7px;font-size:12px;cursor:pointer">🗑</button>` : ''}
+    </td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function recopilarBanosMaria() {
+  const items = [];
+  document.querySelectorAll('[data-bm]').forEach(el => {
+    const idx = parseInt(el.dataset.bm);
+    if(!items[idx]) items[idx] = {};
+    items[idx][el.dataset.field] = el.value;
+  });
+  return items.filter(Boolean);
+}
+
+
+
+
+
+
+
+
+
+// Función genérica de validación para tablas dinámicas
+function validarTempTablaGen(input, alertId, limite, tipo) {
+  const val = parseFloat(input.value);
+  const alerta = document.getElementById(alertId);
+  if(isNaN(val)) {
+    input.style.background = '#fff';
+    input.style.color = '#1a2233';
+    input.style.borderColor = '#D0D7E2';
+    if(alerta) alerta.style.display = 'none';
+    return;
+  }
+  const fuera = tipo === 'min' ? val < limite : val > limite;
+  input.style.background = fuera ? '#FDECEA' : '#F0FBF4';
+  input.style.color = fuera ? '#C0392B' : '#1A6B3C';
+  input.style.borderColor = fuera ? '#C0392B' : '#27AE60';
+  if(alerta) alerta.style.display = fuera ? 'block' : 'none';
+}
+
+// Función genérica para eliminar fila por id
+function eliminarFila(filaId) {
+  const fila = document.getElementById(filaId);
+  if(fila) fila.remove();
+}
+
+
+
+
+
+// =============================================
+// GUARDAR
+// =============================================
+function guardarRegistro() {
+  desviosActuales = detectarDesvios();
+  if(desviosActuales.length > 0) {
+    mostrarModal();
+    return;
+  }
+  ejecutarGuardado('');
+}
+
+function mostrarModal() {
+  const lista = document.getElementById('modal-desvios-lista');
+  lista.innerHTML = desviosActuales.map(d => `• ${d}`).join('<br>');
+  document.getElementById('modal-accion').value = '';
+  document.getElementById('modal-overlay').classList.add('visible');
+}
+
+function cerrarModal() {
+  document.getElementById('modal-overlay').classList.remove('visible');
+}
+
+function confirmarAccionCorrectiva() {
+  const accion = document.getElementById('modal-accion').value.trim();
+  if(!accion) {
+    mostrarToast('Debe ingresar la acción correctiva antes de continuar.', 'rojo');
+    return;
+  }
+  cerrarModal();
+  ejecutarGuardado(accion);
+}
+
+async function ejecutarGuardado(accionCorrectiva) {
+  const reg = recopilarDatos();
+  reg.accionCorrectiva = accionCorrectiva;
+  reg.tieneDesvios = desviosActuales.length > 0;
+  reg.desvios = desviosActuales;
+
+  // 1. Guardar siempre en localStorage (funciona offline)
+  const todos = JSON.parse(localStorage.getItem(KEY) || '[]');
+  todos.unshift(reg);
+  localStorage.setItem(KEY, JSON.stringify(todos));
+
+  // 2. Si Supabase está configurado, guardar también en la nube
+  if(sb.configured()) {
+    mostrarToast('⏳ Guardando en la nube...', 'verde');
+    const resultado = await guardarEnSupabase(reg);
+    if(resultado.ok) {
+      mostrarToast('✅ Guardado en la nube correctamente.', 'verde');
+    } else {
+      mostrarToast('⚠️ Guardado local OK — Error en nube: ' + resultado.error, 'rojo');
+    }
+  } else {
+    mostrarToast('✅ Registro guardado localmente.', 'verde');
+  }
+  cargarHistorial();
+}
+
+async function guardarEnSupabase(reg) {
+  try {
+    // Insertar registro principal
+    const { data: regData, error: regErr } = await sb.insert('registros_trazabilidad', {
+      nro_registro: reg.nroRegistro,
+      fecha: (() => { const p=reg.fecha.split('/'); return `${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`; })(),
+      hora: reg.hora,
+      proceso: reg.proceso,
+      proceso_nombre: reg.procesoNombre,
+      regimen: reg.regimen,
+      nombre_preparacion: reg.nombrePrep,
+      servicio: reg.servicio,
+      responsable: reg.responsable,
+      tiene_desvios: reg.tieneDesvios,
+      desvios: reg.desvios,
+      accion_correctiva: reg.accionCorrectiva,
+      obs_generales: reg.obsGenerales
+    });
+    if(regErr) return { error: JSON.stringify(regErr) };
+
+    const regId = regData[0]?.id;
+    if(!regId) return { error: 'No se obtuvo ID del registro' };
+
+    const inserts = [];
+
+    // Materias primas
+    if(reg.materiasPrimas?.length) {
+      inserts.push(sb.insert('recepcion_materias_primas',
+        reg.materiasPrimas.map((mp,i) => ({
+          registro_id: regId,
+          componente: mp.componente,
+          producto: mp.producto,
+          proveedor: mp.proveedor,
+          factura: mp.factura,
+          lote: mp.lote,
+          fecha_elaboracion: mp['fecha-elab'] || null,
+          fecha_vencimiento: mp['fecha-venc'] || null,
+          fecha_recepcion: mp['fecha-recep'] || null,
+          hora_recepcion: mp['hora-recep'] || null,
+          encargado: mp.encargado,
+          cantidad: mp.cantidad,
+          t_recepcion: mp['t-recep'] ? parseFloat(mp['t-recep']) : null,
+          raciones: mp.raciones,
+          obs: mp.obs,
+          orden: i
+        }))
+      ));
+    }
+
+    // Sanitización
+    if(reg.sanitizacion?.productos?.length) {
+      const { data: sanData } = await sb.insert('sanitizacion', [{
+        registro_id: regId,
+        area: reg.sanitizacion.area,
+        fecha: reg.sanitizacion.fecha || null,
+        ph: reg.sanitizacion.ph ? parseFloat(reg.sanitizacion.ph) : null,
+        servicio: reg.sanitizacion.servicio
+      }]);
+      const sanId = sanData?.[0]?.id;
+      if(sanId) {
+        inserts.push(sb.insert('sanitizacion_productos',
+          reg.sanitizacion.productos.map((p,i) => ({
+            sanitizacion_id: sanId,
+            producto: p.producto,
+            lote: p.lote,
+            hora_inicio: p['hora-ini'] || null,
+            hora_fin: p['hora-fin'] || null,
+            tiempo_minutos: p.tiempo ? parseInt(p.tiempo) : null,
+            responsable: p.responsable,
+            obs: p.obs,
+            orden: i
+          }))
+        ));
+      }
+    }
+
+    // Producción
+    if(reg.produccion?.componentes?.length) {
+      inserts.push(sb.insert('produccion_componentes',
+        reg.produccion.componentes.map((c,i) => ({
+          registro_id: regId,
+          componente: c.componente,
+          tipo_coccion: c['tipo-cocc'],
+          lote: c.lote,
+          fecha_elaboracion: c['fecha-elab'] || null,
+          fecha_vencimiento: c['fecha-venc'] || null,
+          hora_inicio: c['hora-ini'] || null,
+          t_inicial: c['t-ini'] ? parseFloat(c['t-ini']) : null,
+          hora_fin: c['hora-fin'] || null,
+          t_final: c['t-fin'] ? parseFloat(c['t-fin']) : null,
+          hora_entrega: c['hora-entrega'] || null,
+          t_entrega: c['t-entrega'] ? parseFloat(c['t-entrega']) : null,
+          sens_color: c['sens-color'],
+          sens_aroma: c['sens-aroma'],
+          sens_sabor: c['sens-sabor'],
+          sens_textura: c['sens-textura'],
+          obs: c.obs,
+          orden: i
+        }))
+      ));
+    }
+
+    // Abatimiento
+    if(reg.abatimiento?.componentes?.length) {
+      inserts.push(sb.insert('abatimiento_componentes',
+        reg.abatimiento.componentes.map((c,i) => ({
+          registro_id: regId,
+          componente: c.componente,
+          equipo_nro: c.equipo ? parseInt(c.equipo) : null,
+          t_equipo: c['t-equipo'] ? parseFloat(c['t-equipo']) : null,
+          cantidad: c.cantidad,
+          hora_inicio: c['hora-ini'] || null,
+          t_inicial: c['t-ini'] ? parseFloat(c['t-ini']) : null,
+          hora_fin: c['hora-fin'] || null,
+          t_final: c['t-fin'] ? parseFloat(c['t-fin']) : null,
+          responsable: c.responsable,
+          obs: c.obs,
+          orden: i
+        }))
+      ));
+    }
+
+    // Envasado (ZI)
+    if(reg.envasado?.componentes?.length) {
+      inserts.push(sb.insert('envasado_componentes',
+        reg.envasado.componentes.map((c,i) => ({
+          registro_id: regId,
+          componente: c.componente,
+          lote: c.lote,
+          cantidad: c.cantidad,
+          hora_inicio: c['hora-ini'] || null,
+          t_inicial: c['t-ini'] ? parseFloat(c['t-ini']) : null,
+          hora_fin: c['hora-fin'] || null,
+          t_final: c['t-fin'] ? parseFloat(c['t-fin']) : null,
+          responsable: c.responsable,
+          obs: c.obs,
+          orden: i
+        }))
+      ));
+    }
+
+    // Despacho (ZI)
+    if(reg.despacho?.componentes?.length) {
+      const { data: despData } = await sb.insert('despacho', [{
+        registro_id: regId,
+        condicion_vehiculo: reg.despacho.vehiculo,
+        obs_vehiculo: reg.despacho.obsVehiculo
+      }]);
+      const despId = despData?.[0]?.id;
+      if(despId) {
+        inserts.push(sb.insert('despacho_componentes',
+          reg.despacho.componentes.map((c,i) => ({
+            despacho_id: despId,
+            componente: c.componente,
+            lote: c.lote,
+            fecha_vencimiento: c['fecha-venc'] || null,
+            cantidad: c.cantidad,
+            fecha_despacho: c.fecha || null,
+            hora_despacho: c.hora || null,
+            t_despacho: c.t ? parseFloat(c.t) : null,
+            obs: c.obs,
+            orden: i
+          }))
+        ));
+      }
+    }
+
+    // Recepción retermalizado (ZI)
+    if(reg.recepcionReterm?.componentes?.length) {
+      inserts.push(sb.insert('recepcion_retermalizado_componentes',
+        reg.recepcionReterm.componentes.map((c,i) => ({
+          registro_id: regId,
+          componente: c.componente,
+          lote: c.lote,
+          cantidad: c.cantidad,
+          fecha_recepcion: c.fecha || null,
+          hora_recepcion: c.hora || null,
+          t_recepcion: c.t ? parseFloat(c.t) : null,
+          condicion_vehiculo: c.vehiculo,
+          obs: c.obs,
+          orden: i
+        }))
+      ));
+    }
+
+    // Retermalizado (ZI)
+    if(reg.retermalizado?.componentes?.length) {
+      inserts.push(sb.insert('retermalizado_componentes',
+        reg.retermalizado.componentes.map((c,i) => ({
+          registro_id: regId,
+          componente: c.componente,
+          lote: c.lote,
+          fecha_vencimiento: c['fecha-venc'] || null,
+          cantidad: c.cantidad,
+          equipo_nro: c.equipo ? parseInt(c.equipo) : null,
+          hora_inicio: c['hora-ini'] || null,
+          t_inicial: c['t-ini'] ? parseFloat(c['t-ini']) : null,
+          hora_fin: c['hora-fin'] || null,
+          t_final: c['t-fin'] ? parseFloat(c['t-fin']) : null,
+          t_repostero: c['t-repostero'] ? parseFloat(c['t-repostero']) : null,
+          obs: c.obs,
+          orden: i
+        }))
+      ));
+    }
+
+    // Baños María (ZI)
+    if(reg.retermalizado?.banosMaria?.length) {
+      inserts.push(sb.insert('banos_maria',
+        reg.retermalizado.banosMaria.map((b,i) => ({
+          registro_id: regId,
+          identificacion: b.identificacion,
+          hora_medicion: b.hora || null,
+          t_medida: b.t ? parseFloat(b.t) : null,
+          obs: b.obs,
+          orden: i
+        }))
+      ));
+    }
+
+    // Casino ZE
+    if(reg.casinoZE) {
+      inserts.push(sb.insert('casino_ze_temperaturas', [{
+        registro_id: regId,
+        t_1130: reg.casinoZE.t1130 ? parseFloat(reg.casinoZE.t1130) : null,
+        t_1230: reg.casinoZE.t1230 ? parseFloat(reg.casinoZE.t1230) : null,
+        t_1330: reg.casinoZE.t1330 ? parseFloat(reg.casinoZE.t1330) : null,
+        t_1430: reg.casinoZE.t1430 ? parseFloat(reg.casinoZE.t1430) : null,
+        t_bm1: reg.casinoZE.bm1 ? parseFloat(reg.casinoZE.bm1) : null,
+        t_bm2: reg.casinoZE.bm2 ? parseFloat(reg.casinoZE.bm2) : null,
+        comensales_comun: reg.casinoZE.comun ? parseInt(reg.casinoZE.comun) : null,
+        comensales_liviano: reg.casinoZE.liviano ? parseInt(reg.casinoZE.liviano) : null,
+        comensales_hipo: reg.casinoZE.hipo ? parseInt(reg.casinoZE.hipo) : null,
+        obs: reg.casinoZE.obs
+      }]));
+    }
+
+    await Promise.all(inserts);
+    return { ok: true };
+  } catch(e) {
+    return { error: e.message };
+  }
+}
+
+function recopilarDatos() {
+  const data = {
+    nroRegistro: document.getElementById('nro-registro').value,
+    fecha: document.getElementById('fecha-reg').value,
+    hora: document.getElementById('hora-reg').value,
+    regimen: document.getElementById('regimen-reg')?.value || '—',
+    proceso: procesoActual,
+    procesoNombre: procesoActual === 'zi' ? 'Zona Interna — Internos' : 'Zona Externa — Funcionarios GENCHI',
+    nombrePrep: document.getElementById('nombre-prep').value,
+    responsable: document.getElementById('responsable').value,
+    servicio: document.getElementById('servicio').value,
+    materiasPrimas: [],
+    produccion: {
+      componentes: recopilarProduccion()
+    },
+    abatimiento: {
+      componentes: recopilarAbatimiento()
+    },
+    sanitizacion: {
+      area: v('san-area'),
+      fecha: v('san-fecha'),
+      ph: v('san-ph'),
+      servicio: v('san-servicio'),
+      productos: recopilarSanitizacion()
+    },
+    obsGenerales: v('obs-generales')
+  };
+
+  if(procesoActual === 'zi') {
+    data.envasado = {
+      componentes: recopilarEnvasado()
+    };
+    data.despacho = {
+      vehiculo: v('desp-vehiculo'),
+      obsVehiculo: v('desp-obs-vehiculo'),
+      componentes: recopilarDespacho()
+    };
+    data.recepcionReterm = {
+      componentes: recopilarRecepcionReterm()
+    };
+    data.retermalizado = {
+      componentes: recopilarRetermalizado(),
+      banosMaria: recopilarBanosMaria()
+    };
+  } else {
+    data.casinoZE = {
+      t1130: v('ze-t-1130'), t1230: v('ze-t-1230'),
+      t1330: v('ze-t-1330'), t1430: v('ze-t-1430'),
+      bm1: v('ze-bm1'), bm2: v('ze-bm2'),
+      comun: v('ze-com-comun'), liviano: v('ze-com-liviano'), hipo: v('ze-com-hipo'),
+      obs: v('ze-obs-casino')
+    };
+  }
+
+  // Recepción — tabla dinámica por ingrediente
+  data.materiasPrimas = recopilarRecepcion();
+  return data;
+}
+
+function v(id) {
+  const el = document.getElementById(id);
+  return el ? el.value : '';
+}
+
+// =============================================
+// HISTORIAL
+// =============================================
+function cargarHistorial() {
+  const todos = JSON.parse(localStorage.getItem(KEY) || '[]');
+  const cont = document.getElementById('historial-container');
+  if(!todos.length) {
+    cont.innerHTML = '<p style="color:#888;font-size:13px;text-align:center;padding:20px 0;">No hay registros guardados aún.</p>';
+    return;
+  }
+  cont.innerHTML = todos.map((r,i) => `
+    <div class="historial-item">
+      <div class="historial-item-header" onclick="toggleHistorial(${i})">
+        <span class="historial-badge ${r.proceso}">${r.proceso.toUpperCase()}</span>
+        <strong style="font-size:12px">${r.nroRegistro}</strong>
+        <span style="font-size:12px;color:var(--gris-texto)">${r.fecha} ${r.hora}</span>
+        <span style="font-size:12px;flex:1">${r.nombrePrep || '—'}</span>
+        <span class="historial-badge ${r.tieneDesvios ? 'nc' : 'ok'}">${r.tieneDesvios ? 'NC' : 'OK'}</span>
+        <button onclick="event.stopPropagation();eliminarRegistro(${i})" style="margin-left:8px;background:var(--rojo-claro);color:var(--rojo);border:none;border-radius:4px;padding:2px 8px;font-size:11px;cursor:pointer">🗑</button>
+      </div>
+      <div class="historial-item-body" id="hist-body-${i}">
+        <div class="historial-detail-grid">
+          <div class="historial-detail-item"><span>Proceso</span><span>${r.procesoNombre}</span></div>
+          <div class="historial-detail-item"><span>Servicio</span><span>${r.servicio}</span></div>
+          <div class="historial-detail-item"><span>Responsable</span><span>${r.responsable || '—'}</span></div>
+          <div class="historial-detail-item"><span>Régimen</span><span>${r.regimen||'—'}</span></div>
+          ${r.tieneDesvios ? `<div class="historial-detail-item" style="grid-column:span 2"><span>Desvíos</span><span style="color:var(--rojo)">${(r.desvios||[]).join(' | ')}</span></div>` : ''}
+          ${r.accionCorrectiva ? `<div class="historial-detail-item" style="grid-column:span 2"><span>Acción Correctiva</span><span>${r.accionCorrectiva}</span></div>` : ''}
+          ${r.obsGenerales ? `<div class="historial-detail-item" style="grid-column:span 2"><span>Observaciones</span><span>${r.obsGenerales}</span></div>` : ''}
+        </div>
+        <button class="btn btn-pdf" style="margin-top:10px;padding:6px 14px;font-size:12px" onclick="generarPDFHistorial(${i})">📄 PDF este registro</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleHistorial(i) {
+  const body = document.getElementById(`hist-body-${i}`);
+  if(body) body.classList.toggle('visible');
+}
+
+function eliminarRegistro(i) {
+  if(!confirm('¿Eliminar este registro?')) return;
+  const todos = JSON.parse(localStorage.getItem(KEY) || '[]');
+  todos.splice(i, 1);
+  localStorage.setItem(KEY, JSON.stringify(todos));
+  cargarHistorial();
+  mostrarToast('Registro eliminado.', 'rojo');
+}
+
+// =============================================
+// PDF
+// =============================================
+function generarPDF() {
+  const data = recopilarDatos();
+  construirPDF(data);
+}
+
+function generarPDFHistorial(i) {
+  const todos = JSON.parse(localStorage.getItem(KEY) || '[]');
+  construirPDF(todos[i]);
+}
+
+function construirPDF(data) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  const W = 210; const M = 15;
+  let y = 15;
+
+  // Header
+  doc.setFillColor(11, 61, 107);
+  doc.rect(0, 0, W, 28, 'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(12); doc.setFont('helvetica','bold');
+  doc.text('EJERCICIO DE TRAZABILIDAD — SERVICIO DE ALIMENTACIÓN', W/2, 10, {align:'center'});
+  doc.text('E.P. SANTIAGO 1 — INSPECCIÓN TÉCNICA DE EXPLOTACIÓN', W/2, 17, {align:'center'});
+  doc.setFontSize(9); doc.setFont('helvetica','normal');
+  doc.text(`N° Registro: ${data.nroRegistro}   Régimen: ${data.regimen||'—'}   ${data.fecha} ${data.hora}`, W/2, 24, {align:'center'});
+
+  doc.setFillColor(26,107,60);
+  doc.rect(0, 28, W, 4, 'F');
+
+  y = 40;
+  doc.setTextColor(0,0,0);
+
+  function seccion(titulo, color) {
+    if(y > 260) { doc.addPage(); y = 15; }
+    doc.setFillColor(...color);
+    doc.rect(M, y, W-2*M, 7, 'F');
+    doc.setTextColor(255,255,255);
+    doc.setFont('helvetica','bold'); doc.setFontSize(9);
+    doc.text(titulo, M+3, y+5);
+    doc.setTextColor(0,0,0);
+    y += 10;
+  }
+
+  function fila(label, valor, indent=0) {
+    if(y > 270) { doc.addPage(); y = 15; }
+    doc.setFont('helvetica','bold'); doc.setFontSize(8);
+    doc.text(String(label)+':', M+indent, y);
+    doc.setFont('helvetica','normal');
+    doc.text(String(valor||'—'), M+55+indent, y);
+    y += 5;
+  }
+
+  function filaNC(label, valor) {
+    if(y > 270) { doc.addPage(); y = 15; }
+    doc.setFillColor(252,235,235);
+    doc.rect(M, y-4, W-2*M, 6, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(8);
+    doc.setTextColor(192,57,43);
+    doc.text('⚠ '+String(label)+':', M+2, y);
+    doc.text(String(valor||'—'), M+55, y);
+    doc.setTextColor(0,0,0);
+    y += 6;
+  }
+
+  // Datos generales
+  seccion('DATOS GENERALES', [11,61,107]);
+  fila('Preparación', data.nombrePrep);
+  fila('Proceso', data.procesoNombre);
+  fila('Régimen', data.regimen||'—');
+  fila('Servicio', data.servicio);
+  fila('Responsable ITE', data.responsable);
+  if(data.tieneDesvios) {
+    y += 2;
+    doc.setFillColor(254,200,200);
+    doc.rect(M, y-3, W-2*M, 8, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(192,57,43);
+    doc.text('REGISTRO CON DESVIACIONES DE TEMPERATURA — ACCIÓN CORRECTIVA REGISTRADA', M+2, y+2);
+    doc.setTextColor(0,0,0); y += 10;
+    if(data.accionCorrectiva) fila('Acción Correctiva', data.accionCorrectiva);
+  }
+
+  // Materias primas — tabla
+  seccion('REGISTRO DE RECEPCIÓN — SERVICIO COMPLETO', [11,61,107]);
+  if(data.recepComun) {
+    fila('Fecha / Hora recepción', `${data.recepComun.fecha||'—'} ${data.recepComun.hora||''}`);
+    fila('Encargado bodega', data.recepComun.encargado);
+  }
+  y += 2;
+  // Encabezado tabla
+  const colsMP = [18,28,22,16,14,18,18,16,16,18,16,14,16];
+  const hdrsMP = ['Componente','Ingrediente','Proveedor','Factura','Lote','F.Elab.','F.Venc.','F.Recep.','H.Recep.','Encargado','Cantidad','T°','Rac.'];
+  doc.setFillColor(11,61,107);
+  doc.rect(M, y-4, W-2*M, 7, 'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
+  let cx = M+1;
+  hdrsMP.forEach((h,j) => { doc.text(h, cx, y); cx += colsMP[j]; });
+  doc.setTextColor(0,0,0); y += 5;
+  // Filas por MP
+  data.materiasPrimas.forEach((mp,i) => {
+    if(!mp.producto) return;
+    if(y > 265) { doc.addPage(); y = 15; }
+    const bg = i%2===0 ? [255,255,255] : [245,248,252];
+    doc.setFillColor(...bg);
+    doc.rect(M, y-4, W-2*M, 7, 'F');
+    doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(11,61,107);
+    const vals = [
+      `${i+1}.${mp.nombre}`, mp.producto||'—', mp.proveedor||'—', mp.factura||'—',
+      mp['lote-prov']||'—', mp['fecha-elab']||'—', mp['fecha-venc']||'—',
+      mp.cantidad||'—', mp['t-recep']?mp['t-recep']+'°C':'—', mp.raciones||'—'
+    ];
+    cx = M+1; doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
+    vals.forEach((val,j) => {
+      const t = parseFloat(j===11?val:'');
+      if(j===11 && !isNaN(t) && t>5) doc.setTextColor(192,57,43);
+      else doc.setTextColor(0,0,0);
+      doc.text(String(val).substring(0,14), cx, y);
+      cx += colsMP[j];
+    });
+    doc.setTextColor(0,0,0);
+    if(mp['obs-recep']) {
+      y += 5;
+      doc.setFont('helvetica','italic'); doc.setFontSize(7); doc.setTextColor(80,80,80);
+      doc.text(`  Obs MP${i+1}: ${mp['obs-recep']}`, M+2, y);
+    }
+    y += 6;
+  });
+
+  // Producción — tabla multi-componente
+  if(data.produccion && data.produccion.componentes && data.produccion.componentes.length) {
+    seccion('REGISTRO DE PRODUCCIÓN', [11,61,107]);
+    // Encabezado tabla
+    const colsProd = [28,20,16,18,18,14,14,14,14,14,14,40];
+    const hdrsProd = ['Componente','Tipo','Lote','F.Elab.','F.Venc.','H.Ini','T°Ini','H.Fin','T°Fin','H.Ent.','T°Ent.','Sensorial'];
+    doc.setFillColor(11,61,107);
+    doc.rect(M, y-4, W-2*M, 7, 'F');
+    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
+    let cxp = M+1;
+    hdrsProd.forEach((h,j) => { doc.text(h, cxp, y); cxp += colsProd[j]; });
+    doc.setTextColor(0,0,0); y += 5;
+    data.produccion.componentes.forEach((c,i) => {
+      if(!c.componente) return;
+      if(y > 262) { doc.addPage(); y = 15; }
+      doc.setFillColor(i%2===0?255:245, i%2===0?255:248, i%2===0?255:252);
+      doc.rect(M, y-4, W-2*M, 7, 'F');
+      doc.setFont('helvetica','normal'); doc.setFontSize(7);
+      const tFin = parseFloat(c['t-fin']);
+      const tEnt = parseFloat(c['t-entrega']);
+      const ncFin = !isNaN(tFin) && tFin < 74;
+      const ncEnt = !isNaN(tEnt) && tEnt < 63;
+      const vals = [
+        c.componente||'—', c['tipo-cocc']||'—', c.lote||'—',
+        c['fecha-elab']||'—', c['fecha-venc']||'—',
+        c['hora-ini']||'—', c['t-ini']?c['t-ini']+'°':'—',
+        c['hora-fin']||'—',
+        (c['t-fin']?c['t-fin']+'°':'—') + (ncFin?' ⚠':''),
+        c['hora-entrega']||'—',
+        (c['t-entrega']?c['t-entrega']+'°':'—') + (ncEnt?' ⚠':''),
+        `C:${c['sens-color']?.charAt(0)||'—'} A:${c['sens-aroma']?.charAt(0)||'—'} S:${c['sens-sabor']?.charAt(0)||'—'} T:${c['sens-textura']?.charAt(0)||'—'}`
+      ];
+      cxp = M+1;
+      vals.forEach((val,j) => {
+        if((j===8 && ncFin)||(j===10 && ncEnt)) doc.setTextColor(192,57,43);
+        else doc.setTextColor(0,0,0);
+        doc.text(String(val).substring(0, j===0?14:j===11?18:8), cxp, y);
+        cxp += colsProd[j];
+      });
+      doc.setTextColor(0,0,0);
+      if(c.obs) {
+        y += 5;
+        doc.setFont('helvetica','italic'); doc.setFontSize(7); doc.setTextColor(80,80,80);
+        doc.text(`  Obs: ${c.obs}`.substring(0,80), M+2, y);
+      }
+      y += 6;
+    });
+    y += 2;
+  }
+
+  // Abatimiento
+  // Abatimiento — tabla multi-componente
+  if(data.abatimiento && data.abatimiento.componentes && data.abatimiento.componentes.length) {
+    seccion('REGISTRO DE ABATIMIENTO / ENFRIAMIENTO', [11,61,107]);
+    const colsAbat = [30,18,16,18,14,14,14,14,26,16];
+    const hdrsAbat = ['Componente','Equipo','T°Equip','Cantidad','H.Ini','T°Ini','H.Fin','T°Fin⚠','Responsable','Obs.'];
+    doc.setFillColor(11,61,107);
+    doc.rect(M, y-4, W-2*M, 7, 'F');
+    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
+    let cxa = M+1;
+    hdrsAbat.forEach((h,j)=>{ doc.text(h,cxa,y); cxa+=colsAbat[j]; });
+    doc.setTextColor(0,0,0); y+=5;
+    data.abatimiento.componentes.forEach((c,i)=>{
+      if(!c.componente) return;
+      if(y>265){doc.addPage();y=15;}
+      doc.setFillColor(i%2===0?255:245,i%2===0?255:248,i%2===0?255:252);
+      doc.rect(M,y-4,W-2*M,7,'F');
+      doc.setFont('helvetica','normal'); doc.setFontSize(7);
+      const tFin=parseFloat(c['t-fin']); const nc=!isNaN(tFin)&&tFin>5;
+      const vals=[c.componente||'—','Eq.'+c.equipo||'—',c['t-equipo']?c['t-equipo']+'°':'—',
+        c.cantidad||'—',c['hora-ini']||'—',c['t-ini']?c['t-ini']+'°':'—',
+        c['hora-fin']||'—',(c['t-fin']?c['t-fin']+'°':'—')+(nc?' ⚠':''),
+        c.responsable||'—',c.obs?c.obs.substring(0,12):'—'];
+      cxa=M+1;
+      vals.forEach((val,j)=>{ if(j===7&&nc)doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
+        doc.text(String(val).substring(0,j===0?14:j===8?12:8),cxa,y); cxa+=colsAbat[j]; });
+      doc.setTextColor(0,0,0); y+=6;
+    }); y+=2;
+  }
+
+  // Sanitización
+  if(data.sanitizacion && data.sanitizacion.productos && data.sanitizacion.productos.length) {
+    seccion('SANITIZACIÓN DE FRUTAS Y VERDURAS', [11,61,107]);
+    fila('Área / Servicio', `${data.sanitizacion.area||'—'} / ${data.sanitizacion.servicio||'—'}`);
+    fila('pH Sanitizante (común)', data.sanitizacion.ph ? data.sanitizacion.ph + ' pH' : '—');
+    y += 2;
+    // Tabla productos
+    const colsSan = [8,38,26,16,16,14,30,28];
+    const hdrsSan = ['N°','Producto','Lote','H.Ini','H.Fin','Min','Responsable','Obs.'];
+    doc.setFillColor(26,107,60);
+    doc.rect(M, y-4, W-2*M, 7, 'F');
+    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
+    let cxs = M+1;
+    hdrsSan.forEach((h,j) => { doc.text(h, cxs, y); cxs += colsSan[j]; });
+    doc.setTextColor(0,0,0); y += 5;
+    data.sanitizacion.productos.forEach((p,i) => {
+      if(!p.producto) return;
+      if(y > 265) { doc.addPage(); y = 15; }
+      doc.setFillColor(i%2===0?255:245, i%2===0?255:248, i%2===0?255:252);
+      doc.rect(M, y-4, W-2*M, 7, 'F');
+      doc.setFont('helvetica','normal'); doc.setFontSize(7);
+      const vals = [String(i+1), p.producto||'—', p.lote||'—', p['hora-ini']||'—',
+        p['hora-fin']||'—', p.tiempo||'—', p.responsable||'—', p.obs||'—'];
+      cxs = M+1;
+      vals.forEach((val,j) => { doc.text(String(val).substring(0,j===1||j===6?16:8), cxs, y); cxs += colsSan[j]; });
+      y += 6;
+    });
+    y += 2;
+  }
+
+if(data.sanitizacion && data.sanitizacion.productos && data.sanitizacion.productos.length) {
+    seccion('SANITIZACIÓN DE FRUTAS Y VERDURAS', [11,61,107]);
+    fila('Área / Servicio', `${data.sanitizacion.area||'—'} / ${data.sanitizacion.servicio||'—'}`);
+    fila('pH Sanitizante (común)', data.sanitizacion.ph ? data.sanitizacion.ph + ' pH' : '—');
+    y += 2;
+    // Tabla productos
+    const colsSan = [8,38,26,16,16,14,30,28];
+    const hdrsSan = ['N°','Producto','Lote','H.Ini','H.Fin','Min','Responsable','Obs.'];
+    doc.setFillColor(26,107,60);
+    doc.rect(M, y-4, W-2*M, 7, 'F');
+    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
+    let cxs = M+1;
+    hdrsSan.forEach((h,j) => { doc.text(h, cxs, y); cxs += colsSan[j]; });
+    doc.setTextColor(0,0,0); y += 5;
+    data.sanitizacion.productos.forEach((p,i) => {
+      if(!p.producto) return;
+      if(y > 265) { doc.addPage(); y = 15; }
+      doc.setFillColor(i%2===0?255:245, i%2===0?255:248, i%2===0?255:252);
+      doc.rect(M, y-4, W-2*M, 7, 'F');
+      doc.setFont('helvetica','normal'); doc.setFontSize(7);
+      const vals = [String(i+1), p.producto||'—', p.lote||'—', p['hora-ini']||'—',
+        p['hora-fin']||'—', p.tiempo||'—', p.responsable||'—', p.obs||'—'];
+      cxs = M+1;
+      vals.forEach((val,j) => { doc.text(String(val).substring(0,j===1||j===6?16:8), cxs, y); cxs += colsSan[j]; });
+      y += 6;
+    });
+    y += 2;
+  }
+
+  // ZI: Envasado, Despacho, Retermalización
+  if(data.proceso === 'zi' && data.envasado) {
+    seccion('ENVASADO / DESPACHO / RETERMALIZACIÓN', [11,61,107]);
+    if(data.envasado.componentes && data.envasado.componentes.length) {
+      const colsEnv=[30,18,18,14,14,14,14,26];
+      const hdrsEnv=['Componente','Lote','Cantidad','H.Ini','T°Ini⚠','H.Fin','T°Fin⚠','Responsable'];
+      doc.setFillColor(11,61,107); doc.rect(M,y-4,W-2*M,7,'F');
+      doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
+      let cxe=M+1; hdrsEnv.forEach((h,j)=>{doc.text(h,cxe,y);cxe+=colsEnv[j];});
+      doc.setTextColor(0,0,0); y+=5;
+      data.envasado.componentes.forEach((c,i)=>{
+        if(!c.componente)return; if(y>265){doc.addPage();y=15;}
+        doc.setFillColor(i%2===0?255:245,i%2===0?255:248,i%2===0?255:252);
+        doc.rect(M,y-4,W-2*M,7,'F'); doc.setFont('helvetica','normal'); doc.setFontSize(7);
+        const tI=parseFloat(c['t-ini']),tF=parseFloat(c['t-fin']);
+        const ncI=!isNaN(tI)&&tI>5, ncF=!isNaN(tF)&&tF>5;
+        const vals=[c.componente||'—',c.lote||'—',c.cantidad||'—',c['hora-ini']||'—',
+          (c['t-ini']?c['t-ini']+'°':'—')+(ncI?' ⚠':''),c['hora-fin']||'—',
+          (c['t-fin']?c['t-fin']+'°':'—')+(ncF?' ⚠':''),c.responsable||'—'];
+        cxe=M+1; vals.forEach((val,j)=>{
+          if((j===4&&ncI)||(j===6&&ncF))doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
+          doc.text(String(val).substring(0,j===0?14:j===7?12:8),cxe,y); cxe+=colsEnv[j];});
+        doc.setTextColor(0,0,0); y+=6;
+      }); y+=2;
+    }
+    fila('Condiciones Vehículo', data.despacho?.vehiculo||'—');
+    if(data.despacho?.obsVehiculo) fila('Obs. Vehículo', data.despacho.obsVehiculo);
+    if(data.despacho?.componentes && data.despacho.componentes.length) {
+      y += 2;
+      const colsD=[28,16,18,16,18,14,14,28];
+      const hdrsD=['Componente','Lote','F.Venc.','Cantidad','Fecha','Hora','T°⚠','Obs.'];
+      doc.setFillColor(11,61,107); doc.rect(M,y-4,W-2*M,7,'F');
+      doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
+      let cxd=M+1; hdrsD.forEach((h,j)=>{doc.text(h,cxd,y);cxd+=colsD[j];});
+      doc.setTextColor(0,0,0); y+=5;
+      data.despacho.componentes.forEach((c,i)=>{
+        if(!c.componente)return; if(y>265){doc.addPage();y=15;}
+        doc.setFillColor(i%2===0?255:245,i%2===0?255:248,i%2===0?255:252);
+        doc.rect(M,y-4,W-2*M,7,'F'); doc.setFont('helvetica','normal'); doc.setFontSize(7);
+        const tD=parseFloat(c.t); const ncD=!isNaN(tD)&&tD>5;
+        const vals=[c.componente||'—',c.lote||'—',c['fecha-venc']||'—',c.cantidad||'—',
+          c.fecha||'—',c.hora||'—',(c.t?c.t+'°':'—')+(ncD?' ⚠':''),c.obs||'—'];
+        cxd=M+1; vals.forEach((val,j)=>{
+          if(j===6&&ncD)doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
+          doc.text(String(val).substring(0,j===0?14:j===7?14:8),cxd,y); cxd+=colsD[j];});
+        doc.setTextColor(0,0,0); y+=6;
+      }); y+=2;
+    }
+    // Recepción retermalizado por producto
+    if(data.recepcionReterm?.componentes?.length) {
+      y += 2;
+      doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(11,61,107);
+      doc.text('Recepción en Retermalizado:', M+2, y); y += 5;
+      const colsRR=[32,16,16,18,14,14,22,22];
+      const hdrsRR=['Componente','Lote','Cantidad','Fecha','Hora','T°⚠','Vehículo','Obs.'];
+      doc.setFillColor(11,61,107); doc.rect(M,y-4,W-2*M,7,'F');
+      doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
+      let cxrr=M+1; hdrsRR.forEach((h,j)=>{doc.text(h,cxrr,y);cxrr+=colsRR[j];});
+      doc.setTextColor(0,0,0); y+=5;
+      data.recepcionReterm.componentes.forEach((c,i)=>{
+        if(!c.componente)return; if(y>265){doc.addPage();y=15;}
+        doc.setFillColor(i%2===0?255:245,i%2===0?255:248,i%2===0?255:252);
+        doc.rect(M,y-4,W-2*M,7,'F'); doc.setFont('helvetica','normal'); doc.setFontSize(7);
+        const tRR=parseFloat(c.t); const ncRR=!isNaN(tRR)&&tRR>5;
+        const vals=[c.componente||'—',c.lote||'—',c.cantidad||'—',
+          c.fecha||'—',c.hora||'—',(c.t?c.t+'°':'—')+(ncRR?' ⚠':''),
+          c.vehiculo||'—',c.obs||'—'];
+        cxrr=M+1; vals.forEach((val,j)=>{
+          if(j===5&&ncRR)doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
+          doc.text(String(val).substring(0,j===0?16:j===6||j===7?12:8),cxrr,y); cxrr+=colsRR[j];});
+        doc.setTextColor(0,0,0); y+=6;
+      }); y+=2;
+    }
+    // Retermalización por producto
+    if(data.retermalizado?.componentes?.length) {
+      y += 2;
+      doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(139,26,26);
+      doc.text('Retermalización y Despacho a Reposteros:', M+2, y); y += 5;
+      const colsRT=[24,14,18,14,12,14,14,14,14,14,20];
+      const hdrsRT=['Componente','Lote','F.Venc.','Cantidad','Equipo','H.Ini','T°Ini','H.Fin','T°Fin⚠','T°Resp⚠','Obs.'];
+      doc.setFillColor(139,26,26); doc.rect(M,y-4,W-2*M,7,'F');
+      doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
+      let cxrt=M+1; hdrsRT.forEach((h,j)=>{doc.text(h,cxrt,y);cxrt+=colsRT[j];});
+      doc.setTextColor(0,0,0); y+=5;
+      data.retermalizado.componentes.forEach((c,i)=>{
+        if(!c.componente)return; if(y>265){doc.addPage();y=15;}
+        doc.setFillColor(i%2===0?255:254,i%2===0?255:248,i%2===0?255:248);
+        doc.rect(M,y-4,W-2*M,7,'F'); doc.setFont('helvetica','normal'); doc.setFontSize(7);
+        const tF=parseFloat(c['t-fin']),tR=parseFloat(c['t-repostero']);
+        const ncF=!isNaN(tF)&&tF<74, ncR=!isNaN(tR)&&tR<63;
+        const vals=[c.componente||'—',c.lote||'—',c['fecha-venc']||'—',c.cantidad||'—',
+          c.equipo?'Eq.'+c.equipo:'—',c['hora-ini']||'—',c['t-ini']?c['t-ini']+'°':'—',
+          c['hora-fin']||'—',(c['t-fin']?c['t-fin']+'°':'—')+(ncF?' ⚠':''),
+          (c['t-repostero']?c['t-repostero']+'°':'—')+(ncR?' ⚠':''),c.obs||'—'];
+        cxrt=M+1; vals.forEach((val,j)=>{
+          if((j===8&&ncF)||(j===9&&ncR))doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
+          doc.text(String(val).substring(0,j===0?12:j===10?10:8),cxrt,y); cxrt+=colsRT[j];});
+        doc.setTextColor(0,0,0); y+=6;
+      }); y+=2;
+      // Baños María
+      if(data.retermalizado.banosMaria?.length) {
+        doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(139,26,26);
+        doc.text('Control de Baños María:', M+2, y); y+=5;
+        const colsBM=[50,24,20,56];
+        const hdrsBM=['Identificación','Hora','T° (≥63°C)','Obs.'];
+        doc.setFillColor(139,26,26); doc.rect(M,y-4,W-2*M,7,'F');
+        doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
+        let cxbm=M+1; hdrsBM.forEach((h,j)=>{doc.text(h,cxbm,y);cxbm+=colsBM[j];});
+        doc.setTextColor(0,0,0); y+=5;
+        data.retermalizado.banosMaria.forEach((b,i)=>{
+          if(!b.identificacion&&!b.t)return; if(y>265){doc.addPage();y=15;}
+          doc.setFillColor(i%2===0?255:254,i%2===0?255:248,i%2===0?255:248);
+          doc.rect(M,y-4,W-2*M,7,'F'); doc.setFont('helvetica','normal'); doc.setFontSize(7);
+          const tBM=parseFloat(b.t); const ncBM=!isNaN(tBM)&&tBM<63;
+          const vals=[b.identificacion||'—',b.hora||'—',(b.t?b.t+'°C':'—')+(ncBM?' ⚠':''),b.obs||'—'];
+          cxbm=M+1; vals.forEach((val,j)=>{
+            if(j===2&&ncBM)doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
+            doc.text(String(val).substring(0,j===3?28:j===0?24:10),cxbm,y); cxbm+=colsBM[j];});
+          doc.setTextColor(0,0,0); y+=6;
+        }); y+=2;
+      }
+    }
+  }
+
+  // ZE: Casino
+  if(data.proceso === 'ze' && data.casinoZE) {
+    seccion('TEMPERATURAS CASINO — ZONA EXTERNA', [26,107,60]);
+    const cze = data.casinoZE;
+    ['1130','1230','1330','1430'].forEach(h => {
+      const t = parseFloat(cze[`t${h}`]);
+      const hs = h.slice(0,2)+':'+h.slice(2);
+      if(!isNaN(t) && t < 63) filaNC(`T° ${hs} hrs (PCC)`, `${t}°C ⚠ Límite: ≥ 63°C`);
+      else fila(`T° ${hs} hrs`, `${cze['t'+h]||'—'}°C`);
+    });
+    fila('Baño María 1 / 2', `${cze.bm1||'—'}°C / ${cze.bm2||'—'}°C`);
+    fila('Comensales Común/Liviano/Hipo', `${cze.comun||'—'} / ${cze.liviano||'—'} / ${cze.hipo||'—'}`);
+  }
+
+  // Observaciones
+  if(data.obsGenerales) {
+    seccion('OBSERVACIONES GENERALES', [74,74,74]);
+    const lines = doc.splitTextToSize(data.obsGenerales, W-2*M-10);
+    doc.setFontSize(8); doc.text(lines, M+3, y); y += lines.length * 5 + 3;
+  }
+
+  // Firma
+  if(y > 240) { doc.addPage(); y = 15; }
+  y = Math.max(y, 240);
+  doc.setDrawColor(180,180,180); doc.setLineWidth(0.3);
+  doc.line(M, y, M+70, y);
+  doc.setFontSize(8); doc.setFont('helvetica','normal');
+  doc.text(`${data.responsable||'Inspector ITE'}`, M+35, y+4, {align:'center'});
+  doc.text('Firma / Timbre ITE', M+35, y+8, {align:'center'});
+  doc.setFontSize(7); doc.setTextColor(120,120,120);
+  doc.text(`Generado: ${new Date().toLocaleString('es-CL')} — Sistema de Trazabilidad E.P. Santiago 1`, W/2, 290, {align:'center'});
+
+  const regStr = (data.regimen||'').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
+  const nombre = `Trazabilidad_${data.proceso.toUpperCase()}_${regStr}_${data.nroRegistro}_${data.fecha?.replace(/\//g,'-')}.pdf`;
+  doc.save(nombre);
+  mostrarToast('📄 PDF generado correctamente.', 'verde');
+}
+
+// =============================================
+// LIMPIAR
+// =============================================
+
+// =============================================
+// LIMPIAR
+// =============================================
+function limpiarFormulario() {
+  if(!confirm('¿Limpiar el formulario para un nuevo registro?')) return;
+  document.querySelectorAll('input:not(.auto), select, textarea').forEach(el => {
+    if(el.tagName === 'SELECT') el.selectedIndex = 0;
+    else el.value = '';
+    el.classList.remove('alerta-rojo');
+    el.style.background = '';
+    el.style.color = '';
+    el.style.borderColor = '';
+  });
+  document.querySelectorAll('.alerta-nc').forEach(a => a.classList.remove('visible'));
+  document.querySelectorAll('.limite').forEach(l => l.classList.remove('rojo'));
+  // Resetear tabla recepción (se reinicia via iniciarTablaRecep)
+  // Reiniciar tablas
+  iniciarTablaSan();
+  iniciarTablaProd();
+  iniciarTablaAbat();
+  iniciarTablaEnv();
+  iniciarTablaDesp();
+  iniciarTablaRR();
+  iniciarTablaRT();
+  iniciarTablaBM();
+  iniciarTablaDesp();
+  // Ocultar MP5 si estaba visible
+  mp5Visible = false;
+  const fila5 = document.getElementById('fila-mp5');
+  const btn5 = document.getElementById('btn-add-mp5');
+  if(fila5) fila5.style.display='none';
+  if(btn5) btn5.textContent='＋ Agregar componente adicional (MP5)';
+  generarMetadatos();
+  mostrarToast('Formulario limpio para nuevo registro.', 'verde');
+}
+
+// =============================================
+// UTILS
+// =============================================
 function toggleCard(header) {
   header.classList.toggle('collapsed');
   const body = header.nextElementSibling;
-  if (body) {
-    body.classList.toggle('hidden');
-  }
+  if(body) body.classList.toggle('hidden');
 }
 
-// Generar número de registro
-function generarNroRegistro() {
-  const now = new Date();
-  const year = now.getFullYear().toString().slice(-2);
-  const month = (now.getMonth() + 1).toString().padStart(2, '0');
-  const day = now.getDate().toString().padStart(2, '0');
-  const nro = nroRegistroCounter.toString().padStart(3, '0');
-  return `TRZ-${year}${month}${day}-${nro}`;
+function mostrarToast(msg, tipo) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = `toast ${tipo} visible`;
+  setTimeout(() => t.classList.remove('visible'), 3500);
 }
 
-// Actualizar fecha y hora en el header
 function actualizarHeader() {
-  const now = new Date();
-  document.getElementById('hdr-fecha').textContent = now.toLocaleDateString('es-CL');
-  document.getElementById('hdr-hora').textContent = now.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
-  document.getElementById('hdr-reg').textContent = generarNroRegistro();
+  // se llama cuando cambia nombre prep, sin necesidad de actualizar más
 }
 
-// Setear proceso (ZI o ZE)
-function setProceso(proceso) {
-  currentProceso = proceso;
-  document.body.className = `proceso-${proceso}`;
-  document.querySelectorAll('.proceso-btn').forEach(btn => btn.classList.remove('activo'));
-  document.querySelector(`.proceso-btn.${proceso}`).classList.add('activo');
-  document.getElementById('proceso-display').value = (proceso === 'zi' ? 'Zona Interna' : 'Zona Externa');
+// =============================================
+// INICIO
+// =============================================
+
+// =============================================
+// CONFIGURACIÓN SUPABASE
+// =============================================
+function guardarConfigSupabase() {
+  const url = document.getElementById('config-sb-url').value.trim();
+  const key = document.getElementById('config-sb-key').value.trim();
+  if(!url || !key) {
+    mostrarToast('Ingresa ambos campos antes de guardar.', 'rojo');
+    return;
+  }
+  localStorage.setItem('sb_url', url);
+  localStorage.setItem('sb_key', key);
+  sb.url = url;
+  sb.key = key;
+  mostrarToast('✅ Configuración guardada.', 'verde');
+  actualizarEstadoSB();
 }
 
-// Materias Primas
-let materiasPrimas = [];
+async function probarConexionSupabase() {
+  const status = document.getElementById('sb-status');
+  status.textContent = '⏳ Probando...';
+  status.style.color = '#888';
+  const { data, error } = await sb.select('registros_trazabilidad', 'limit=1');
+  if(error) {
+    status.textContent = '❌ Error: ' + JSON.stringify(error).substring(0,60);
+    status.style.color = 'var(--rojo)';
+  } else {
+    status.textContent = '✅ Conexión exitosa';
+    status.style.color = 'var(--verde)';
+  }
+}
 
-function agregarFilaMP() {
-  materiasPrimas.push({
-    componente: '', ingrediente: '', proveedor: '', factura: '', vencimiento: '', lote: '', temperatura: '', condicion: '', sensorial: '', accion: ''
+function actualizarEstadoSB() {
+  const status = document.getElementById('sb-status');
+  if(!status) return;
+  if(sb.configured()) {
+    status.textContent = '✅ Supabase configurado';
+    status.style.color = 'var(--verde)';
+  } else {
+    status.textContent = '⚠️ Sin configurar — guardado solo local';
+    status.style.color = 'var(--naranja)';
+  }
+}
+
+window.addEventListener('DOMContentLoaded', () => { init(); actualizarEstadoSB(); 
+  // Cargar config Supabase en los inputs
+  const sbUrlEl = document.getElementById('config-sb-url');
+  const sbKeyEl = document.getElementById('config-sb-key');
+  if(sbUrlEl) sbUrlEl.value = localStorage.getItem('sb_url') || '';
+  if(sbKeyEl) sbKeyEl.value = localStorage.getItem('sb_key') || '';
+ });
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// =============================================
+// DASHBOARD — GRÁFICOS v2
+// =============================================
+let chartCaliente = null;
+let chartFrio = null;
+let chartTorta = null;
+let chartBarras = null;
+
+const PALABRAS_CLAVE = [
+  'falla equipo','temperatura','producto rechazado','rechazado',
+  'baja temperatura','alta temperatura','contaminación','retraso','demora',
+  'fuera de rango','sin novedad','corregido','proveedor',
+  'vencimiento','etiqueta','higiene','sanitización','equipo'
+];
+
+function filtrarRegistros() {
+  const todos = JSON.parse(localStorage.getItem(KEY) || '[]');
+  const dias = parseInt(document.getElementById('dash-periodo')?.value || '30');
+  const proceso = document.getElementById('dash-proceso')?.value || 'todos';
+  const ahora = new Date();
+  return todos.filter(r => {
+    if(proceso !== 'todos' && r.proceso !== proceso) return false;
+    if(dias === 0) return true;
+    const partes = (r.fecha || '').split('/');
+    if(partes.length < 3) return true;
+    const fechaReg = new Date(`${partes[2]}-${partes[1].padStart(2,'0')}-${partes[0].padStart(2,'0')}`);
+    return (ahora - fechaReg) / (1000*60*60*24) <= dias;
   });
-  renderTablaMP();
 }
 
-function eliminarFilaMP(index) {
-  materiasPrimas.splice(index, 1);
-  renderTablaMP();
+// Extrae el mínimo de una lista de valores numéricos
+function minVal(arr) {
+  const nums = arr.map(v => parseFloat(v)).filter(v => !isNaN(v));
+  return nums.length ? Math.min(...nums) : null;
 }
 
-function actualizarMP(index, field, value) {
-  materiasPrimas[index][field] = value;
+// Extrae temperaturas mínimas por etapa de un registro
+function extraerTemps(r) {
+  // CALIENTES
+  const tCocc = minVal((r.produccion?.componentes||[]).map(c => c['t-fin']));
+  const tReterm = minVal((r.retermalizado?.componentes||[]).map(c => c['t-fin']));
+  const tCasino = r.proceso === 'zi'
+    ? minVal((r.retermalizado?.componentes||[]).map(c => c['t-repostero']))
+    : minVal(['t1130','t1230','t1330','t1430'].map(k => r.casinoZE?.[k]));
+
+  // FRÍAS
+  const tAbat = minVal((r.abatimiento?.componentes||[]).map(c => c['t-fin']));
+  const tDesp = minVal((r.despacho?.componentes||[]).map(c => c.t));
+  const tRecep = minVal((r.materiasPrimas||[]).map(mp => mp['t-recep']));
+
+  return { tCocc, tReterm, tCasino, tAbat, tDesp, tRecep };
 }
 
-function renderTablaMP() {
-  const tbody = document.getElementById('tbody-mp');
-  tbody.innerHTML = '';
-  materiasPrimas.forEach((mp, index) => {
-    const row = `
-      <tr>
-        <td><input type="text" value="${mp.componente}" oninput="actualizarMP(${index}, 'componente', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
-        <td><input type="text" value="${mp.ingrediente}" oninput="actualizarMP(${index}, 'ingrediente', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
-        <td><input type="text" value="${mp.proveedor}" oninput="actualizarMP(${index}, 'proveedor', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
-        <td><input type="text" value="${mp.factura}" oninput="actualizarMP(${index}, 'factura', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
-        <td><input type="date" value="${mp.vencimiento}" oninput="actualizarMP(${index}, 'vencimiento', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
-        <td><input type="text" value="${mp.lote}" oninput="actualizarMP(${index}, 'lote', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
-        <td><input type="number" value="${mp.temperatura}" oninput="actualizarMP(${index}, 'temperatura', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
-        <td><input type="text" value="${mp.condicion}" oninput="actualizarMP(${index}, 'condicion', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
-        <td><input type="text" value="${mp.sensorial}" oninput="actualizarMP(${index}, 'sensorial', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
-        <td><button onclick="eliminarFilaMP(${index})" style="background:#fcebeb;color:#A32D2D;border:none;border-radius:4px;padding:4px 8px;font-size:10px;font-weight:bold;cursor:pointer">🗑️</button></td>
-      </tr>
-    `;
-    tbody.insertAdjacentHTML('beforeend', row);
-  });
-}
+function renderDashboard() {
+  const registros = filtrarRegistros();
+  const total = registros.length;
 
-// Raciones
-function calcularRaciones() {
-  const producidas = parseInt(document.getElementById('raciones-producidas').value) || 0;
-  const servidas = parseInt(document.getElementById('raciones-servidas').value) || 0;
-  const desechadas = parseInt(document.getElementById('raciones-desechadas').value) || 0;
-  document.getElementById('resumen-raciones').textContent = producidas - servidas - desechadas;
-}
+  // KPIs
+  document.getElementById('kpi-total').textContent = total;
+  const nc = registros.filter(r => r.tieneDesvios).length;
+  const ok = total - nc;
+  const pct = total > 0 ? Math.round((ok/total)*100) : 0;
+  document.getElementById('kpi-cump').textContent = pct + '%';
+  document.getElementById('kpi-nc').textContent = nc;
+  document.getElementById('kpi-zi').textContent = registros.filter(r=>r.proceso==='zi').length;
+  document.getElementById('kpi-ze').textContent = registros.filter(r=>r.proceso==='ze').length;
 
-// Desvíos
-function mostrarOcultarDesvios() {
-  const desviosDetectados = document.getElementById('desvios-detectados').value;
-  document.getElementById('panel-desvios').style.display = (desviosDetectados === 'si' ? 'block' : 'none');
-}
-
-// Guardar Registro
-async function guardarRegistro() {
-  const nro_registro = document.getElementById('hdr-reg').textContent;
-  const fecha = document.getElementById('fecha-reg').textContent;
-  const hora = document.getElementById('hdr-hora').textContent;
-  const proceso = document.getElementById('proceso-display').value;
-  const regimen = document.getElementById('regimen-reg').value;
-  const nombre_preparacion = document.getElementById('nombre-prep').value;
-  const servicio = document.getElementById('servicio').value;
-  const responsable = document.getElementById('responsable').value;
-
-  const desviosDetectados = document.getElementById('desvios-detectados').value;
-  let desvios = [];
-  let accion_correctiva = '';
-
-  if (desviosDetectados === 'si') {
-    desvios.push({
-      tipo: document.getElementById('tipo-desvio').value,
-      descripcion: document.getElementById('desc-desvio').value
-    });
-    accion_correctiva = document.getElementById('accion-correctiva').value;
+  if(total === 0) {
+    document.getElementById('dash-vacio').style.display = 'block';
+    [chartCaliente,chartFrio,chartTorta,chartBarras].forEach(c=>{if(c)c.destroy();});
+    chartCaliente = chartFrio = chartTorta = chartBarras = null;
+    return;
   }
+  document.getElementById('dash-vacio').style.display = 'none';
 
-  const observaciones_generales = document.getElementById('observaciones-generales').value;
+  const rev = [...registros].reverse();
+  const labels = rev.map((r,i) => r.nroRegistro || ('Reg '+(i+1)));
+  const temps = rev.map(r => extraerTemps(r));
 
-  const registro = {
-    nro_registro,
-    fecha,
-    hora,
-    proceso,
-    proceso_nombre: currentProceso === 'zi' ? 'Zona Interna' : 'Zona Externa',
-    regimen,
-    nombre_preparacion,
-    servicio,
-    responsable,
-    tiene_desvios: desviosDetectados === 'si',
-    desvios: JSON.stringify(desvios), // Guardar como JSON string
-    accion_correctiva,
-    obs_generales: observaciones_generales,
-    materias_primas: JSON.stringify(materiasPrimas) // Guardar como JSON string
-  };
-
-  // Guardar en localStorage
-  let historial = JSON.parse(localStorage.getItem('historial_trazabilidad')) || [];
-  historial.push(registro);
-  localStorage.setItem('historial_trazabilidad', JSON.stringify(historial));
-  showToast('✅ Registro guardado localmente', 'verde');
-
-  // Guardar en Supabase
-  await supabaseClient.insert('registros_trazabilidad', registro);
-
-  nroRegistroCounter++;
-  localStorage.setItem('nroRegistroCounter', nroRegistroCounter);
-  limpiarFormulario();
-  renderHistorial();
+  renderCalienteChart(labels, temps);
+  renderFrioChart(labels, temps);
+  renderTortaChart(ok, nc, total);
+  renderBarrasChart(registros);
 }
 
-// Eliminar Registro
-function eliminarRegistro() {
-  if (confirm('¿Estás seguro de que quieres eliminar el último registro?')) {
-    let historial = JSON.parse(localStorage.getItem('historial_trazabilidad')) || [];
-    historial.pop();
-    localStorage.setItem('historial_trazabilidad', JSON.stringify(historial));
-    showToast('🗑️ Último registro eliminado', 'rojo');
-    renderHistorial();
-  }
-}
+// ── GRÁFICO 1A: CALIENTES ────────────────────────────────────────────────────
+function renderCalienteChart(labels, temps) {
+  if(chartCaliente) chartCaliente.destroy();
 
-// Limpiar Formulario
-function limpiarFormulario() {
-  document.getElementById('nombre-prep').value = '';
-  document.getElementById('responsable').value = '';
-  document.getElementById('servicio').value = 'Almuerzo';
-  document.getElementById('regimen-reg').value = 'Régimen Común';
-  document.getElementById('desvios-detectados').value = 'no';
-  mostrarOcultarDesvios();
-  document.getElementById('tipo-desvio').value = '';
-  document.getElementById('desc-desvio').value = '';
-  document.getElementById('accion-correctiva').value = '';
-  document.getElementById('observaciones-generales').value = '';
+  const tCocc   = temps.map(t => t.tCocc);
+  const tReterm = temps.map(t => t.tReterm);
+  const tCasino = temps.map(t => t.tCasino);
 
-  document.getElementById('temp-camara').value = '';
-  document.getElementById('temp-refrigerador').value = '';
-  document.getElementById('temp-congelador').value = '';
-  document.getElementById('temp-enfriamiento').value = '';
-  document.getElementById('temp-mantenimiento').value = '';
-  document.getElementById('temp-servicio').value = '';
-  document.getElementById('temp-ambiente-ze').value = '';
-  document.getElementById('temp-transporte-ze').value = '';
-  document.getElementById('temp-servicio-ze').value = '';
-  document.getElementById('hora-inicio-ze').value = '';
-  document.getElementById('hora-fin-ze').value = '';
+  // Colorear puntos NC en rojo
+  const pColorCocc   = tCocc.map(v   => (v !== null && v < 74) ? '#E74C3C' : '#E74C3C');
+  const pColorReterm = tReterm.map(v => (v !== null && v < 74) ? '#E74C3C' : '#F39C12');
+  const pColorCasino = tCasino.map(v => (v !== null && v < 63) ? '#E74C3C' : '#27AE60');
 
-  document.getElementById('raciones-producidas').value = '0';
-  document.getElementById('raciones-servidas').value = '0';
-  document.getElementById('raciones-desechadas').value = '0';
-  calcularRaciones();
-
-  materiasPrimas = [];
-  renderTablaMP();
-
-  actualizarHeader();
-}
-
-// Renderizar Historial
-async function renderHistorial() {
-  const historialDiv = document.getElementById('historial-registros');
-  historialDiv.innerHTML = '';
-
-  // Cargar de Supabase
-  const supabaseHistorial = await supabaseClient.fetchAll('registros_trazabilidad');
-  if (supabaseHistorial.length > 0) {
-    showToast('☁️ Historial cargado de Supabase', 'verde');
-  }
-
-  // Combinar con localStorage (si existe y es diferente)
-  let localHistorial = JSON.parse(localStorage.getItem('historial_trazabilidad')) || [];
-  let combinedHistorial = [...localHistorial];
-
-  // Evitar duplicados si ya están en local
-  supabaseHistorial.forEach(s_rec => {
-    if (!localHistorial.some(l_rec => l_rec.nro_registro === s_rec.nro_registro)) {
-      combinedHistorial.push(s_rec);
+  chartCaliente = new Chart(document.getElementById('chart-caliente'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        // Líneas límite (horizontales fijas)
+        {
+          label: 'Límite cocción 74°C',
+          data: labels.map(() => 74),
+          borderColor: 'rgba(231,76,60,0.35)',
+          borderDash: [6,4],
+          borderWidth: 1.5,
+          pointRadius: 0,
+          fill: false,
+          spanGaps: true,
+          tension: 0
+        },
+        {
+          label: 'Límite casino 63°C',
+          data: labels.map(() => 63),
+          borderColor: 'rgba(39,174,96,0.35)',
+          borderDash: [6,4],
+          borderWidth: 1.5,
+          pointRadius: 0,
+          fill: false,
+          spanGaps: true,
+          tension: 0
+        },
+        // Valores reales
+        {
+          label: 'T° Cocción (mín.)',
+          data: tCocc,
+          borderColor: '#E74C3C',
+          backgroundColor: 'rgba(231,76,60,0.08)',
+          tension: 0.3,
+          borderWidth: 2,
+          pointRadius: 5,
+          pointBackgroundColor: pColorCocc,
+          spanGaps: true
+        },
+        {
+          label: 'T° Retermalización (mín.)',
+          data: tReterm,
+          borderColor: '#F39C12',
+          backgroundColor: 'rgba(243,156,18,0.08)',
+          tension: 0.3,
+          borderWidth: 2,
+          pointRadius: 5,
+          pointBackgroundColor: pColorReterm,
+          spanGaps: true
+        },
+        {
+          label: 'T° Casino/Repostero (mín.)',
+          data: tCasino,
+          borderColor: '#27AE60',
+          backgroundColor: 'rgba(39,174,96,0.08)',
+          tension: 0.3,
+          borderWidth: 2,
+          pointRadius: 5,
+          pointBackgroundColor: pColorCasino,
+          spanGaps: true
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: c => {
+              if(c.parsed.y === null) return null;
+              const lim = c.datasetIndex === 2 ? 74 : c.datasetIndex === 3 ? 74 : 63;
+              const nc = (c.datasetIndex >= 2) && (
+                (c.datasetIndex === 2 && c.parsed.y < 74) ||
+                (c.datasetIndex === 3 && c.parsed.y < 74) ||
+                (c.datasetIndex === 4 && c.parsed.y < 63)
+              );
+              return `${c.dataset.label}: ${c.parsed.y}°C${nc ? ' ⚠ NC' : ' ✓'}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { font: { size: 10 }, maxRotation: 45, autoSkip: true }, grid: { color: 'rgba(0,0,0,0.04)' } },
+        y: {
+          min: 50,
+          title: { display: true, text: 'Temperatura (°C)', font: { size: 10 } },
+          ticks: { font: { size: 10 }, callback: v => v + '°C' },
+          grid: { color: 'rgba(0,0,0,0.04)' }
+        }
+      }
     }
   });
+}
 
-  combinedHistorial.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); // Ordenar por fecha
+// ── GRÁFICO 1B: FRÍAS ────────────────────────────────────────────────────────
+function renderFrioChart(labels, temps) {
+  if(chartFrio) chartFrio.destroy();
 
-  if (combinedHistorial.length === 0) {
-    historialDiv.innerHTML = '<p style="text-align:center;color:#888;padding:20px">No hay registros en el historial.</p>';
+  const tAbat  = temps.map(t => t.tAbat);
+  const tDesp  = temps.map(t => t.tDesp);
+  const tRecep = temps.map(t => t.tRecep);
+
+  const pColorAbat  = tAbat.map(v  => (v !== null && v > 5) ? '#E74C3C' : '#3498DB');
+  const pColorDesp  = tDesp.map(v  => (v !== null && v > 5) ? '#E74C3C' : '#8E44AD');
+  const pColorRecep = tRecep.map(v => (v !== null && v > 5) ? '#E74C3C' : '#1ABC9C');
+
+  chartFrio = new Chart(document.getElementById('chart-frio'), {
+    type: 'line',
+    data: {
+      labels,
+      datasets: [
+        // Límite frío
+        {
+          label: 'Límite frío 5°C',
+          data: labels.map(() => 5),
+          borderColor: 'rgba(231,76,60,0.4)',
+          borderDash: [6,4],
+          borderWidth: 1.5,
+          pointRadius: 0,
+          fill: false,
+          spanGaps: true,
+          tension: 0
+        },
+        // Valores reales
+        {
+          label: 'T° Abatimiento (mín.)',
+          data: tAbat,
+          borderColor: '#3498DB',
+          backgroundColor: 'rgba(52,152,219,0.08)',
+          tension: 0.3,
+          borderWidth: 2,
+          pointRadius: 5,
+          pointBackgroundColor: pColorAbat,
+          spanGaps: true
+        },
+        {
+          label: 'T° Despacho (mín.)',
+          data: tDesp,
+          borderColor: '#8E44AD',
+          backgroundColor: 'rgba(142,68,173,0.08)',
+          tension: 0.3,
+          borderWidth: 2,
+          pointRadius: 5,
+          pointBackgroundColor: pColorDesp,
+          spanGaps: true
+        },
+        {
+          label: 'T° Recepción MP (mín.)',
+          data: tRecep,
+          borderColor: '#1ABC9C',
+          backgroundColor: 'rgba(26,188,156,0.08)',
+          tension: 0.3,
+          borderWidth: 2,
+          pointRadius: 5,
+          pointBackgroundColor: pColorRecep,
+          spanGaps: true
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            label: c => {
+              if(c.parsed.y === null) return null;
+              const nc = c.datasetIndex >= 1 && c.parsed.y > 5;
+              return `${c.dataset.label}: ${c.parsed.y}°C${nc ? ' ⚠ NC' : ' ✓'}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: { ticks: { font:{size:10}, maxRotation:45, autoSkip:true }, grid:{color:'rgba(0,0,0,0.04)'} },
+        y: {
+          min: -2,
+          max: 15,
+          title: { display: true, text: 'Temperatura (°C)', font:{size:10} },
+          ticks: { font:{size:10}, callback: v => v+'°C' },
+          grid: { color:'rgba(0,0,0,0.04)' }
+        }
+      }
+    }
+  });
+}
+
+// ── GRÁFICO 2: TORTA ─────────────────────────────────────────────────────────
+function renderTortaChart(ok, nc, total) {
+  if(chartTorta) chartTorta.destroy();
+  document.getElementById('torta-label').textContent = total>0 ? `${ok} registros OK · ${nc} con NC` : '';
+  chartTorta = new Chart(document.getElementById('chart-torta'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Sin desvíos','Con NC'],
+      datasets: [{ data:[ok,nc], backgroundColor:['#27AE60','#E74C3C'], borderWidth:2, borderColor:'#fff', hoverOffset:6 }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, cutout: '62%',
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: c => { const p=total>0?Math.round(c.parsed/total*100):0; return `${c.label}: ${c.parsed} (${p}%)`; } } }
+      }
+    }
+  });
+}
+
+// ── GRÁFICO 3: BARRAS OBSERVACIONES ──────────────────────────────────────────
+function renderBarrasChart(registros) {
+  const texto = registros.map(r => [
+    r.obsGenerales||'', r.accionCorrectiva||'',
+    ...(r.produccion?.componentes||[]).map(c=>c.obs||''),
+    ...(r.abatimiento?.componentes||[]).map(c=>c.obs||''),
+    ...(r.envasado?.componentes||[]).map(c=>c.obs||''),
+    ...(r.despacho?.componentes||[]).map(c=>c.obs||''),
+    ...(r.recepcionReterm?.componentes||[]).map(c=>c.obs||''),
+    ...(r.retermalizado?.componentes||[]).map(c=>c.obs||''),
+    ...(r.retermalizado?.banosMaria||[]).map(b=>b.obs||''),
+    ...(r.sanitizacion?.productos||[]).map(p=>p.obs||''),
+    ...(r.materiasPrimas||[]).map(mp=>mp.obs||''),
+    r.casinoZE?.obs||''
+  ].join(' ').toLowerCase()).join(' ');
+
+  const conteos = PALABRAS_CLAVE.map(kw => {
+    const m = texto.match(new RegExp(kw,'gi'));
+    return { kw: kw.charAt(0).toUpperCase()+kw.slice(1), count: m?m.length:0 };
+  }).filter(x=>x.count>0).sort((a,b)=>b.count-a.count).slice(0,8);
+
+  if(chartBarras) chartBarras.destroy();
+  const canvas = document.getElementById('chart-barras');
+  if(!canvas) return;
+
+  if(!conteos.length) {
+    const ctx = canvas.getContext('2d');
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.font='12px Segoe UI'; ctx.fillStyle='#888'; ctx.textAlign='center';
+    ctx.fillText('Sin observaciones registradas aún', canvas.width/2, 100);
     return;
   }
 
-  combinedHistorial.forEach(registro => {
-    const desviosHtml = registro.tiene_desvios ? 
-      `<span class="historial-badge nc">⚠️ Desvíos</span>` : 
-      `<span class="historial-badge ok">✅ Sin Desvíos</span>`;
-    
-    const item = `
-      <div class="historial-item">
-        <div class="historial-item-header" onclick="toggleCard(this)">
-          <span style="font-weight:700;color:#1a2233">${registro.nro_registro}</span>
-          <span style="font-size:11px;color:#666;margin-left:8px">${registro.fecha} ${registro.hora}</span>
-          <span style="font-size:11px;color:#666;margin-left:auto">${registro.proceso_nombre}</span>
-          ${desviosHtml}
-          <span class="toggle-icon">▼</span>
-        </div>
-        <div class="historial-item-body hidden">
-          <div class="historial-detail-grid">
-            <div class="historial-detail-item"><span>Preparación</span><span>${registro.nombre_preparacion}</span></div>
-            <div class="historial-detail-item"><span>Servicio</span><span>${registro.servicio}</span></div>
-            <div class="historial-detail-item"><span>Responsable</span><span>${registro.responsable}</span></div>
-            <div class="historial-detail-item"><span>Régimen</span><span>${registro.regimen}</span></div>
-            <div class="historial-detail-item"><span>Observaciones</span><span>${registro.obs_generales || 'N/A'}</span></div>
-            ${registro.tiene_desvios ? `
-              <div class="historial-detail-item"><span>Desvíos</span><span>${JSON.parse(registro.desvios).map(d => d.tipo + ': ' + d.descripcion).join('; ')}</span></div>
-              <div class="historial-detail-item"><span>Acción Correctiva</span><span>${registro.accion_correctiva}</span></div>
-            ` : ''}
-          </div>
-          <div class="btn-row" style="justify-content:flex-end;margin-top:15px">
-            <button class="btn btn-pdf" onclick="generarPDF('${registro.nro_registro}')">📄 Ver PDF</button>
-          </div>
-        </div>
-      </div>
-    `;
-    historialDiv.insertAdjacentHTML('beforeend', item);
+  chartBarras = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: conteos.map(x=>x.kw),
+      datasets: [{
+        label: 'Frecuencia',
+        data: conteos.map(x=>x.count),
+        backgroundColor: conteos.map((_,i) => i===0?'#0B3D6B':i===1?'#155A9A':'rgba(11,61,107,0.55)'),
+        borderRadius: 4, borderSkipped: false
+      }]
+    },
+    options: {
+      indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+      plugins: { legend:{display:false}, tooltip:{callbacks:{label:c=>`Aparece ${c.parsed.x} vez/veces`}} },
+      scales: {
+        x: { ticks:{font:{size:10},stepSize:1}, grid:{color:'rgba(0,0,0,0.04)'}, title:{display:true,text:'Frecuencia',font:{size:10}} },
+        y: { ticks:{font:{size:10}}, grid:{display:false} }
+      }
+    }
   });
 }
 
-// Generar PDF (simplificado para ejemplo)
-function generarPDF(nroRegistro) {
-  showToast('Generando PDF (funcionalidad completa no implementada en este ejemplo)', 'verde');
-  // Aquí iría la lógica completa de jsPDF para generar el PDF con los datos del registro
-  // Por ahora, solo muestra un toast
-}
-
-// Inicialización
-document.addEventListener('DOMContentLoaded', () => {
-  actualizarHeader();
-  setProceso('zi'); // Iniciar en Zona Interna
-  renderTablaMP();
-  renderHistorial();
-});
-
-// ==============================================================================
-// BOTÓN DE CONFIGURACIÓN FLOTANTE (INYECCIÓN QUIRÚRGICA)
-// ==============================================================================
-const configButton = document.createElement('button');
-configButton.innerHTML = '⚙️';
-configButton.style.cssText = `
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: #1A3A5C;
-  color: white;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  z-index: 1000;
-`;
-configButton.onclick = () => {
-  const currentUrl = localStorage.getItem('supabase_url') || '';
-  const currentKey = localStorage.getItem('supabase_key') || '';
-  const newUrl = prompt('Ingrese la URL de Supabase:', currentUrl);
-  const newKey = prompt('Ingrese la Anon Public Key de Supabase:', currentKey);
-
-  if (newUrl && newKey) {
-    localStorage.setItem('supabase_url', newUrl);
-    localStorage.setItem('supabase_key', newKey);
-    showToast('✅ Configuración Supabase guardada', 'verde');
-  } else {
-    showToast('❌ Configuración Supabase incompleta', 'rojo');
-  }
-};
-document.body.appendChild(configButton);
-
+window.addEventListener('DOMContentLoaded', () => setTimeout(renderDashboard, 400));
 </script>
 </body>
 </html>
