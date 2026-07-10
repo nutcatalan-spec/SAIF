@@ -1,7 +1,12 @@
+<script>
+const DIAS_H = ["Dom","Lun","Mar","Mié","Jue","Vie","Sáb"];
+const MESES_H = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
+</script>
+
+
 <!DOCTYPE html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
+<head> <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>HACCP PCC - ITE</title>
 <style>
@@ -694,6 +699,109 @@ body{font-family:Arial,sans-serif;background:#efefef;padding-bottom:20px;font-si
 </div>
 
 <script>
+// ═══════════════════════════════════════════════════════════════════════════
+// CONFIGURACIÓN SUPABASE
+// ═══════════════════════════════════════════════════════════════════════════
+const SUPABASE_URL = localStorage.getItem('sb_url') || '';
+const SUPABASE_KEY = localStorage.getItem('sb_key') || '';
+
+// Definiciones globales necesarias para el historial e informes
+
+// Cliente Supabase simplificado (sin SDK — usa fetch directo)
+const sb = {
+  url: SUPABASE_URL,
+  key: SUPABASE_KEY,
+  configured: () => !!(sb.url && sb.key),
+
+  async insert(table, data) {
+    if(!sb.configured()) return { error: 'No configurado' };
+    try {
+      const r = await fetch(`${sb.url}/rest/v1/${table}`, {
+        method: 'POST',
+        headers: {
+          'apikey': sb.key,
+          'Authorization': `Bearer ${sb.key}`,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(data)
+      });
+      const json = await r.json();
+      return r.ok ? { data: json } : { error: json };
+    } catch(e) { return { error: e.message }; }
+  },
+
+  async select(table, query = '') {
+    if(!sb.configured()) return { error: 'No configurado' };
+    try {
+      const r = await fetch(`${sb.url}/rest/v1/${table}?${query}&order=created_at.desc`, {
+        headers: {
+          'apikey': sb.key,
+          'Authorization': `Bearer ${sb.key}`
+        }
+      });
+      const json = await r.json();
+      return r.ok ? { data: json } : { error: json };
+    } catch(e) { return { error: e.message }; }
+  },
+
+  async delete(table, id) {
+    if(!sb.configured()) return { error: 'No configurado' };
+    try {
+      const r = await fetch(`${sb.url}/rest/v1/${table}?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': sb.key,
+          'Authorization': `Bearer ${sb.key}`
+        }
+      });
+      return r.ok ? { ok: true } : { error: await r.json() };
+    } catch(e) { return { error: e.message }; }
+  }
+};
+
+// Función para guardar en Supabase (híbrido: localStorage + nube)
+async function guardarEnSupabase(registro) {
+  if(!sb.configured()) return { ok: false, error: 'Supabase no configurado' };
+  try {
+    const { data, error } = await sb.insert('haccp_registros', {
+      fecha: registro.fecha,
+      estab: registro.estab,
+      fisc: registro.fisc,
+      turno: registro.turno,
+      nvis: registro.nvis,
+      serv: registro.serv,
+      cargo: registro.cargo,
+      emp: registro.emp,
+      region: registro.region,
+      obs: registro.obs,
+      ev: registro.ev,
+      co: registro.co,
+      al: registro.al,
+      nc: registro.nc,
+      pct: registro.pct,
+      risk: registro.risk,
+      pccData: JSON.stringify(registro.pccData),
+      accs: JSON.stringify(registro.accs),
+      det: JSON.stringify(registro.det),
+      fn0: registro.fn0,
+      fn1: registro.fn1,
+      fn2: registro.fn2,
+      fn3: registro.fn3,
+      validado: registro.validado || false,
+      valNom: registro.valNom,
+      valTs: registro.valTs,
+      valObs: registro.valObs,
+      sign: registro.sign,
+      acsTab: JSON.stringify(registro.acsTab || [])
+    });
+    if(error) return { ok: false, error: JSON.stringify(error) };
+    return { ok: true, data: data };
+  } catch(e) {
+    return { ok: false, error: e.message };
+  }
+}
+
 // ESTADO de cada PCC: null=sin evaluar, conf, alert, noconf, rev
 var ST = [null,null,null,null,null,null,null];
 var VALS = [null,null,null,null,null,null,null];
@@ -830,11 +938,6 @@ var hist = [];
 try { var hd=localStorage.getItem("haccp_h4"); if(hd) hist=JSON.parse(hd); } catch(x){}
 function sH() {
   try { localStorage.setItem("haccp_h4",JSON.stringify(hist)); } catch(x){}
-  try { localStorage.setItem("haccp_hist",JSON.stringify(hist)); } catch(x){}
-  // Guardar en Supabase el primer registro (más reciente)
-  if(hist.length>0) {
-    supabaseClient.insert('haccp_registros', hist[0]).catch(function(e){console.error('Error Supabase:', e);});
-  }
   // Reconstruir anualH siempre desde hist para mantener sincronización
   reconstruirAnualH();
 }
@@ -896,7 +999,7 @@ document.getElementById("bGuardar").onclick = function() {
       accsArr.push({pcc:IDS[i],eta:ETAS[i],estado:ST[i],val:VALS[i],acc:gv("a"+i)});
     }
   }
-  hist.unshift({
+  var nuevoReg = {
     ts:Date.now(),
     fecha:gv("f1"),estab:gv("f0"),fisc:gv("f2"),turno:gv("f5"),
     nvis:gv("f6"),serv:gv("f7"),cargo:gv("f4"),emp:gv("f8"),region:gv("f9"),
@@ -906,64 +1009,25 @@ document.getElementById("bGuardar").onclick = function() {
     det:pccDetalle,
     pccData:pccDataFull,
     accs:accsArr
-  });
+  };
+  hist.unshift(nuevoReg);
   // Sin límite de registros — localStorage aguanta >1000 registros
   sH(); rH(null);
   autoNreg();
-  alert("Registro guardado correctamente en el historial.");
-};
-
-// ═══════════════════════════════════════════════════════════════════════════
-// SUPABASE INTEGRATION
-// ═══════════════════════════════════════════════════════════════════════════
-var supabaseClient = {
-  url: function() { return localStorage.getItem('supabase_url') || ''; },
-  key: function() { return localStorage.getItem('supabase_key') || ''; },
-  async insert(table, data) {
-    var url = this.url();
-    var key = this.key();
-    if (!url || !key) { console.warn('Supabase no configurado'); return; }
-    try {
-      var response = await fetch(url + '/rest/v1/' + table, {
-        method: 'POST',
-        headers: {
-          'apikey': key,
-          'Authorization': 'Bearer ' + key,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify(data)
-      });
-      if (response.ok) {
-        console.log('✅ Guardado en Supabase: ' + table);
+  
+  // Guardar en Supabase (híbrido)
+  if(sb.configured()) {
+    guardarEnSupabase(nuevoReg).then(function(res) {
+      if(res.ok) {
+        alert("✅ Registro guardado en localStorage y Supabase.");
       } else {
-        var err = await response.json();
-        console.error('❌ Error Supabase:', err);
+        alert("⚠️ Guardado en localStorage OK — Error en Supabase: " + res.error);
       }
-    } catch(e) { console.error('Error de conexión:', e); }
+    });
+  } else {
+    alert("Registro guardado correctamente en el historial.");
   }
 };
-
-// Botón de configuración flotante
-(function(){
-  var btn = document.createElement('button');
-  btn.textContent = '⚙️';
-  btn.style.cssText = 'position:fixed;bottom:10px;right:10px;width:40px;height:40px;border-radius:50%;border:none;background:rgba(255,255,255,.9);cursor:pointer;font-size:20px;box-shadow:0 2px 8px rgba(0,0,0,.2);z-index:999';
-  btn.onclick = function() {
-    var modal = document.getElementById('supabaseConfigModal');
-    if (!modal) {
-      modal = document.createElement('div');
-      modal.id = 'supabaseConfigModal';
-      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:2000';
-      modal.innerHTML = '<div style="background:white;width:90%;max-width:400px;border-radius:12px;padding:20px;box-shadow:0 10px 25px rgba(0,0,0,.3)"><h3 style="margin-bottom:15px;font-size:16px;color:#1A3A5C">Configuración Supabase</h3><label style="display:block;font-size:11px;color:#888;margin-bottom:4px;text-transform:uppercase;font-weight:bold">URL del Proyecto</label><input type="text" id="supaUrl" placeholder="https://xxxx.supabase.co" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:15px;font-size:13px"><label style="display:block;font-size:11px;color:#888;margin-bottom:4px;text-transform:uppercase;font-weight:bold">Anon Public Key</label><input type="text" id="supaKey" placeholder="eyJhbGciOiJIUzI1NiI..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:15px;font-size:13px"><div style="display:flex;gap:10px"><button onclick="(function(){localStorage.setItem(\'supabase_url\',document.getElementById(\'supaUrl\').value);localStorage.setItem(\'supabase_key\',document.getElementById(\'supaKey\').value);document.getElementById(\'supabaseConfigModal\').style.display=\'none\';alert(\'✅ Configuración guardada\');})()" style="flex:1;padding:12px;background:#1D9E75;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer">Guardar</button><button onclick="document.getElementById(\'supabaseConfigModal\').style.display=\'none\'" style="flex:1;padding:12px;background:#eee;color:#555;border:none;border-radius:8px;font-weight:bold;cursor:pointer">Cancelar</button></div></div>';
-      document.body.appendChild(modal);
-    }
-    modal.style.display = 'flex';
-    document.getElementById('supaUrl').value = localStorage.getItem('supabase_url') || '';
-    document.getElementById('supaKey').value = localStorage.getItem('supabase_key') || '';
-  };
-  document.body.appendChild(btn);
-})();
 
 document.getElementById("bLimpiar").onclick = function() {
   if (!confirm("Limpiar todos los valores del formulario?")) return;
