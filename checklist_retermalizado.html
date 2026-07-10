@@ -258,625 +258,1061 @@ body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30
 
 <!-- VALIDACION -->
 <div class="card">
-  <div class="chdr" style="background:#0F6E56">Validación del Registro</div>
+  <div class="chdr" style="background:#0F6E56">Validación — Fiscalizador ITE</div>
   <div class="firma-g">
-    <div class="ff"><label>Nombre Validador</label><input id="v_nom" readonly></div>
-    <div class="ff"><label>RUT Validador</label><input id="v_rut" placeholder="12.345.678-9"></div>
-    <div class="ff"><label>Cargo Validador</label><input id="v_cargo" placeholder="Cargo..."></div>
-    <div class="ff"><label>Fecha/Hora Validación</label><input id="v_ts" readonly></div>
+    <div class="ff"><label>Nombre ITE</label><input id="val_nom" placeholder="Nombre completo" oninput="onEditValNom()"></div>
+    <div class="ff"><label>RUT</label><input id="val_rut" placeholder="12.345.678-9"></div>
+    <div class="ff"><label>Cargo</label><input id="val_cargo" placeholder="Cargo..."></div>
   </div>
-  <div class="decl">
-    Declaro que la información registrada es fiel reflejo de la fiscalización realizada en terreno, en cumplimiento con el Decreto 977 RSA Chile y los estándares ISO 22000.
+  <div style="padding:12px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;border-bottom:1px solid #f2f2f2">
+    <button id="btnValidar" onclick="validar()" style="background:#1D9E75;color:white;border:none;border-radius:8px;padding:11px 22px;font-size:13px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif">✅ Validar Registro</button>
+    <div>
+      <div style="font-size:9px;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:3px">Fecha y hora de validación</div>
+      <div id="val_ts" style="font-size:13px;font-weight:bold;color:#1A3A5C">—</div>
+    </div>
+  </div>
+  <div class="decl">Declaro que la información registrada es fiel reflejo de la fiscalización realizada, conforme al Decreto 977 RSA Chile.</div>
+</div>
+
+<!-- BOTONES -->
+<div class="card">
+  <div class="action-bar">
+    <button class="btn-g" id="btnGuardar" onclick="guardar()">💾 Guardar Registro</button>
+    <button class="btn-r" onclick="limpiar()">🗑 Limpiar</button>
+    <button class="btn-b" onclick="verPDF()">📄 Informe Diario</button>
+    <button class="btn-m" onclick="verPDFMes()">📊 Informe Mensual</button>
+    <button style="background:#4A235A;color:white;border:none;border-radius:8px;padding:10px 14px;font-size:12px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif" onclick="verPDFAnual()">📈 Informe Anual</button>
   </div>
 </div>
 
-<!-- ACCIONES -->
-<div class="action-bar">
-  <button class="btn-g" onclick="guardar()">💾 Guardar Registro</button>
-  <button class="btn-r" onclick="limpiar()">🧹 Limpiar Formulario</button>
-</div>
+</div><!-- /formWrap -->
 
-</div> <!-- fin formWrap -->
-
-<!-- HISTORIAL PANEL -->
-<div id="histPanel" style="display:none">
-  <div class="hist-bar">
-    <div class="hist-cnt" id="hCnt">0 registros</div>
-    <input type="date" id="hDate" class="hist-date-input">
-    <button class="hbtn" onclick="filtrarHist()">🔍 Buscar</button>
-    <button class="hbtn out" onclick="renderHist()">Ver Todos</button>
-    <button class="hbtn out" style="margin-left:auto;border-color:#A32D2D;color:#A32D2D" onclick="cerrarHist()">Cerrar</button>
+<!-- HISTORIAL OVERLAY -->
+<div id="histOverlay" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#efefef;z-index:200;overflow-y:auto;padding:12px">
+  <div style="background:white;border-radius:8px;border:1px solid #ddd;overflow:hidden;max-width:900px;margin:0 auto">
+    <div style="background:#1A3A5C;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <span style="font-size:14px;font-weight:bold;color:white">📋 Historial — Checklist BPM Retermalizado</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="guardar()" style="background:#1D9E75;color:white;border:none;border-radius:6px;padding:7px 14px;font-size:12px;font-weight:bold;cursor:pointer">💾 Guardar</button>
+        <button onclick="limpiar()" style="background:#fcebeb;color:#A32D2D;border:none;border-radius:6px;padding:7px 12px;font-size:12px;font-weight:bold;cursor:pointer">🗑 Limpiar</button>
+        <button onclick="cerrarHist()" style="background:#1A3A5C;color:white;border:2px solid rgba(255,255,255,.4);border-radius:6px;padding:7px 14px;font-size:12px;font-weight:bold;cursor:pointer">✕ Cerrar</button>
+      </div>
+    </div>
+    <div class="hist-bar">
+      <span class="hist-cnt" id="hCnt">0 registros</span>
+      <span style="font-size:11px;color:#888">Buscar por fecha:</span>
+      <input type="date" class="hist-date-input" id="hFecha">
+      <button class="hbtn" onclick="buscarHist()">Buscar</button>
+      <button class="hbtn out" onclick="verTodosHist()">Ver todos</button>
+    </div>
+    <div class="hist-list" id="hList"><div class="hemp">Sin registros guardados.</div></div>
   </div>
-  <div class="hist-list" id="hList"></div>
 </div>
 
 <!-- PDF PAGE -->
 <div id="pdfPage">
-  <div class="pdf-actions">
-    <button class="pdf-btn bk" onclick="cerrarPDF()">⬅ Volver al Formulario</button>
-    <button class="pdf-btn pr" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
-  </div>
-  <div style="padding:10px;max-width:210mm;margin:0 auto;background:white">
+  <div style="background:white;max-width:900px;margin:0 auto;border-radius:8px;overflow:hidden;border:1px solid #ddd">
     <div class="pdf-header">
       <div>
-        <h1>Checklist BPM — Área Retermalizado</h1>
-        <p>E.P. Santiago 1 · Decreto 977 RSA Chile · ISO 22000</p>
+        <h1>Checklist BPM — Área Retermalizado — Inspección Técnica de Explotación (ITE)</h1>
+        <p>Decreto 977 RSA Chile | ISO 22000</p>
       </div>
-      <div class="pdf-badge" id="p_nreg">REG-000</div>
+      <span class="pdf-badge" id="pdfBadge">DIARIO</span>
     </div>
-    
-    <div class="pdf-ficha">
-      <div class="pdf-fi"><div class="pdf-fi-lbl">Establecimiento</div><div class="pdf-fi-val" id="p_estab"></div></div>
-      <div class="pdf-fi"><div class="pdf-fi-lbl">Fecha</div><div class="pdf-fi-val" id="p_fecha"></div></div>
-      <div class="pdf-fi"><div class="pdf-fi-lbl">Fiscalizador</div><div class="pdf-fi-val" id="p_fisc"></div></div>
-      <div class="pdf-fi"><div class="pdf-fi-lbl">Turno</div><div class="pdf-fi-val" id="p_turno"></div></div>
-    </div>
-
-    <div class="pdf-resultado">
-      <div class="pdf-res-row">
-        <div class="pdf-res-circle" id="p_pct">0%</div>
-        <div>
-          <div class="pdf-res-title" id="p_res">Sin evaluar</div>
-          <div class="pdf-res-sub">Nivel de Cumplimiento Global</div>
-        </div>
-      </div>
-      <div class="pdf-bar"><div class="pdf-bar-fill" id="p_bar"></div></div>
-    </div>
-
-    <div class="pdf-kpis">
-      <div class="pdf-kpi"><div class="pdf-kpi-lbl">Total</div><div class="pdf-kpi-val bl" id="p_tot">18</div></div>
-      <div class="pdf-kpi"><div class="pdf-kpi-lbl">Cumple</div><div class="pdf-kpi-val gr" id="p_ok">0</div></div>
-      <div class="pdf-kpi"><div class="pdf-kpi-lbl">No Cumple</div><div class="pdf-kpi-val rd" id="p_nc">0</div></div>
-      <div class="pdf-kpi"><div class="pdf-kpi-lbl">No Aplica</div><div class="pdf-kpi-val" id="p_na">0</div></div>
-      <div class="pdf-kpi"><div class="pdf-kpi-lbl">Resultado</div><div class="pdf-kpi-val" id="p_txt" style="font-size:12px;margin-top:4px">—</div></div>
-    </div>
-
-    <div class="pdf-sec-hdr">I. Infraestructura</div>
-    <table class="pdf-tabla">
-      <thead><tr><th style="width:20px">N°</th><th class="p">Ítem / Criterio</th><th style="width:40px">Eval</th><th style="width:120px">Observación</th></tr></thead>
-      <tbody id="ptbody1"></tbody>
-    </table>
-
-    <div class="pdf-sec-hdr" style="margin-top:8px">II. Higiene Personal</div>
-    <table class="pdf-tabla">
-      <thead><tr><th style="width:20px">N°</th><th class="p">Ítem / Criterio</th><th style="width:40px">Eval</th><th style="width:120px">Observación</th></tr></thead>
-      <tbody id="ptbody2"></tbody>
-    </table>
-
-    <div class="pdf-firma" style="margin-top:8px">
-      <div class="pdf-firma-col">
-        <div class="pdf-firma-lbl">Fiscalizador / Inspector ITE</div>
-        <div class="pdf-firma-val" id="p_fnom"></div>
-        <div class="pdf-firma-sub" id="p_fcargo"></div>
-      </div>
-      <div class="pdf-firma-col">
-        <div class="pdf-firma-lbl">Validación del Registro</div>
-        <div class="pdf-firma-val" id="p_vnom"></div>
-        <div class="pdf-firma-sub" id="p_vts"></div>
-      </div>
+    <div class="pdf-ficha" id="pdfFicha"></div>
+    <div class="pdf-kpis" id="pdfKpis"></div>
+    <div class="pdf-resultado" id="pdfResultado"></div>
+    <div id="pdfTablas"></div>
+    <div class="pdf-firma" id="pdfFirma"></div>
+    <div class="pdf-actions">
+      <button class="pdf-btn pr" onclick="window.print()">🖨 Imprimir / PDF</button>
+      <button class="pdf-btn bk" onclick="cerrarPDF()">← Volver</button>
     </div>
   </div>
 </div>
 
 <script>
-// ==============================================================================
-// CONFIGURACIÓN SUPABASE (INYECCIÓN QUIRÚRGICA)
-// ==============================================================================
+// ═══════════════════════════════════════════════════════════════
+// DATOS DE ÍTEMS
+// ═══════════════════════════════════════════════════════════════
+// SUPABASE INTEGRATION
 var supabaseClient = {
-  url: function() { return localStorage.getItem("supabase_url") || ""; },
-  key: function() { return localStorage.getItem("supabase_key") || ""; },
+  url: function() { return localStorage.getItem('supabase_url') || ''; },
+  key: function() { return localStorage.getItem('supabase_key') || ''; },
   async insert(table, data) {
     var url = this.url();
     var key = this.key();
-    if (!url || !key) {
-      showToast("❌ Error: Configuración Supabase incompleta.", "#A32D2D");
-      return;
-    }
+    if (!url || !key) { console.warn('Supabase no configurado'); return; }
     try {
-      showToast("☁️ Sincronizando con la nube...", "#1A3A5C");
-      const response = await fetch(url + "/rest/v1/" + table, {
-        method: "POST",
-        headers: { "apikey": key, "Authorization": "Bearer " + key, "Content-Type": "application/json", "Prefer": "return=minimal" },
+      var response = await fetch(url + '/rest/v1/' + table, {
+        method: 'POST',
+        headers: {
+          'apikey': key,
+          'Authorization': 'Bearer ' + key,
+          'Content-Type': 'application/json',
+          'Prefer': 'return=minimal'
+        },
         body: JSON.stringify(data)
       });
       if (response.ok) {
-        showToast("✅ Guardado en Local y Nube", "#1D9E75");
+        console.log('✅ Guardado en Supabase: ' + table);
       } else {
-        const errorData = await response.json();
-        showToast("❌ Error Supabase: " + (errorData.message || response.statusText), "#A32D2D");
-        console.error("Error Supabase:", errorData);
+        var err = await response.json();
+        console.error('❌ Error Supabase:', err);
       }
-    } catch(e) {
-      showToast("❌ Error de red o Supabase: " + e.message, "#A32D2D");
-      console.error("Error de red o Supabase:", e);
-    }
+    } catch(e) { console.error('Error de conexión:', e); }
   }
 };
 
-// ==============================================================================
-// CÓDIGO ORIGINAL INTACTO
-// ==============================================================================
-const items1 = [
-  "Pisos limpios, sin acumulación de agua ni grietas.",
-  "Paredes y techos limpios, sin hongos ni descascaramiento.",
-  "Iluminación adecuada y con protecciones (mallas/micas).",
-  "Ventilación suficiente, sin condensación excesiva.",
-  "Puertas y ventanas limpias, con mallas mosquiteras en buen estado.",
-  "Equipos de frío (refrigeradores/congeladores) limpios y operativos.",
-  "Termómetros de equipos de frío visibles y calibrados.",
-  "Mesones de trabajo limpios, lisos y de material lavable (acero inox).",
-  "Lavamanos operativo, con jabón, papel secante y basurero con tapa.",
-  "Basureros del área con tapa, pedal y bolsa interior.",
-  "Ausencia de plagas (insectos, roedores) o rastros de ellas."
+// Botón de configuración flotante
+(function(){
+  var btn = document.createElement('button');
+  btn.textContent = '⚙️';
+  btn.style.cssText = 'position:fixed;bottom:10px;right:10px;width:40px;height:40px;border-radius:50%;border:none;background:rgba(255,255,255,.9);cursor:pointer;font-size:20px;box-shadow:0 2px 8px rgba(0,0,0,.2);z-index:999';
+  btn.onclick = function() {
+    var modal = document.getElementById('supabaseConfigModal');
+    if (!modal) {
+      modal = document.createElement('div');
+      modal.id = 'supabaseConfigModal';
+      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:2000';
+      modal.innerHTML = '<div style="background:white;width:90%;max-width:400px;border-radius:12px;padding:20px;box-shadow:0 10px 25px rgba(0,0,0,.3)"><h3 style="margin-bottom:15px;font-size:16px;color:#1A3A5C">Configuración Supabase</h3><label style="display:block;font-size:11px;color:#888;margin-bottom:4px;text-transform:uppercase;font-weight:bold">URL del Proyecto</label><input type="text" id="supaUrl" placeholder="https://xxxx.supabase.co" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:15px;font-size:13px"><label style="display:block;font-size:11px;color:#888;margin-bottom:4px;text-transform:uppercase;font-weight:bold">Anon Public Key</label><input type="text" id="supaKey" placeholder="eyJhbGciOiJIUzI1NiI..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:15px;font-size:13px"><div style="display:flex;gap:10px"><button onclick="(function(){localStorage.setItem(\'supabase_url\',document.getElementById(\'supaUrl\').value);localStorage.setItem(\'supabase_key\',document.getElementById(\'supaKey\').value);document.getElementById(\'supabaseConfigModal\').style.display=\'none\';alert(\'✅ Configuración guardada\');})()" style="flex:1;padding:12px;background:#1D9E75;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer">Guardar</button><button onclick="document.getElementById(\'supabaseConfigModal\').style.display=\'none\'" style="flex:1;padding:12px;background:#eee;color:#555;border:none;border-radius:8px;font-weight:bold;cursor:pointer">Cancelar</button></div></div>';
+      document.body.appendChild(modal);
+    }
+    modal.style.display = 'flex';
+    document.getElementById('supaUrl').value = localStorage.getItem('supabase_url') || '';
+    document.getElementById('supaKey').value = localStorage.getItem('supabase_key') || '';
+  };
+  document.body.appendChild(btn);
+})();
+
+var SECS = [
+  {
+    id: 1,
+    nombre: "I. Infraestructura",
+    items: [
+      {n:1,  cat:"PISOS",              crit:"Los pisos están limpios, sin charcos de agua o restos de comida, y son antideslizantes"},
+      {n:2,  cat:"ILUMINACIÓN",        crit:"Las luminarias tienen tapas limpias y en buen estado"},
+      {n:3,  cat:"CÁMARAS",            crit:"Presencia de óxido en puerta de cámaras"},
+      {n:4,  cat:"HORNOS",             crit:"Hornos en buen estado"},
+      {n:5,  cat:"EQUIPOS",            crit:"El sistema de extracción funciona y no se observa ninguna gota de humedad/condensación en techos o campanas"},
+      {n:6,  cat:"EQUIPOS",            crit:"Los cambros están en correcto estado, limpios, burlete puesto, puertas firmes, rieles en condiciones y ruedas en buen estado"},
+      {n:7,  cat:"HORNOS",             crit:"Los hornos retermalizadores se encuentran limpios, sin grasa adherida y en buen estado"},
+      {n:8,  cat:"PAREDES",            crit:"Las paredes y superficies son lisas, de colores claros y sin grietas"},
+      {n:9,  cat:"MANEJO DE QUÍMICOS", crit:"Los implementos de limpieza y químicos (desengrasantes) están debidamente rotulados y guardados lejos de la línea de comida"},
+      {n:10, cat:"EQUIPOS",            crit:"Cada equipo de regeneración térmica se encuentra claramente identificado de forma física, permitiendo vincularlo con exactitud a los registros de control de temperaturas para asegurar la trazabilidad del proceso"},
+      {n:11, cat:"BASUREROS",          crit:"Todos los basureros son de material lavable y se encuentran cerrados con su tapa operativa"}
+    ]
+  },
+  {
+    id: 2,
+    nombre: "II. Higiene Personal",
+    items: [
+      {n:1, cat:"UNIFORME",             crit:"El personal utiliza su uniforme completo y limpio"},
+      {n:2, cat:"EPP",                  crit:"El personal usa correctamente la cofia cubriendo la totalidad del cabello"},
+      {n:3, cat:"HIGIENE DE MANOS",     crit:"Las manos del personal están limpias, con uñas cortas, sin esmalte de uñas"},
+      {n:4, cat:"RESTRICCIÓN OBJETOS",  crit:"Hay ausencia total de joyas, relojes, anillos o aros durante la manipulación de los alimentos"},
+      {n:5, cat:"ZONA DE LAVADO",       crit:"La estación de lavado de manos cuenta con jabón y papel secante"},
+      {n:6, cat:"EPP",                  crit:"Tiene sus EPP completos (Mascarilla, Cofia, Pechera, Zapatos de seguridad, Escafandra), en buen estado y los utiliza correctamente"},
+      {n:7, cat:"HIGIENE FACIAL",       crit:"Personal correctamente afeitado"}
+    ]
+  }
 ];
 
-const items2 = [
-  "Personal con uniforme completo, limpio y de color claro.",
-  "Uso correcto de cofia (cubre todo el cabello) y mascarilla si aplica.",
-  "Uñas cortas, limpias y sin esmalte.",
-  "Ausencia de joyas (anillos, pulseras, aros, relojes).",
-  "Lavado de manos frecuente y correcto.",
-  "Personal sin síntomas de enfermedades infectocontagiosas.",
-  "No se observan malos hábitos (comer, fumar, masticar chicle en el área)."
-];
+// ═══════════════════════════════════════════════════════════════
+// ESTADO
+// ═══════════════════════════════════════════════════════════════
+var estado = {}; // {sec_item: 'c'|'nc'|'na'|''}
+var SK = 'bpm_ret';
+var hist = [];
 
-let state = {
-  s1: Array(11).fill(null),
-  s2: Array(7).fill(null),
-  o1: Array(11).fill(""),
-  o2: Array(7).fill("")
-};
+function sKey(sec, n){ return sec+'_'+n; }
 
-function init(){
-  document.getElementById('f_fecha').valueAsDate = new Date();
-  updTS();
-  renderT(1, items1, 'tbody1');
-  renderT(2, items2, 'tbody2');
-  calc();
-}
-
-function updTS(){
-  const d = new Date();
-  document.getElementById('v_ts').value = d.toLocaleString('es-CL');
-}
-
-function syncVal(){
-  document.getElementById('v_nom').value = document.getElementById('f_fisc').value;
-}
-
-function renderT(sec, items, tid){
-  const tb = document.getElementById(tid);
-  let h = '';
-  items.forEach((it, i) => {
-    h += `
-      <tr>
-        <td class="item-cell">${i+1}</td>
-        <td class="param-cell">${it}</td>
-        <td>
-          <div class="mod-btn-group">
-            <button class="mb" id="b_${sec}_${i}_C" onclick="setE(${sec},${i},'C')">C</button>
-            <button class="mb" id="b_${sec}_${i}_NC" onclick="setE(${sec},${i},'NC')">NC</button>
-            <button class="mb" id="b_${sec}_${i}_NA" onclick="setE(${sec},${i},'NA')">NA</button>
-          </div>
-        </td>
-        <td><input type="text" class="obs-input" id="o_${sec}_${i}" onchange="setO(${sec},${i},this.value)" placeholder="Observación..."></td>
-      </tr>
-    `;
+// ═══════════════════════════════════════════════════════════════
+// RENDER TABLAS
+// ═══════════════════════════════════════════════════════════════
+function buildTables(){
+  SECS.forEach(function(sec){
+    var tbody = document.getElementById('tbody'+sec.id);
+    if(!tbody) return;
+    var html = '';
+    sec.items.forEach(function(it){
+      var k = sKey(sec.id, it.n);
+      var v = estado[k]||'';
+      html += '<tr>';
+      html += '<td class="item-cell">'+it.n+'</td>';
+      html += '<td class="param-cell"><span style="font-size:9px;font-weight:bold;color:#1A3A5C;display:block;margin-bottom:2px">'+it.cat+'</span>'+it.crit+'</td>';
+      html += '<td><div class="mod-btn-group">';
+      html += '<button class="mb'+(v==='c'?' c':'')+'" onclick="setVal('+sec.id+','+it.n+',\'c\',this)">C</button>';
+      html += '<button class="mb'+(v==='nc'?' nc':'')+'" onclick="setVal('+sec.id+','+it.n+',\'nc\',this)">NC</button>';
+      html += '<button class="mb'+(v==='na'?' na':'')+'" onclick="setVal('+sec.id+','+it.n+',\'na\',this)">NA</button>';
+      html += '</div></td>';
+      html += '<td><input class="obs-input" id="obs_'+k+'" placeholder="Observación..." value="'+(estado['obs_'+k]||'')+'" oninput="saveObs(\''+k+'\',this.value)"></td>';
+      html += '</tr>';
+    });
+    tbody.innerHTML = html;
   });
-  tb.innerHTML = h;
 }
 
-function setE(sec, i, val){
-  state['s'+sec][i] = val;
-  const btns = document.querySelectorAll(`[id^="b_${sec}_${i}_"]`);
-  btns.forEach(b => {
-    b.classList.remove('c','nc','na');
-    b.style.background = '#f0f0f0';
-    b.style.color = '#aaa';
-    b.style.borderColor = 'transparent';
-  });
-  const sel = document.getElementById(`b_${sec}_${i}_${val}`);
-  if(val==='C'){ sel.classList.add('c'); sel.style.background='#e1f5ee'; sel.style.color='#0F6E56'; sel.style.borderColor='#9FE1CB'; }
-  if(val==='NC'){ sel.classList.add('nc'); sel.style.background='#fcebeb'; sel.style.color='#A32D2D'; sel.style.borderColor='#FFAAAA'; }
-  if(val==='NA'){ sel.classList.add('na'); sel.style.background='#f5f5f5'; sel.style.color='#888'; sel.style.borderColor='#ddd'; }
-  calc();
+function setVal(sec, n, val, btn){
+  var k = sKey(sec, n);
+  var prev = estado[k]||'';
+  // Toggle off
+  if(prev === val){ estado[k]=''; } else { estado[k]=val; }
+  // Update buttons in this group
+  var group = btn.parentNode;
+  group.querySelectorAll('.mb').forEach(function(b){ b.className='mb'; });
+  if(estado[k]){
+    btn.className = 'mb '+estado[k];
+  }
+  upd();
 }
 
-function setO(sec, i, val){
-  state['o'+sec][i] = val;
+function saveObs(k, v){
+  estado['obs_'+k] = v;
 }
 
-function calc(){
-  let ok=0, nc=0, na=0, tot=18;
-  
-  let s1ok=0, s1nc=0, s1na=0, s1ev=0;
-  state.s1.forEach(v => {
-    if(v==='C'){ ok++; s1ok++; s1ev++; }
-    if(v==='NC'){ nc++; s1nc++; s1ev++; }
-    if(v==='NA'){ na++; s1na++; s1ev++; }
+// ═══════════════════════════════════════════════════════════════
+// CALCULAR Y ACTUALIZAR RESUMEN
+// ═══════════════════════════════════════════════════════════════
+function calcSec(secId){
+  var sec = SECS.find(function(s){return s.id===secId;});
+  if(!sec) return {ok:0,nc:0,na:0,tot:0};
+  var ok=0,nc=0,na=0;
+  sec.items.forEach(function(it){
+    var v = estado[sKey(secId,it.n)]||'';
+    if(v==='c') ok++;
+    else if(v==='nc') nc++;
+    else if(v==='na') na++;
   });
-  document.getElementById('st1_ok').innerText = s1ok;
-  document.getElementById('st1_nc').innerText = s1nc;
-  document.getElementById('st1_na').innerText = s1na;
-  document.getElementById('sb1').innerText = `${s1ev} / 11`;
+  return {ok:ok,nc:nc,na:na,tot:sec.items.length};
+}
 
-  let s2ok=0, s2nc=0, s2na=0, s2ev=0;
-  state.s2.forEach(v => {
-    if(v==='C'){ ok++; s2ok++; s2ev++; }
-    if(v==='NC'){ nc++; s2nc++; s2ev++; }
-    if(v==='NA'){ na++; s2na++; s2ev++; }
+function upd(){
+  var totOk=0,totNc=0,totNa=0,totItems=0;
+  SECS.forEach(function(sec){
+    var r = calcSec(sec.id);
+    totOk+=r.ok; totNc+=r.nc; totNa+=r.na; totItems+=r.tot;
+    // Subtotales
+    var stOk=document.getElementById('st'+sec.id+'_ok');
+    var stNc=document.getElementById('st'+sec.id+'_nc');
+    var stNa=document.getElementById('st'+sec.id+'_na');
+    if(stOk) stOk.textContent=r.ok;
+    if(stNc) stNc.textContent=r.nc;
+    if(stNa) stNa.textContent=r.na;
+    // Badge sección
+    var sb=document.getElementById('sb'+sec.id);
+    if(sb) sb.textContent=(r.ok+r.nc+r.na)+' / '+r.tot;
   });
-  document.getElementById('st2_ok').innerText = s2ok;
-  document.getElementById('st2_nc').innerText = s2nc;
-  document.getElementById('st2_na').innerText = s2na;
-  document.getElementById('sb2').innerText = `${s2ev} / 7`;
 
-  document.getElementById('rOk').innerText = ok;
-  document.getElementById('rNc').innerText = nc;
-  document.getElementById('rNa').innerText = na;
+  document.getElementById('rOk').textContent = totOk;
+  document.getElementById('rNc').textContent = totNc;
+  document.getElementById('rNa').textContent = totNa;
+  document.getElementById('rTot').textContent = totItems;
 
-  let evalTot = ok + nc;
-  let pct = evalTot > 0 ? Math.round((ok / evalTot)*100) : 0;
-  
-  if(evalTot === 0){
-    document.getElementById('rPct').innerText = '—';
-    document.getElementById('rBar').style.width = '0%';
-    document.getElementById('rRes').innerText = 'Sin evaluar';
-    document.getElementById('rRes').className = 'res-result';
+  var eval_count = totOk + totNc; // NA no cuenta para %
+  var pct = eval_count > 0 ? Math.round(totOk / eval_count * 100) : null;
+  var pctEl = document.getElementById('rPct');
+  var barEl = document.getElementById('rBar');
+  var resEl = document.getElementById('rRes');
+
+  if(pct!==null){
+    pctEl.textContent = pct+'%';
+    pctEl.className = 'res-val'+(pct>=75?' gr':pct>=50?' am':' rd');
+    barEl.style.width = pct+'%';
+    barEl.style.background = pct>=75?'#1D9E75':pct>=50?'#e09000':'#A32D2D';
+    var res,cls;
+    if(pct>=90){res='Excelente';cls='exc';}
+    else if(pct>=75){res='Aceptable';cls='exc';}
+    else if(pct>=50){res='Deficiente';cls='def';}
+    else{res='Crítico';cls='cri';}
+    resEl.textContent = pct+'% — '+res;
+    resEl.className = 'res-result '+cls;
   } else {
-    document.getElementById('rPct').innerText = pct + '%';
-    document.getElementById('rBar').style.width = pct + '%';
-    
-    let rEl = document.getElementById('rRes');
-    if(pct >= 85){
-      rEl.innerText = 'Excelente';
-      rEl.className = 'res-result exc';
-      document.getElementById('rBar').style.background = '#1D9E75';
-    } else if(pct >= 70){
-      rEl.innerText = 'Deficiente';
-      rEl.className = 'res-result def';
-      document.getElementById('rBar').style.background = '#e09000';
-    } else {
-      rEl.innerText = 'Crítico';
-      rEl.className = 'res-result cri';
-      document.getElementById('rBar').style.background = '#A32D2D';
-    }
+    pctEl.textContent='—'; pctEl.className='res-val';
+    barEl.style.width='0';
+    resEl.textContent='Sin evaluar'; resEl.className='res-result';
   }
 }
 
-function showToast(msg, bg){
-  const t = document.createElement('div');
-  t.className = 'toast';
-  t.innerText = msg;
-  t.style.background = bg;
-  document.body.appendChild(t);
-  setTimeout(()=> t.remove(), 3000);
+// ═══════════════════════════════════════════════════════════════
+// SINCRONIZAR VALIDACION
+// ═══════════════════════════════════════════════════════════════
+function syncVal(){
+  var fisc = document.getElementById('f_fisc');
+  var vnom = document.getElementById('val_nom');
+  if(fisc && vnom && !vnom.dataset.edited) vnom.value = fisc.value;
+  var cargo = document.getElementById('f_cargo');
+  var vcargo = document.getElementById('val_cargo');
+  if(cargo && vcargo && !vcargo.dataset.edited) vcargo.value = cargo.value;
+}
+function onEditValNom(){
+  var fisc = document.getElementById('f_fisc');
+  var vnom = document.getElementById('val_nom');
+  if(fisc && vnom && vnom.value !== fisc.value) vnom.dataset.edited='1';
+  else if(vnom) delete vnom.dataset.edited;
+}
+function updTs(){
+  var el=document.getElementById('val_ts');
+  if(!el)return;
+  var d=new Date(),m=d.getMonth()+1,dy=d.getDate(),h=d.getHours(),mn=d.getMinutes();
+  el.textContent=dy+'/'+(m<10?'0'+m:m)+'/'+d.getFullYear()+' '+(h<10?'0'+h:h)+':'+(mn<10?'0'+mn:mn);
 }
 
+// ═══════════════════════════════════════════════════════════════
+// LOCALSTORAGE
+// ═══════════════════════════════════════════════════════════════
 function sH(){
-  updTS();
-  const d = new Date();
-  const nreg = 'BPM-' + d.getFullYear().toString().slice(-2) + (d.getMonth()+1).toString().padStart(2,'0') + d.getDate().toString().padStart(2,'0') + '-' + Math.floor(Math.random()*1000).toString().padStart(3,'0');
-  
-  let ok = parseInt(document.getElementById('rOk').innerText);
-  let nc = parseInt(document.getElementById('rNc').innerText);
-  let na = parseInt(document.getElementById('rNa').innerText);
-  let evalTot = ok + nc;
-  let pct = evalTot > 0 ? Math.round((ok / evalTot)*100) : 0;
-  let res = pct >= 85 ? 'Excelente' : (pct >= 70 ? 'Deficiente' : 'Crítico');
+  try{localStorage.setItem(SK+'_hist',JSON.stringify(hist));}catch(e){}
+  try{localStorage.setItem('bpm_hist',JSON.stringify(hist));}catch(e){}
+  // Guardar en Supabase el primer registro (más reciente)
+  if(hist.length>0) {
+    supabaseClient.insert('bpm_registros', hist[0]).catch(function(e){console.error('Error Supabase:', e);});
+  }
+}
+function lH(){ try{var v=localStorage.getItem(SK+'_hist');if(v)hist=JSON.parse(v)||[];}catch(e){} }
 
-  const obj = {
-    id: Date.now(),
+// N° correlativo
+function nextNreg(){
+  var yr=new Date().getFullYear(),key=SK+'_nreg_'+yr,last=0;
+  try{var v=localStorage.getItem(key);if(v)last=parseInt(v)||0;}catch(e){}
+  last++;
+  var pad=last<10?'000'+last:last<100?'00'+last:last<1000?'0'+last:''+last;
+  try{localStorage.setItem(key,last);}catch(e){}
+  return yr+'-'+pad;
+}
+
+// ═══════════════════════════════════════════════════════════════
+// VALIDAR
+// ═══════════════════════════════════════════════════════════════
+var validado = false;
+
+function validar(){
+  var fecha = document.getElementById('f_fecha').value;
+  if(!fecha){toast('⚠️ Ingresa la fecha antes de validar','#854F0B');return;}
+  var fisc = document.getElementById('f_fisc').value.trim();
+  if(!fisc){toast('⚠️ Ingresa el nombre del fiscalizador','#854F0B');return;}
+  var algunoEval = false;
+  SECS.forEach(function(sec){
+    sec.items.forEach(function(it){
+      if(estado[sKey(sec.id,it.n)]) algunoEval=true;
+    });
+  });
+  if(!algunoEval){toast('⚠️ Evalúa al menos un ítem antes de validar','#854F0B');return;}
+
+  // Estampar timestamp
+  updTs();
+  validado = true;
+
+  // Bloquear botón validar
+  var btn = document.getElementById('btnValidar');
+  if(btn){
+    btn.disabled = true;
+    btn.style.opacity = '0.5';
+    btn.style.cursor = 'not-allowed';
+    btn.style.background = '#aaa';
+    btn.textContent = '✅ Registro Validado';
+  }
+
+  // Bloquear botones C/NC/NA
+  document.querySelectorAll('.mb').forEach(function(b){
+    b.disabled=true; b.style.cursor='not-allowed'; b.style.opacity='0.7';
+  });
+  document.querySelectorAll('.obs-input').forEach(function(el){el.readOnly=true;});
+
+  toast('✅ Registro validado correctamente','#0F6E56');
+}
+
+function desbloquearValidacion(){
+  validado = false;
+  var btn = document.getElementById('btnValidar');
+  if(btn){
+    btn.disabled=false; btn.style.opacity=''; btn.style.cursor='';
+    btn.style.background='#1D9E75'; btn.textContent='✅ Validar Registro';
+  }
+  document.querySelectorAll('.mb').forEach(function(b){
+    b.disabled=false; b.style.cursor=''; b.style.opacity='';
+  });
+  document.querySelectorAll('.obs-input').forEach(function(el){el.readOnly=false;});
+  document.getElementById('val_ts').textContent='—';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// GUARDAR
+// ═══════════════════════════════════════════════════════════════
+function guardar(){
+  if(!validado){toast('⚠️ Debes validar el registro antes de guardar','#854F0B');return;}
+  var fecha = document.getElementById('f_fecha').value;
+  var fisc = document.getElementById('f_fisc').value.trim();
+
+  var totOk=0,totNc=0,totNa=0,secData=[];
+
+  // ── Mapeo ítems Retermalizado → campos C/NC Ficha Madre ──────────────
+  // Infraestructura
+  var RET_MAPEO = [
+    // {cat, fmCampos[]}
+    {cats:['PISOS'],              fm:['pis']},
+    {cats:['ILUMINACIÓN'],        fm:['var']},
+    {cats:['CÁMARAS','HORNOS'],   fm:['her']},
+    {cats:['EQUIPOS'],            fm:['ven','her']},
+    {cats:['PAREDES'],            fm:['par']},
+    {cats:['MANEJO DE QUÍMICOS'], fm:['des']},
+    {cats:['BASUREROS'],          fm:['av']},
+    // Higiene Personal
+    {cats:['UNIFORME'],           fm:['uni']},
+    {cats:['EPP'],                fm:['cof','mas','pec','zap','gua']},
+    {cats:['HIGIENE DE MANOS'],   fm:['man']},
+    {cats:['RESTRICCIÓN OBJETOS'],fm:['maq']},
+    {cats:['ZONA DE LAVADO'],     fm:['jab','toa']},
+    {cats:['HIGIENE FACIAL'],     fm:['hig']}
+  ];
+
+  // Construir ncDetails compatible con Ficha Madre
+  var ncDetails=[];
+  // Mapa cat → valor evaluado
+  var catMap={};
+  SECS.forEach(function(sec){
+    var r=calcSec(sec.id);
+    totOk+=r.ok; totNc+=r.nc; totNa+=r.na;
+    var items=[];
+    sec.items.forEach(function(it){
+      var k=sKey(sec.id,it.n);
+      var v=estado[k]||'';
+      catMap[it.cat.toUpperCase()] = v;
+      items.push({n:it.n,cat:it.cat,crit:it.crit,val:v,obs:estado['obs_'+k]||''});
+      // Si es NC registrar en ncDetails con estructura compatible FM
+      if(v==='nc'){
+        ncDetails.push({
+          param: it.cat+' — '+it.crit.substring(0,60),
+          art: 'Retermalizado',
+          mods: [it.cat],
+          obs: estado['obs_'+k]||''
+        });
+      }
+    });
+    secData.push({id:sec.id,nombre:sec.nombre,ok:r.ok,nc:r.nc,na:r.na,items:items});
+  });
+
+  // Construir mapa FM: campo → estado C/NC/NA para Ficha Madre
+  var fmMap={};
+  RET_MAPEO.forEach(function(m){
+    // Determinar estado consolidado de las cats asociadas
+    var vals=m.cats.map(function(cat){ return catMap[cat.toUpperCase()]||''; });
+    var hasNc=vals.some(function(v){return v==='nc';});
+    var hasC=vals.some(function(v){return v==='c';});
+    var estado_fm = hasNc?'NC': hasC?'C': 'NA';
+    m.fm.forEach(function(campo){ fmMap[campo]=estado_fm; });
+  });
+
+  // Evaluar higiene general y bpm desde promedio higiene personal
+  var secHig=SECS.find(function(s){return s.id===2;});
+  if(secHig){
+    var rHig=calcSec(2);
+    var pctHig=((rHig.ok+rHig.nc)>0)?Math.round(rHig.ok/(rHig.ok+rHig.nc)*100):null;
+    fmMap['hig'] = pctHig>=75?'C':'NC';
+    fmMap['bpm'] = pctHig>=75?'C':'NC';
+  }
+
+  var evalCount=totOk+totNc;
+  var pct=evalCount>0?Math.round(totOk/evalCount*100):null;
+  var res=pct===null?'Sin evaluar':pct>=90?'Excelente':pct>=75?'Aceptable':pct>=50?'Deficiente':'Crítico';
+
+  var entry = {
     ts: Date.now(),
-    nreg: nreg,
-    fecha: document.getElementById('f_fecha').value,
+    nreg: nextNreg(),
+    fecha: fecha,
     turno: document.getElementById('f_turno').value,
     estab: document.getElementById('f_estab').value,
     area: document.getElementById('f_area').value,
-    fisc: document.getElementById('f_fisc').value,
+    fisc: fisc,
     cargo: document.getElementById('f_cargo').value,
-    val_nom: document.getElementById('v_nom').value,
-    val_rut: document.getElementById('v_rut').value,
-    val_cargo: document.getElementById('v_cargo').value,
-    val_ts: document.getElementById('v_ts').value,
-    ok: ok,
-    nc: nc,
-    na: na,
-    tot: 18,
-    pct: pct,
-    res: res,
-    secs: JSON.stringify(state),
+    val_nom: document.getElementById('val_nom').value,
+    val_rut: document.getElementById('val_rut').value,
+    val_cargo: document.getElementById('val_cargo').value,
+    val_ts: document.getElementById('val_ts').textContent,
+    ok: totOk, nc: totNc, na: totNa, tot: totOk+totNc,
+    pct: pct, res: res,
+    secs: secData,
     validado: true,
-    ncDetails: JSON.stringify([]),
-    accGen: JSON.stringify([]),
-    obs: "",
-    fmMap: JSON.stringify({
-      nreg: nreg,
-      fecha: document.getElementById('f_fecha').value,
-      turno: document.getElementById('f_turno').value,
-      estab: document.getElementById('f_estab').value,
-      area: document.getElementById('f_area').value,
-      fisc: document.getElementById('f_fisc').value,
-      cargo: document.getElementById('f_cargo').value,
-      ok: ok,
-      nc: nc,
-      na: na,
-      pct: pct,
-      res: res,
-      val_nom: document.getElementById('v_nom').value,
-      val_ts: document.getElementById('v_ts').value
-    })
+    // ── Campos compatibles con Ficha Madre ──
+    ncDetails: ncDetails,
+    accGen: ncDetails.map(function(n){return {param:n.param, acc:n.obs||''};}).filter(function(a){return a.acc;}),
+    obs: '',
+    fmMap: fmMap   // mapa directo campo FM → C/NC/NA
   };
 
-  let hist = JSON.parse(localStorage.getItem('bpm_ret_hist') || '[]');
-  hist.push(obj);
-  localStorage.setItem('bpm_ret_hist', JSON.stringify(hist));
-  
-  // Guardar también en bpm_hist para compatibilidad con Ficha Madre
-  let bpmHist = JSON.parse(localStorage.getItem('bpm_hist') || '[]');
-  bpmHist.push(obj);
-  localStorage.setItem('bpm_hist', JSON.stringify(bpmHist));
-
-  // Inyección Supabase
-  supabaseClient.insert('bpm_registros', obj);
-
-  showToast('✅ Registro guardado localmente', '#1D9E75');
-  limpiar();
-}
-
-function guardar(){
-  if(!document.getElementById('f_fisc').value){
-    showToast('⚠️ Ingrese el nombre del fiscalizador', '#e09000');
-    return;
-  }
+  lH();
+  hist.unshift(entry);
   sH();
+  renderHist(null);
+  desbloquearValidacion();
+  toast('✅ Registro guardado correctamente','#0F6E56');
 }
 
+// ═══════════════════════════════════════════════════════════════
+// LIMPIAR
+// ═══════════════════════════════════════════════════════════════
 function limpiar(){
-  state = {
-    s1: Array(11).fill(null),
-    s2: Array(7).fill(null),
-    o1: Array(11).fill(""),
-    o2: Array(7).fill("")
-  };
-  document.querySelectorAll('.mb').forEach(b => {
-    b.classList.remove('c','nc','na');
-    b.style.background = '#f0f0f0';
-    b.style.color = '#aaa';
-    b.style.borderColor = 'transparent';
-  });
-  document.querySelectorAll('.obs-input').forEach(i => i.value = '');
-  calc();
+  if(!confirm('¿Limpiar todos los valores del formulario?'))return;
+  estado={};
+  buildTables();
+  upd();
+  // Limpiar obs inputs
+  document.querySelectorAll('.obs-input').forEach(function(el){el.value='';});
+  document.getElementById('f_fecha').value='';
+  document.getElementById('f_turno').value='';
+  desbloquearValidacion();
+  toast('🧹 Formulario limpiado','#1A3A5C');
 }
+
+// ═══════════════════════════════════════════════════════════════
+// HISTORIAL
+// ═══════════════════════════════════════════════════════════════
+var MESES_N=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+var DIAS_N=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 
 function abrirHist(){
-  document.getElementById('formWrap').style.display = 'none';
-  document.getElementById('histPanel').style.display = 'block';
-  renderHist();
+  lH();
+  var fEl=document.getElementById('hFecha');
+  if(fEl) fEl.value='';
+  document.getElementById('histOverlay').style.display='block';
+  renderHist(null);
+}
+function cerrarHist(){ document.getElementById('histOverlay').style.display='none'; }
+function buscarHist(){
+  var v=document.getElementById('hFecha').value;
+  if(!v){toast('⚠️ Selecciona una fecha','#854F0B');return;}
+  lH(); renderHist(v);
+}
+function verTodosHist(){ document.getElementById('hFecha').value=''; lH(); renderHist(null); }
+
+function toggleH(gid){
+  var body=document.getElementById(gid), arr=document.getElementById('arr_'+gid);
+  if(!body)return;
+  var isOpen=body.style.display==='block'||body.classList.contains('open');
+  if(isOpen){
+    body.style.display='none'; body.classList.remove('open');
+    if(arr){arr.style.transform='rotate(0deg)'; arr.classList.remove('open');}
+  } else {
+    body.style.display='block'; body.classList.add('open');
+    if(arr){arr.style.transform='rotate(90deg)'; arr.classList.add('open');}
+  }
 }
 
-function cerrarHist(){
-  document.getElementById('histPanel').style.display = 'none';
-  document.getElementById('formWrap').style.display = 'block';
-}
+function renderHist(filtro){
+  lH();
+  var list=document.getElementById('hList');
+  var cntEl=document.getElementById('hCnt');
+  if(cntEl) cntEl.textContent=hist.length+' registro'+(hist.length!==1?'s':'');
 
-function renderHist(filtro = null){
-  let hist = JSON.parse(localStorage.getItem('bpm_ret_hist') || '[]');
-  if(filtro) hist = hist.filter(x => x.fecha === filtro);
-  hist.sort((a,b) => b.id - a.id);
-  
-  document.getElementById('hCnt').innerText = `${hist.length} registros`;
-  const hl = document.getElementById('hList');
-  
-  if(hist.length === 0){
-    hl.innerHTML = '<div class="hemp">No hay registros guardados.</div>';
+  var registros=filtro?hist.filter(function(r){return r.fecha===filtro;}):hist;
+  if(!registros.length){
+    list.innerHTML='<div class="hemp">'+(filtro?'📅 No hay registros para esa fecha.<br><span style="font-size:11px">Prueba otra fecha o presiona <b>Ver todos</b>.</span>':'Sin registros guardados.')+'</div>';
     return;
   }
 
-  let h = '';
-  hist.forEach(r => {
-    let col = r.pct >= 85 ? '#0F6E56' : (r.pct >= 70 ? '#854F0B' : '#A32D2D');
-    h += `
-      <div class="hrow">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-          <div style="font-size:11px;font-weight:bold;color:#1A3A5C">${r.nreg}</div>
-          <div style="font-size:10px;color:#888">${r.fecha} · ${r.turno}</div>
-        </div>
-        <div style="font-size:10px;color:#555;margin-bottom:6px">
-          <b>Fisc:</b> ${r.fisc} | <b>Val:</b> ${r.val_nom}
-        </div>
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div class="hchips">
-            <div class="hch k">${r.pct}%</div>
-            <div class="hch ok">${r.ok} C</div>
-            <div class="hch nc">${r.nc} NC</div>
-            <div class="hch na">${r.na} NA</div>
-          </div>
-          <div>
-            <button class="hdel" onclick="delH(${r.id})">🗑️</button>
-            <button class="hbtn" style="padding:4px 10px;font-size:10px" onclick="verPDFHist(${r.id})">📄 PDF</button>
-          </div>
-        </div>
-      </div>
-    `;
+  // Agrupar AÑO > MES > DÍA
+  var arbol={};
+  registros.forEach(function(r){
+    var fp=(r.fecha||'').split('-');
+    if(fp.length<3)return;
+    var yr=fp[0],mm=parseInt(fp[1])-1,fecha=r.fecha;
+    if(!arbol[yr])arbol[yr]={};
+    if(!arbol[yr][mm])arbol[yr][mm]={};
+    if(!arbol[yr][mm][fecha])arbol[yr][mm][fecha]=[];
+    arbol[yr][mm][fecha].push(r);
   });
-  hl.innerHTML = h;
+
+  var anios=Object.keys(arbol).sort().reverse();
+  var out='';
+
+  anios.forEach(function(yr,yi){
+    var yrOk=0,yrNc=0,yrNa=0,yrReg=0;
+    var meses=Object.keys(arbol[yr]).map(Number).sort().reverse();
+    meses.forEach(function(mm){
+      Object.keys(arbol[yr][mm]).forEach(function(f){
+        arbol[yr][mm][f].forEach(function(r){yrOk+=r.ok||0;yrNc+=r.nc||0;yrNa+=r.na||0;yrReg++;});
+      });
+    });
+    var yrCol=yrNc>0?'#A32D2D':'#0F6E56';
+    var yrBg=yrNc>0?'#fcebeb':'#e1f5ee';
+    var yrOpen=(yi===0);
+    var yrGid='hy_'+yr;
+
+    out+='<div onclick="toggleH(\''+yrGid+'\')" style="background:#1A3A5C;padding:10px 14px;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none">';
+    out+='<span id="arr_'+yrGid+'" style="font-size:11px;color:white;transition:transform .2s;transform:'+(yrOpen?'rotate(90deg)':'rotate(0deg)')+'">▶</span>';
+    out+='<span style="font-size:14px;font-weight:bold;color:white;flex:1">📁 '+yr+'</span>';
+    out+='<span style="font-size:10px;font-weight:bold;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,.15);color:white">'+yrReg+' registros</span>';
+    if(yrOk>0)out+='<span style="font-size:10px;font-weight:bold;padding:2px 7px;border-radius:20px;background:#e1f5ee;color:#0F6E56">'+yrOk+' C</span>';
+    if(yrNc>0)out+='<span style="font-size:10px;font-weight:bold;padding:2px 7px;border-radius:20px;background:#fcebeb;color:#A32D2D">'+yrNc+' NC</span>';
+    if(yrNa>0)out+='<span style="font-size:10px;font-weight:bold;padding:2px 7px;border-radius:20px;background:#f5f5f5;color:#888">'+yrNa+' NA</span>';
+    out+='</div>';
+    out+='<div id="'+yrGid+'" style="display:'+(yrOpen?'block':'none')+'">';
+
+    meses.forEach(function(mm,mi){
+      var mOk=0,mNc=0,mNa=0,mEval=0,mReg=0;
+      var fechas=Object.keys(arbol[yr][mm]).sort().reverse();
+      fechas.forEach(function(f){
+        arbol[yr][mm][f].forEach(function(r){mOk+=r.ok||0;mNc+=r.nc||0;mNa+=r.na||0;mEval+=r.ok+r.nc;mReg++;});
+      });
+      var mPct=mEval>0?Math.round(mOk/mEval*100):null;
+      var mCol=mNc>0?'#A32D2D':'#0F6E56';
+      var mBg=mNc>0?'#fcebeb':'#e1f5ee';
+      var mOpen=(yi===0&&mi===0);
+      var mGid='hm_'+yr+'_'+mm;
+
+      out+='<div onclick="toggleH(\''+mGid+'\')" style="background:#f0f4ff;padding:9px 14px;padding-left:24px;border-bottom:1px solid #dde8f5;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none">';
+      out+='<span id="arr_'+mGid+'" style="font-size:10px;color:#1A3A5C;transition:transform .2s;transform:'+(mOpen?'rotate(90deg)':'rotate(0deg)')+'">▶</span>';
+      out+='<span style="font-size:13px;font-weight:bold;color:#1A3A5C;flex:1">📅 '+MESES_N[mm]+' '+yr+'</span>';
+      out+='<span style="font-size:10px;font-weight:bold;padding:2px 8px;border-radius:20px;background:rgba(26,58,92,.1);color:#1A3A5C">'+mReg+' días</span>';
+      if(mOk>0)out+='<span style="font-size:10px;font-weight:bold;padding:2px 7px;border-radius:20px;background:#e1f5ee;color:#0F6E56">'+mOk+' C</span>';
+      if(mNc>0)out+='<span style="font-size:10px;font-weight:bold;padding:2px 7px;border-radius:20px;background:#fcebeb;color:#A32D2D">'+mNc+' NC</span>';
+      if(mPct!==null)out+='<span style="font-size:10px;font-weight:bold;padding:2px 7px;border-radius:20px;background:'+mBg+';color:'+mCol+'">'+mPct+'%</span>';
+      out+='</div>';
+      out+='<div id="'+mGid+'" style="display:'+(mOpen?'block':'none')+'">';
+
+      fechas.forEach(function(fecha,fi){
+        var items=arbol[yr][mm][fecha];
+        var dOk=0,dNc=0,dNa=0,dEval=0;
+        items.forEach(function(r){dOk+=r.ok||0;dNc+=r.nc||0;dNa+=r.na||0;dEval+=r.ok+r.nc;});
+        var dPct=dEval>0?Math.round(dOk/dEval*100):null;
+        var dCol=dNc>0?'#A32D2D':'#0F6E56';
+        var dBg=dNc>0?'#fcebeb':'#e1f5ee';
+        var fp=fecha.split('-');
+        var fs=fp.length>2?fp[2]+'/'+fp[1]+'/'+fp[0]:fecha;
+        var ds='';try{var dd=new Date(parseInt(fp[0]),parseInt(fp[1])-1,parseInt(fp[2]));ds=' — '+(DIAS_N[dd.getDay()]||'');}catch(e){}
+        var dOpen=(yi===0&&mi===0&&fi===0);
+        var dGid='hd_'+fecha.replace(/-/g,'');
+
+        out+='<div onclick="toggleH(\''+dGid+'\')" style="background:#fafbff;padding:8px 14px;padding-left:36px;border-bottom:1px solid #eef0f8;display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none">';
+        out+='<span id="arr_'+dGid+'" style="font-size:9px;color:#888;transition:transform .2s;transform:'+(dOpen?'rotate(90deg)':'rotate(0deg)')+'">▶</span>';
+        out+='<span style="font-size:12px;font-weight:bold;color:#1A3A5C;flex:1">'+fs+ds+'</span>';
+        out+='<span style="font-size:10px;font-weight:bold;padding:2px 7px;border-radius:20px;background:'+dBg+';color:'+dCol+'">'+(dPct!==null?dPct+'%':'-')+'</span>';
+        if(dOk>0)out+='<span style="font-size:10px;padding:2px 6px;border-radius:20px;background:#e1f5ee;color:#0F6E56;font-weight:bold">'+dOk+' C</span>';
+        if(dNc>0)out+='<span style="font-size:10px;padding:2px 6px;border-radius:20px;background:#fcebeb;color:#A32D2D;font-weight:bold">'+dNc+' NC</span>';
+        if(dNa>0)out+='<span style="font-size:10px;padding:2px 6px;border-radius:20px;background:#f5f5f5;color:#888;font-weight:bold">'+dNa+' NA</span>';
+        out+='</div>';
+        out+='<div id="'+dGid+'" style="display:'+(dOpen?'block':'none')+'">';
+
+        items.forEach(function(r){
+          var realIdx=-1;
+          for(var k=0;k<hist.length;k++){if(hist[k].ts===r.ts){realIdx=k;break;}}
+          var col=r.pct>=75?'#0F6E56':r.pct>=50?'#854F0B':'#A32D2D';
+          out+='<div class="hrow" style="padding-left:48px">';
+          out+='<div style="display:flex;gap:6px;margin-bottom:5px;flex-wrap:wrap;align-items:center">';
+          if(realIdx>=0){
+            out+='<button class="hdel" style="background:#1A3A5C;color:white;border-color:#1A3A5C" onclick="verInforme('+realIdx+')">📄 Ver informe</button>';
+            out+='<button class="hdel" onclick="eliminar('+realIdx+')">🗑 Eliminar</button>';
+          }
+          out+='<span class="hch" style="background:#e1f5ee;color:#0F6E56;border:1px solid #1D9E75">✓ Validado</span>';
+          out+='</div>';
+          out+='<div style="font-size:11px;color:#555;margin-bottom:4px">'+(r.area||'—')+' | Turno: '+(r.turno||'—')+' | '+(r.fisc||'—')+'</div>';
+          out+='<div class="hchips">';
+          out+='<span class="hch ok">'+(r.ok||0)+' Cumple</span>';
+          out+='<span class="hch nc">'+(r.nc||0)+' No Cumple</span>';
+          out+='<span class="hch na">'+(r.na||0)+' NA</span>';
+          if(r.pct!==null)out+='<span class="hch k" style="color:'+col+'">'+r.pct+'% — '+r.res+'</span>';
+          out+='</div>';
+          out+='</div>';
+        });
+        out+='</div>'; // /dia
+      });
+      out+='</div>'; // /mes
+    });
+    out+='</div>'; // /año
+  });
+
+  list.innerHTML=out;
 }
 
-function filtrarHist(){
-  const d = document.getElementById('hDate').value;
-  if(d) renderHist(d);
-  else renderHist();
+function eliminar(idx){
+  if(!confirm('¿Eliminar este registro?'))return;
+  lH(); hist.splice(idx,1); sH(); renderHist(null);
+  toast('Registro eliminado','#A32D2D');
 }
 
-function delH(id){
-  if(confirm('¿Eliminar este registro?')){
-    let hist = JSON.parse(localStorage.getItem('bpm_ret_hist') || '[]');
-    hist = hist.filter(x => x.id !== id);
-    localStorage.setItem('bpm_ret_hist', JSON.stringify(hist));
-    
-    let bpmHist = JSON.parse(localStorage.getItem('bpm_hist') || '[]');
-    bpmHist = bpmHist.filter(x => x.id !== id);
-    localStorage.setItem('bpm_hist', JSON.stringify(bpmHist));
-    
-    renderHist();
-  }
+// ═══════════════════════════════════════════════════════════════
+// PDF DIARIO
+// ═══════════════════════════════════════════════════════════════
+function verInforme(idx){
+  lH();
+  var r=hist[idx];
+  if(!r)return;
+  generarPDF(r);
+  cerrarHist();
 }
 
 function verPDF(){
-  updTS();
-  document.getElementById('p_nreg').innerText = 'VISTA PREVIA';
-  document.getElementById('p_estab').innerText = document.getElementById('f_estab').value;
-  document.getElementById('p_fecha').innerText = document.getElementById('f_fecha').value;
-  document.getElementById('p_fisc').innerText = document.getElementById('f_fisc').value;
-  document.getElementById('p_turno').innerText = document.getElementById('f_turno').value;
-  
-  document.getElementById('p_tot').innerText = document.getElementById('rTot').innerText;
-  document.getElementById('p_ok').innerText = document.getElementById('rOk').innerText;
-  document.getElementById('p_nc').innerText = document.getElementById('rNc').innerText;
-  document.getElementById('p_na').innerText = document.getElementById('rNa').innerText;
-  
-  let pct = document.getElementById('rPct').innerText;
-  document.getElementById('p_pct').innerText = pct;
-  document.getElementById('p_bar').style.width = pct;
-  
-  let rEl = document.getElementById('rRes');
-  document.getElementById('p_res').innerText = rEl.innerText;
-  
-  let col = '#888';
-  if(rEl.innerText === 'Excelente') col = '#0F6E56';
-  if(rEl.innerText === 'Deficiente') col = '#e09000';
-  if(rEl.innerText === 'Crítico') col = '#A32D2D';
-  
-  document.getElementById('p_pct').style.borderColor = col;
-  document.getElementById('p_pct').style.color = col;
-  document.getElementById('p_bar').style.background = col;
-  document.getElementById('p_txt').innerText = rEl.innerText;
-  document.getElementById('p_txt').style.color = col;
-
-  document.getElementById('p_fnom').innerText = document.getElementById('f_fisc').value;
-  document.getElementById('p_fcargo').innerText = document.getElementById('f_cargo').value;
-  document.getElementById('p_vnom').innerText = document.getElementById('v_nom').value;
-  document.getElementById('p_vts').innerText = document.getElementById('v_ts').value;
-
-  renderPDFTabla(1, items1, 'ptbody1');
-  renderPDFTabla(2, items2, 'ptbody2');
-
-  document.getElementById('formWrap').style.display = 'none';
-  document.getElementById('histPanel').style.display = 'none';
-  document.getElementById('pdfPage').style.display = 'block';
-}
-
-function verPDFHist(id){
-  let hist = JSON.parse(localStorage.getItem('bpm_ret_hist') || '[]');
-  let r = hist.find(x => x.id === id);
-  if(!r) return;
-
-  document.getElementById('p_nreg').innerText = r.nreg;
-  document.getElementById('p_estab').innerText = r.estab;
-  document.getElementById('p_fecha').innerText = r.fecha;
-  document.getElementById('p_fisc').innerText = r.fisc;
-  document.getElementById('p_turno').innerText = r.turno;
-  
-  document.getElementById('p_tot').innerText = r.tot;
-  document.getElementById('p_ok').innerText = r.ok;
-  document.getElementById('p_nc').innerText = r.nc;
-  document.getElementById('p_na').innerText = r.na;
-  
-  document.getElementById('p_pct').innerText = r.pct + '%';
-  document.getElementById('p_bar').style.width = r.pct + '%';
-  document.getElementById('p_res').innerText = r.res;
-  
-  let col = '#888';
-  if(r.res === 'Excelente') col = '#0F6E56';
-  if(r.res === 'Deficiente') col = '#e09000';
-  if(r.res === 'Crítico') col = '#A32D2D';
-  
-  document.getElementById('p_pct').style.borderColor = col;
-  document.getElementById('p_pct').style.color = col;
-  document.getElementById('p_bar').style.background = col;
-  document.getElementById('p_txt').innerText = r.res;
-  document.getElementById('p_txt').style.color = col;
-
-  document.getElementById('p_fnom').innerText = r.fisc;
-  document.getElementById('p_fcargo').innerText = r.cargo;
-  document.getElementById('p_vnom').innerText = r.val_nom;
-  document.getElementById('p_vts').innerText = r.val_ts;
-
-  let st = JSON.parse(r.secs);
-  renderPDFTablaHist(1, items1, 'ptbody1', st.s1, st.o1);
-  renderPDFTablaHist(2, items2, 'ptbody2', st.s2, st.o2);
-
-  document.getElementById('formWrap').style.display = 'none';
-  document.getElementById('histPanel').style.display = 'none';
-  document.getElementById('pdfPage').style.display = 'block';
-}
-
-function renderPDFTabla(sec, items, tid){
-  let h = '';
-  items.forEach((it, i) => {
-    let val = state['s'+sec][i] || '-';
-    let obs = state['o'+sec][i] || '';
-    let col = val==='C'?'#0F6E56':(val==='NC'?'#A32D2D':'#888');
-    h += `<tr><td class="c">${i+1}</td><td class="p">${it}</td><td class="c" style="color:${col};font-weight:bold">${val}</td><td class="p">${obs}</td></tr>`;
+  // PDF del estado actual del formulario
+  var fecha=document.getElementById('f_fecha').value;
+  if(!fecha){toast('⚠️ Ingresa la fecha primero','#854F0B');return;}
+  var totOk=0,totNc=0,totNa=0,secData=[];
+  SECS.forEach(function(sec){
+    var r=calcSec(sec.id); totOk+=r.ok; totNc+=r.nc; totNa+=r.na;
+    var items=[];
+    sec.items.forEach(function(it){
+      var k=sKey(sec.id,it.n);
+      items.push({n:it.n,cat:it.cat,crit:it.crit,val:estado[k]||'',obs:estado['obs_'+k]||''});
+    });
+    secData.push({id:sec.id,nombre:sec.nombre,ok:r.ok,nc:r.nc,na:r.na,items:items});
   });
-  document.getElementById(tid).innerHTML = h;
+  var evalCount=totOk+totNc;
+  var pct=evalCount>0?Math.round(totOk/evalCount*100):null;
+  var res=pct===null?'Sin evaluar':pct>=90?'Excelente':pct>=75?'Aceptable':pct>=50?'Deficiente':'Crítico';
+  var entry={
+    fecha:fecha,turno:document.getElementById('f_turno').value,
+    estab:document.getElementById('f_estab').value,
+    area:document.getElementById('f_area').value,
+    fisc:document.getElementById('f_fisc').value,
+    cargo:document.getElementById('f_cargo').value,
+    resp:document.getElementById('f_resp').value,
+    jefe:document.getElementById('f_jefe').value,
+    emp:document.getElementById('f_emp').value,
+    val_nom:document.getElementById('val_nom').value,
+    val_rut:document.getElementById('val_rut').value,
+    val_cargo:document.getElementById('val_cargo').value,
+    ok:totOk,nc:totNc,na:totNa,pct:pct,res:res,secs:secData
+  };
+  generarPDF(entry);
 }
 
-function renderPDFTablaHist(sec, items, tid, sArr, oArr){
-  let h = '';
-  items.forEach((it, i) => {
-    let val = sArr[i] || '-';
-    let obs = oArr[i] || '';
-    let col = val==='C'?'#0F6E56':(val==='NC'?'#A32D2D':'#888');
-    h += `<tr><td class="c">${i+1}</td><td class="p">${it}</td><td class="c" style="color:${col};font-weight:bold">${val}</td><td class="p">${obs}</td></tr>`;
-  });
-  document.getElementById(tid).innerHTML = h;
+function generarPDF(r){
+  document.getElementById('pdfBadge').textContent='DIARIO';
+  var fp=r.fecha?r.fecha.split('-'):['','',''];
+  var fs=fp.length>2?fp[2]+'/'+fp[1]+'/'+fp[0]:r.fecha||'—';
+
+  // Ficha
+  document.getElementById('pdfFicha').innerHTML=
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Establecimiento</div><div class="pdf-fi-val">'+(r.estab||'—')+'</div></div>'+
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Fecha</div><div class="pdf-fi-val">'+fs+'</div></div>'+
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Área Evaluada</div><div class="pdf-fi-val">'+(r.area||'—')+'</div></div>'+
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Turno</div><div class="pdf-fi-val">'+(r.turno||'—')+'</div></div>'+
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Fiscalizador ITE</div><div class="pdf-fi-val">'+(r.fisc||'—')+'</div></div>'+
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Cargo</div><div class="pdf-fi-val">'+(r.cargo||'—')+'</div></div>'+
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Responsable Área</div><div class="pdf-fi-val">'+(r.resp||'—')+'</div></div>'+
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Jefe de Turno</div><div class="pdf-fi-val">'+(r.jefe||'—')+'</div></div>';
+
+  // KPIs
+  var evalCount=(r.ok||0)+(r.nc||0);
+  var col=r.pct>=75?'gr':r.pct>=50?'am':'rd';
+  document.getElementById('pdfKpis').innerHTML=
+    '<div class="pdf-kpi"><div class="pdf-kpi-lbl">Total Ítems</div><div class="pdf-kpi-val bl">'+((r.ok||0)+(r.nc||0)+(r.na||0))+'</div></div>'+
+    '<div class="pdf-kpi"><div class="pdf-kpi-lbl">Cumple</div><div class="pdf-kpi-val gr">'+(r.ok||0)+'</div></div>'+
+    '<div class="pdf-kpi"><div class="pdf-kpi-lbl">No Cumple</div><div class="pdf-kpi-val rd">'+(r.nc||0)+'</div></div>'+
+    '<div class="pdf-kpi"><div class="pdf-kpi-lbl">No Aplica</div><div class="pdf-kpi-val">'+(r.na||0)+'</div></div>'+
+    '<div class="pdf-kpi"><div class="pdf-kpi-lbl">% Cumplimiento</div><div class="pdf-kpi-val '+col+'">'+(r.pct!==null?r.pct+'%':'—')+'</div></div>';
+
+  // Resultado
+  var barW=r.pct||0;
+  var barCol=r.pct>=75?'#1D9E75':r.pct>=50?'#e09000':'#A32D2D';
+  document.getElementById('pdfResultado').innerHTML=
+    '<div class="pdf-res-row">'+
+    '<div class="pdf-res-circle" style="border-color:'+barCol+';color:'+barCol+'">'+(r.pct!==null?r.pct+'%':'—')+'</div>'+
+    '<div><div class="pdf-res-title">'+r.res+'</div><div class="pdf-res-sub">Resultado Checklist BPM — Área Retermalizado</div></div>'+
+    '</div>'+
+    '<div style="font-size:7px;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:2px">Nivel de cumplimiento</div>'+
+    '<div class="pdf-bar"><div class="pdf-bar-fill" style="width:'+barW+'%;background:'+barCol+'"></div></div>';
+
+  // Tablas por sección
+  var tablasHtml='';
+  if(r.secs){
+    r.secs.forEach(function(sec){
+      tablasHtml+='<div class="pdf-sec-hdr">'+sec.nombre+
+        ' — Cumple: '+sec.ok+' / No Cumple: '+sec.nc+' / No Aplica: '+sec.na+'</div>';
+      tablasHtml+='<table class="pdf-tabla"><thead><tr>'+
+        '<th style="width:25px">N°</th>'+
+        '<th style="width:80px">Categoría</th>'+
+        '<th class="p">Criterio</th>'+
+        '<th style="width:55px">Evaluación</th>'+
+        '<th style="width:130px">Observación</th>'+
+        '</tr></thead><tbody>';
+      sec.items.forEach(function(it){
+        var vLabel=it.val==='c'?'✓ Cumple':it.val==='nc'?'✗ No Cumple':it.val==='na'?'NA':'Pendiente';
+        var vCol=it.val==='c'?'#0F6E56':it.val==='nc'?'#A32D2D':it.val==='na'?'#888':'#aaa';
+        tablasHtml+='<tr>'+
+          '<td class="c">'+it.n+'</td>'+
+          '<td class="c" style="font-size:7px;font-weight:bold;color:#1A3A5C">'+it.cat+'</td>'+
+          '<td>'+it.crit+'</td>'+
+          '<td class="c" style="font-weight:bold;color:'+vCol+'">'+vLabel+'</td>'+
+          '<td style="font-size:7px;color:#555">'+it.obs+'</td>'+
+          '</tr>';
+      });
+      tablasHtml+='</tbody></table>';
+    });
+  }
+  document.getElementById('pdfTablas').innerHTML=tablasHtml;
+
+  // Firma
+  document.getElementById('pdfFirma').innerHTML=
+    '<div class="pdf-firma-col">'+
+    '<div class="pdf-firma-lbl">Fiscalizador / Inspector ITE</div>'+
+    '<div class="pdf-firma-val">'+(r.val_nom||r.fisc||'—')+'</div>'+
+    '<div class="pdf-firma-sub">'+(r.val_rut?'RUT: '+r.val_rut:'')+(r.val_cargo?' — '+r.val_cargo:'')+'</div>'+
+    '</div>'+
+    '<div class="pdf-firma-col">'+
+    '<div class="pdf-firma-lbl">Responsable del Área / Jefe de Turno</div>'+
+    '<div class="pdf-firma-val">'+(r.resp||'—')+'</div>'+
+    '<div class="pdf-firma-sub">Responsable Área</div>'+
+    '</div>';
+
+  document.getElementById('formWrap').style.display='none';
+  document.getElementById('pdfPage').style.display='block';
 }
 
 function cerrarPDF(){
-  document.getElementById('pdfPage').style.display = 'none';
-  document.getElementById('formWrap').style.display = 'block';
+  document.getElementById('pdfPage').style.display='none';
+  document.getElementById('formWrap').style.display='block';
 }
 
-window.onload = init;
+// ═══════════════════════════════════════════════════════════════
+// PDF MENSUAL
+// ═══════════════════════════════════════════════════════════════
+function verPDFMes(){
+  lH();
+  if(!hist.length){toast('⚠️ No hay registros guardados','#854F0B');return;}
+  var yr=new Date().getFullYear(), mm=new Date().getMonth()+1;
+  var mmStr=mm<10?'0'+mm:''+mm;
+  var regs=hist.filter(function(r){return r.fecha&&r.fecha.startsWith(yr+'-'+mmStr);});
+  if(!regs.length){toast('⚠️ No hay registros para este mes','#854F0B');return;}
 
-// ==============================================================================
-// BOTÓN DE CONFIGURACIÓN FLOTANTE (INYECCIÓN QUIRÚRGICA)
-// ==============================================================================
-const configButton = document.createElement("button");
-configButton.innerHTML = "⚙️";
-configButton.style.cssText = `
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: #1A3A5C;
-  color: white;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-  z-index: 1000;
-`;
-configButton.onclick = () => {
-  const currentUrl = localStorage.getItem("supabase_url") || "";
-  const currentKey = localStorage.getItem("supabase_key") || "";
-  const newUrl = prompt("Ingrese la URL de Supabase:", currentUrl);
-  const newKey = prompt("Ingrese la Anon Public Key de Supabase:", currentKey);
+  var totOk=0,totNc=0,totNa=0;
+  regs.forEach(function(r){totOk+=r.ok||0;totNc+=r.nc||0;totNa+=r.na||0;});
+  var evalCount=totOk+totNc;
+  var pct=evalCount>0?Math.round(totOk/evalCount*100):null;
+  var res=pct===null?'Sin datos':pct>=90?'Excelente':pct>=75?'Aceptable':pct>=50?'Deficiente':'Crítico';
 
-  if (newUrl && newKey) {
-    localStorage.setItem("supabase_url", newUrl);
-    localStorage.setItem("supabase_key", newKey);
-    showToast("✅ Configuración Supabase guardada", "#1D9E75");
-  } else {
-    showToast("❌ Configuración Supabase incompleta", "#A32D2D");
+  document.getElementById('pdfBadge').textContent='MENSUAL';
+  document.getElementById('pdfFicha').innerHTML=
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Establecimiento</div><div class="pdf-fi-val">E.P. Santiago 1</div></div>'+
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Período</div><div class="pdf-fi-val">'+MESES_N[mm-1]+' '+yr+'</div></div>'+
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Área Evaluada</div><div class="pdf-fi-val">Área Retermalizado</div></div>'+
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Total Fiscalizaciones</div><div class="pdf-fi-val">'+regs.length+'</div></div>';
+
+  var col=pct>=75?'gr':pct>=50?'am':'rd';
+  document.getElementById('pdfKpis').innerHTML=
+    '<div class="pdf-kpi"><div class="pdf-kpi-lbl">Fiscalizaciones</div><div class="pdf-kpi-val bl">'+regs.length+'</div></div>'+
+    '<div class="pdf-kpi"><div class="pdf-kpi-lbl">Cumple</div><div class="pdf-kpi-val gr">'+totOk+'</div></div>'+
+    '<div class="pdf-kpi"><div class="pdf-kpi-lbl">No Cumple</div><div class="pdf-kpi-val rd">'+totNc+'</div></div>'+
+    '<div class="pdf-kpi"><div class="pdf-kpi-lbl">No Aplica</div><div class="pdf-kpi-val">'+totNa+'</div></div>'+
+    '<div class="pdf-kpi"><div class="pdf-kpi-lbl">% Promedio</div><div class="pdf-kpi-val '+col+'">'+(pct!==null?pct+'%':'—')+'</div></div>';
+
+  var barW=pct||0, barCol=pct>=75?'#1D9E75':pct>=50?'#e09000':'#A32D2D';
+  document.getElementById('pdfResultado').innerHTML=
+    '<div class="pdf-res-row">'+
+    '<div class="pdf-res-circle" style="border-color:'+barCol+';color:'+barCol+'">'+(pct!==null?pct+'%':'—')+'</div>'+
+    '<div><div class="pdf-res-title">'+res+'</div><div class="pdf-res-sub">Resultado mensual — '+MESES_N[mm-1]+' '+yr+'</div></div>'+
+    '</div>'+
+    '<div class="pdf-bar"><div class="pdf-bar-fill" style="width:'+barW+'%;background:'+barCol+'"></div></div>';
+
+  // Tabla resumen por día
+  var tabHtml='<div class="pdf-sec-hdr">Resumen Diario — '+MESES_N[mm-1]+' '+yr+'</div>';
+  tabHtml+='<table class="pdf-tabla"><thead><tr>'+
+    '<th>N°</th><th class="p">Fecha</th><th>Turno</th><th>Fiscalizador</th>'+
+    '<th>Cumple</th><th>NC</th><th>NA</th><th>%</th><th>Resultado</th>'+
+    '</tr></thead><tbody>';
+  regs.forEach(function(r,i){
+    var fp=r.fecha?r.fecha.split('-'):['','',''];
+    var fs=fp.length>2?fp[2]+'/'+fp[1]+'/'+fp[0]:r.fecha;
+    var col2=r.pct>=75?'#0F6E56':r.pct>=50?'#854F0B':'#A32D2D';
+    tabHtml+='<tr>'+
+      '<td class="c">'+(i+1)+'</td>'+
+      '<td>'+fs+'</td>'+
+      '<td class="c">'+(r.turno||'—')+'</td>'+
+      '<td>'+(r.fisc||'—')+'</td>'+
+      '<td class="c" style="color:#0F6E56;font-weight:bold">'+(r.ok||0)+'</td>'+
+      '<td class="c" style="color:#A32D2D;font-weight:bold">'+(r.nc||0)+'</td>'+
+      '<td class="c" style="color:#888">'+(r.na||0)+'</td>'+
+      '<td class="c" style="font-weight:bold;color:'+col2+'">'+(r.pct!==null?r.pct+'%':'—')+'</td>'+
+      '<td class="c" style="font-weight:bold;color:'+col2+'">'+(r.res||'—')+'</td>'+
+      '</tr>';
+  });
+  tabHtml+='</tbody></table>';
+  document.getElementById('pdfTablas').innerHTML=tabHtml;
+  document.getElementById('pdfFirma').innerHTML=
+    '<div class="pdf-firma-col"><div class="pdf-firma-lbl">Generado por</div><div class="pdf-firma-val">ITE — E.P. Santiago 1</div></div>'+
+    '<div class="pdf-firma-col"><div class="pdf-firma-lbl">Período</div><div class="pdf-firma-val">'+MESES_N[mm-1]+' '+yr+'</div></div>';
+
+  document.getElementById('formWrap').style.display='none';
+  document.getElementById('pdfPage').style.display='block';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// PDF ANUAL
+// ═══════════════════════════════════════════════════════════════
+function verPDFAnual(){
+  lH();
+  if(!hist.length){toast('⚠️ No hay registros guardados','#854F0B');return;}
+  var yr=new Date().getFullYear();
+  var regsAnual=hist.filter(function(r){return r.fecha&&r.fecha.startsWith(yr+'-');});
+  if(!regsAnual.length){toast('⚠️ No hay registros para el año '+yr,'#854F0B');return;}
+
+  // Agrupar por mes
+  var porMes={};
+  regsAnual.forEach(function(r){
+    var fp=r.fecha.split('-');
+    var mm=parseInt(fp[1])-1;
+    if(!porMes[mm])porMes[mm]={ok:0,nc:0,na:0,eval:0,regs:[]};
+    porMes[mm].ok+=r.ok||0;
+    porMes[mm].nc+=r.nc||0;
+    porMes[mm].na+=r.na||0;
+    porMes[mm].eval+=(r.ok||0)+(r.nc||0);
+    porMes[mm].regs.push(r);
+  });
+
+  // Totales anuales
+  var totOk=0,totNc=0,totNa=0,totEval=0;
+  regsAnual.forEach(function(r){totOk+=r.ok||0;totNc+=r.nc||0;totNa+=r.na||0;totEval+=(r.ok||0)+(r.nc||0);});
+  var pctAnual=totEval>0?Math.round(totOk/totEval*100):null;
+  var resAnual=pctAnual===null?'Sin datos':pctAnual>=90?'Excelente':pctAnual>=75?'Aceptable':pctAnual>=50?'Deficiente':'Crítico';
+  var colAnual=pctAnual>=75?'#0F6E56':pctAnual>=50?'#854F0B':'#A32D2D';
+
+  document.getElementById('pdfBadge').textContent='ANUAL';
+
+  document.getElementById('pdfFicha').innerHTML=
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Establecimiento</div><div class="pdf-fi-val">E.P. Santiago 1</div></div>'+
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Año</div><div class="pdf-fi-val">'+yr+'</div></div>'+
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Área Evaluada</div><div class="pdf-fi-val">Área Retermalizado</div></div>'+
+    '<div class="pdf-fi"><div class="pdf-fi-lbl">Total Fiscalizaciones</div><div class="pdf-fi-val">'+regsAnual.length+'</div></div>';
+
+  var colK=pctAnual>=75?'gr':pctAnual>=50?'am':'rd';
+  document.getElementById('pdfKpis').innerHTML=
+    '<div class="pdf-kpi"><div class="pdf-kpi-lbl">Fiscalizaciones</div><div class="pdf-kpi-val bl">'+regsAnual.length+'</div></div>'+
+    '<div class="pdf-kpi"><div class="pdf-kpi-lbl">Cumple</div><div class="pdf-kpi-val gr">'+totOk+'</div></div>'+
+    '<div class="pdf-kpi"><div class="pdf-kpi-lbl">No Cumple</div><div class="pdf-kpi-val rd">'+totNc+'</div></div>'+
+    '<div class="pdf-kpi"><div class="pdf-kpi-lbl">No Aplica</div><div class="pdf-kpi-val">'+totNa+'</div></div>'+
+    '<div class="pdf-kpi"><div class="pdf-kpi-lbl">% Anual</div><div class="pdf-kpi-val '+colK+'">'+(pctAnual!==null?pctAnual+'%':'—')+'</div></div>';
+
+  var barW=pctAnual||0;
+  document.getElementById('pdfResultado').innerHTML=
+    '<div class="pdf-res-row">'+
+    '<div class="pdf-res-circle" style="border-color:'+colAnual+';color:'+colAnual+'">'+(pctAnual!==null?pctAnual+'%':'—')+'</div>'+
+    '<div><div class="pdf-res-title">'+resAnual+'</div><div class="pdf-res-sub">Resultado Anual Checklist BPM — Área Retermalizado '+yr+'</div></div>'+
+    '</div>'+
+    '<div class="pdf-bar"><div class="pdf-bar-fill" style="width:'+barW+'%;background:'+colAnual+'"></div></div>';
+
+  // Tabla resumen por mes
+  var tabHtml='<div class="pdf-sec-hdr">Resumen Mensual — '+yr+'</div>';
+  tabHtml+='<table class="pdf-tabla"><thead><tr>'+
+    '<th class="p">Mes</th><th>Fiscalizaciones</th><th>Cumple</th><th>No Cumple</th><th>No Aplica</th><th>% Cumplim.</th><th>Resultado</th>'+
+    '</tr></thead><tbody>';
+
+  for(var mm=0;mm<12;mm++){
+    var d=porMes[mm];
+    if(!d)continue;
+    var pctMes=d.eval>0?Math.round(d.ok/d.eval*100):null;
+    var resMes=pctMes===null?'—':pctMes>=90?'Excelente':pctMes>=75?'Aceptable':pctMes>=50?'Deficiente':'Crítico';
+    var colMes=pctMes>=75?'#0F6E56':pctMes>=50?'#854F0B':'#A32D2D';
+    tabHtml+='<tr>'+
+      '<td style="font-weight:bold">'+MESES_N[mm]+'</td>'+
+      '<td class="c">'+d.regs.length+'</td>'+
+      '<td class="c" style="color:#0F6E56;font-weight:bold">'+d.ok+'</td>'+
+      '<td class="c" style="color:#A32D2D;font-weight:bold">'+d.nc+'</td>'+
+      '<td class="c" style="color:#888">'+d.na+'</td>'+
+      '<td class="c" style="font-weight:bold;color:'+colMes+'">'+(pctMes!==null?pctMes+'%':'—')+'</td>'+
+      '<td class="c" style="font-weight:bold;color:'+colMes+'">'+resMes+'</td>'+
+      '</tr>';
   }
-};
-document.body.appendChild(configButton);
+  // Fila totales
+  tabHtml+='<tr style="background:#f0f4ff">'+
+    '<td style="font-weight:bold;color:#1A3A5C">TOTAL '+yr+'</td>'+
+    '<td class="c" style="font-weight:bold">'+regsAnual.length+'</td>'+
+    '<td class="c" style="color:#0F6E56;font-weight:bold">'+totOk+'</td>'+
+    '<td class="c" style="color:#A32D2D;font-weight:bold">'+totNc+'</td>'+
+    '<td class="c" style="color:#888">'+totNa+'</td>'+
+    '<td class="c" style="font-weight:bold;color:'+colAnual+'">'+(pctAnual!==null?pctAnual+'%':'—')+'</td>'+
+    '<td class="c" style="font-weight:bold;color:'+colAnual+'">'+resAnual+'</td>'+
+    '</tr>';
+  tabHtml+='</tbody></table>';
 
+  // Tabla detalle por mes (expandida)
+  for(var mm2=0;mm2<12;mm2++){
+    var dm=porMes[mm2];
+    if(!dm||!dm.regs.length)continue;
+    var pctM2=dm.eval>0?Math.round(dm.ok/dm.eval*100):null;
+    tabHtml+='<div class="pdf-sec-hdr">'+MESES_N[mm2]+' '+yr+' — '+dm.regs.length+' fiscalización'+(dm.regs.length>1?'es':'')+
+      (pctM2!==null?' — '+pctM2+'% cumplimiento':'')+'</div>';
+    tabHtml+='<table class="pdf-tabla"><thead><tr>'+
+      '<th>N°</th><th class="p">Fecha</th><th>Turno</th><th>Fiscalizador</th>'+
+      '<th>C</th><th>NC</th><th>NA</th><th>%</th><th>Resultado</th>'+
+      '</tr></thead><tbody>';
+    dm.regs.forEach(function(r,i){
+      var fp=r.fecha?r.fecha.split('-'):['','',''];
+      var fs=fp.length>2?fp[2]+'/'+fp[1]+'/'+fp[0]:r.fecha;
+      var colR=r.pct>=75?'#0F6E56':r.pct>=50?'#854F0B':'#A32D2D';
+      tabHtml+='<tr>'+
+        '<td class="c">'+(i+1)+'</td>'+
+        '<td>'+fs+'</td>'+
+        '<td class="c">'+(r.turno||'—')+'</td>'+
+        '<td>'+(r.fisc||'—')+'</td>'+
+        '<td class="c" style="color:#0F6E56;font-weight:bold">'+(r.ok||0)+'</td>'+
+        '<td class="c" style="color:#A32D2D;font-weight:bold">'+(r.nc||0)+'</td>'+
+        '<td class="c" style="color:#888">'+(r.na||0)+'</td>'+
+        '<td class="c" style="font-weight:bold;color:'+colR+'">'+(r.pct!==null?r.pct+'%':'—')+'</td>'+
+        '<td class="c" style="font-weight:bold;color:'+colR+'">'+(r.res||'—')+'</td>'+
+        '</tr>';
+    });
+    tabHtml+='</tbody></table>';
+  }
+
+  document.getElementById('pdfTablas').innerHTML=tabHtml;
+  document.getElementById('pdfFirma').innerHTML=
+    '<div class="pdf-firma-col"><div class="pdf-firma-lbl">Generado por</div><div class="pdf-firma-val">ITE — E.P. Santiago 1</div></div>'+
+    '<div class="pdf-firma-col"><div class="pdf-firma-lbl">Período</div><div class="pdf-firma-val">Año '+yr+'</div></div>';
+
+  document.getElementById('formWrap').style.display='none';
+  document.getElementById('pdfPage').style.display='block';
+}
+
+// ═══════════════════════════════════════════════════════════════
+// TOAST
+// ═══════════════════════════════════════════════════════════════
+function toast(msg,color){
+  var t=document.createElement('div');
+  t.className='toast'; t.textContent=msg;
+  t.style.background=color||'#1A3A5C';
+  document.body.appendChild(t);
+  setTimeout(function(){if(t.parentNode)t.parentNode.removeChild(t);},3200);
+}
+
+// ═══════════════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════════════
+(function(){
+  // Fecha de hoy por defecto
+  var hoy=new Date();
+  var mm=hoy.getMonth()+1,dd=hoy.getDate();
+  document.getElementById('f_fecha').value=
+    hoy.getFullYear()+'-'+(mm<10?'0'+mm:mm)+'-'+(dd<10?'0'+dd:dd);
+
+  // Cargar datos guardados de ficha (localStorage)
+  try{
+    var sk=localStorage.getItem(SK+'_ficha');
+    if(sk){
+      var fd=JSON.parse(sk);
+      ['f_fisc','f_cargo','f_emp'].forEach(function(id){
+        if(fd[id]) document.getElementById(id).value=fd[id];
+      });
+    }
+  }catch(e){}
+
+  // Auto-guardar ficha al escribir
+  ['f_fisc','f_cargo'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.addEventListener('input',function(){
+      try{
+        var fd={};
+        ['f_fisc','f_cargo'].forEach(function(i){
+          var e=document.getElementById(i); if(e) fd[i]=e.value;
+        });
+        localStorage.setItem(SK+'_ficha',JSON.stringify(fd));
+      }catch(e){}
+      syncVal();
+    });
+  });
+
+  buildTables();
+  upd();
+  lH();
+})();
 </script>
 </body>
 </html>
