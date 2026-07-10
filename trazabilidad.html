@@ -1,5 +1,3 @@
-<!-- Versión Restaurada y Conectada a Supabase -->
-<!-- Mantiene el 100% del diseño y lógica de trazabilidad originales -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,39 +6,1050 @@
 <title>Ejercicio de Trazabilidad — E.P. Santiago 1</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-/* ... (Se mantiene el estilo original) ... */
-:root { --azul: #0B3D6B; --verde: #1A6B3C; --rojo: #C0392B; --gris-fondo: #F4F6F9; --gris-borde: #D0D7E2; --blanco: #FFFFFF; }
+:root {
+  --azul: #0B3D6B;
+  --azul-medio: #155A9A;
+  --azul-claro: #E8F0F8;
+  --verde: #1A6B3C;
+  --verde-claro: #E6F4EC;
+  --rojo: #C0392B;
+  --rojo-claro: #FDECEA;
+  --naranja: #D35400;
+  --naranja-claro: #FEF0E6;
+  --gris-fondo: #F4F6F9;
+  --gris-borde: #D0D7E2;
+  --gris-texto: #4A5568;
+  --blanco: #FFFFFF;
+  --sombra: 0 2px 8px rgba(11,61,107,0.10);
+  --radio: 8px;
+}
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--gris-fondo); color: #1a2233; font-size: 14px; }
-.header { background: var(--azul); color: #fff; padding: 14px 20px 10px; display: flex; align-items: center; gap: 14px; border-bottom: 4px solid var(--verde); }
-.card { background: var(--blanco); border-radius: 8px; border: 1px solid var(--gris-borde); margin-bottom: 14px; overflow: hidden; }
-/* ... (resto del CSS original) ... */
+
+/* HEADER */
+.header {
+  background: var(--azul);
+  color: #fff;
+  padding: 14px 20px 10px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 4px solid var(--verde);
+}
+
+.header-titulo { flex: 1; }
+.header-titulo h1 { font-size: 13px; font-weight: 700; letter-spacing: 0.5px; line-height: 1.3; text-transform: uppercase; }
+.header-titulo p { font-size: 11px; opacity: 0.8; margin-top: 2px; }
+.header-meta { text-align: right; font-size: 11px; opacity: 0.85; line-height: 1.7; }
+
+/* CONTENEDOR */
+.container { max-width: 860px; margin: 0 auto; padding: 16px 12px 40px; }
+
+/* TARJETA */
+.card {
+  background: var(--blanco);
+  border-radius: var(--radio);
+  border: 1px solid var(--gris-borde);
+  box-shadow: var(--sombra);
+  margin-bottom: 14px;
+  overflow: hidden;
+}
+.card-header {
+  padding: 10px 16px;
+  font-weight: 700;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+}
+.card-header.azul { background: var(--azul); color: #fff; }
+.card-header.verde { background: var(--verde); color: #fff; }
+.card-header.gris { background: #EEF1F6; color: var(--azul); border-bottom: 1px solid var(--gris-borde); }
+.card-header .toggle-icon { margin-left: auto; transition: transform 0.2s; }
+.card-header.collapsed .toggle-icon { transform: rotate(-90deg); }
+.card-body { padding: 14px 16px; }
+.card-body.hidden { display: none; }
+
+/* SELECTOR PROCESO */
+.proceso-selector {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.proceso-btn {
+  flex: 1;
+  padding: 12px 8px;
+  border: 2px solid var(--gris-borde);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+  font-size: 13px;
+  font-weight: 600;
+}
+.proceso-btn.zi.activo { border-color: var(--azul); background: var(--azul-claro); color: var(--azul); }
+.proceso-btn.ze.activo { border-color: var(--verde); background: var(--verde-claro); color: var(--verde); }
+.proceso-btn .badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  margin-top: 4px;
+  font-weight: 700;
+}
+.proceso-btn.zi .badge { background: var(--azul); color: #fff; }
+.proceso-btn.ze .badge { background: var(--verde); color: #fff; }
+
+/* GRID CAMPOS */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.grid-5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+@media(max-width:600px) {
+  .grid-2,.grid-3,.grid-4,.grid-5 { grid-template-columns: 1fr 1fr; }
+}
+@media(max-width:400px) {
+  .grid-2,.grid-3,.grid-4,.grid-5 { grid-template-columns: 1fr; }
+}
+
+/* CAMPOS */
+.campo { display: flex; flex-direction: column; gap: 4px; }
+.campo label { font-size: 11px; font-weight: 600; color: var(--gris-texto); text-transform: uppercase; letter-spacing: 0.4px; }
+.campo input, .campo select, .campo textarea {
+  border: 1px solid var(--gris-borde);
+  border-radius: 6px;
+  padding: 7px 10px;
+  font-size: 13px;
+  background: var(--blanco);
+  color: #1a2233;
+  width: 100%;
+  transition: border-color 0.15s, background 0.15s;
+}
+.campo input:focus, .campo select:focus, .campo textarea:focus {
+  outline: none;
+  border-color: var(--azul-medio);
+  box-shadow: 0 0 0 3px rgba(21,90,154,0.10);
+}
+.campo input.auto { background: #F0F4FA; color: var(--azul); font-weight: 600; }
+.campo input.alerta-rojo { background: var(--rojo-claro) !important; border-color: var(--rojo) !important; color: var(--rojo); font-weight: 700; }
+.campo .limite { font-size: 10px; color: #888; margin-top: 1px; }
+.campo .limite.rojo { color: var(--rojo); font-weight: 600; }
+
+/* DIVIDER */
+.divider { border: none; border-top: 1px solid var(--gris-borde); margin: 12px 0; }
+.seccion-titulo {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--azul);
+  margin: 12px 0 8px;
+  padding-bottom: 4px;
+  border-bottom: 2px solid var(--azul-claro);
+}
+
+/* TABLA MATERIAS PRIMAS */
+.mp-tabs { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+.mp-tab {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 1px solid var(--gris-borde);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+  background: var(--blanco);
+  color: var(--gris-texto);
+}
+.mp-tab.activo { background: var(--azul); color: #fff; border-color: var(--azul); }
+.mp-panel { display: none; }
+.mp-panel.activo { display: block; }
+
+/* SENSORIAL */
+.sensorial-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+.sensorial-item { text-align: center; }
+.sensorial-item label { font-size: 11px; font-weight: 600; color: var(--gris-texto); display: block; margin-bottom: 4px; text-transform: uppercase; }
+.sensorial-item select { text-align: center; font-size: 12px; }
+@media(max-width:500px) { .sensorial-grid { grid-template-columns: 1fr 1fr; } }
+
+/* RACIONES */
+.raciones-box {
+  background: var(--azul-claro);
+  border: 1px solid #B8CEEA;
+  border-radius: var(--radio);
+  padding: 10px 14px;
+  margin-top: 8px;
+}
+.raciones-box .raciones-titulo { font-size: 11px; font-weight: 700; color: var(--azul); margin-bottom: 8px; text-transform: uppercase; }
+.raciones-resultado { font-size: 18px; font-weight: 800; color: var(--azul); }
+.raciones-sub { font-size: 11px; color: var(--gris-texto); }
+
+/* BOTONES */
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+.btn {
+  padding: 10px 20px;
+  border-radius: var(--radio);
+  border: none;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.15s, transform 0.1s;
+  letter-spacing: 0.3px;
+}
+.btn:active { transform: scale(0.97); }
+.btn-guardar { background: var(--verde); color: #fff; }
+.btn-pdf { background: var(--azul); color: #fff; }
+.btn-limpiar { background: #EEF1F6; color: var(--gris-texto); border: 1px solid var(--gris-borde); }
+.btn-danger { background: var(--rojo); color: #fff; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* MODAL ACCIÓN CORRECTIVA */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.visible { display: flex; }
+.modal-box {
+  background: var(--blanco);
+  border-radius: 12px;
+  width: 94%;
+  max-width: 460px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.25);
+  overflow: hidden;
+}
+.modal-header {
+  background: var(--rojo);
+  color: #fff;
+  padding: 14px 18px;
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.modal-body { padding: 18px; }
+.modal-body p { font-size: 13px; color: var(--gris-texto); margin-bottom: 10px; line-height: 1.5; }
+.modal-desvios { background: var(--rojo-claro); border-radius: 6px; padding: 10px 12px; margin-bottom: 12px; font-size: 12px; color: var(--rojo); font-weight: 600; }
+.modal-footer { padding: 12px 18px; border-top: 1px solid var(--gris-borde); display: flex; justify-content: flex-end; gap: 10px; }
+
+/* HISTORIAL */
+.historial-item {
+  border: 1px solid var(--gris-borde);
+  border-radius: var(--radio);
+  margin-bottom: 8px;
+  overflow: hidden;
+}
+.historial-item-header {
+  padding: 10px 14px;
+  background: #F8FAFD;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.historial-item-header:hover { background: var(--azul-claro); }
+.historial-badge { font-size: 10px; padding: 2px 8px; border-radius: 20px; font-weight: 700; }
+.historial-badge.zi { background: var(--azul); color: #fff; }
+.historial-badge.ze { background: var(--verde); color: #fff; }
+.historial-badge.nc { background: var(--rojo); color: #fff; }
+.historial-badge.ok { background: #27AE60; color: #fff; }
+.historial-item-body { padding: 12px 14px; display: none; border-top: 1px solid var(--gris-borde); font-size: 12px; }
+.historial-item-body.visible { display: block; }
+.historial-detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; }
+.historial-detail-item span:first-child { color: var(--gris-texto); font-weight: 600; text-transform: uppercase; font-size: 10px; display: block; }
+.historial-detail-item span:last-child { color: #1a2233; }
+
+/* TOAST */
+.toast {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  background: #1a2233;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 2000;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s;
+  pointer-events: none;
+  max-width: 300px;
+}
+.toast.visible { opacity: 1; transform: translateY(0); }
+.toast.verde { border-left: 4px solid #27AE60; }
+.toast.rojo { border-left: 4px solid var(--rojo); }
+
+/* ALERTAS */
+.alerta-nc {
+  background: var(--rojo-claro);
+  border: 1px solid #E8A09A;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 12px;
+  color: var(--rojo);
+  font-weight: 600;
+  margin-top: 6px;
+  display: none;
+}
+.alerta-nc.visible { display: block; }
+
+/* ZONA VISIBLE */
+.zona-zi { display: block; }
+.zona-ze { display: none; }
+body.proceso-ze .zona-zi { display: none; }
+body.proceso-ze .zona-ze { display: block; }
+
+/* TABS horarios ZE */
+.horarios-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; }
+@media(max-width:500px) { .horarios-grid { grid-template-columns: 1fr 1fr; } }
 </style>
 </head>
-<body>
+<body class="proceso-zi">
 
-<!-- ... (Estructura HTML original se mantiene intacta) ... -->
+<!-- HEADER -->
+<div class="header">
+
+  <div class="header-titulo">
+    <h1>Ejercicio de Trazabilidad<br>Servicio de Alimentación</h1>
+    <p>E.P. Santiago 1 — Inspección Técnica de Explotación</p>
+  </div>
+  <div class="header-meta">
+    <span id="hdr-fecha">—</span><br>
+    <span id="hdr-hora">—</span><br>
+    Reg. N° <strong id="hdr-reg">—</strong><br>
+    <span id="hdr-regimen" style="font-size:10px;opacity:0.85">Régimen Común</span>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- SELECTOR PROCESO -->
+<div class="proceso-selector">
+  <button class="proceso-btn zi activo" onclick="setProceso('zi')">
+    🏢 Zona Interna<br>
+    <span class="badge">INTERNOS — RÉGIMEN COMÚN</span>
+  </button>
+  <button class="proceso-btn ze" onclick="setProceso('ze')">
+    👔 Zona Externa<br>
+    <span class="badge">FUNCIONARIOS GENCHI</span>
+  </button>
+</div>
+
+<!-- DATOS GENERALES -->
+<div class="card">
+  <div class="card-header azul" onclick="toggleCard(this)">
+    📋 Datos Generales del Registro
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="card-body">
+    <div class="grid-4" style="margin-bottom:10px">
+      <div class="campo">
+        <label>N° Registro</label>
+        <input type="text" id="nro-registro" class="auto" readonly>
+      </div>
+      <div class="campo">
+        <label>Fecha</label>
+        <input type="text" id="fecha-reg" class="auto" readonly>
+      </div>
+      <div class="campo">
+        <label>Hora</label>
+        <input type="text" id="hora-reg" class="auto" readonly>
+      </div>
+      <div class="campo">
+        <label>Régimen</label>
+        <select id="regimen-reg" onchange="document.getElementById('hdr-regimen').textContent=this.value" style="background:#F0F4FA;color:#0B3D6B;font-weight:600;border:1px solid #B8CEEA;border-radius:6px;padding:7px 10px;font-size:13px;width:100%">
+          <option value="Régimen Común">Régimen Común</option>
+          <option value="Régimen Liviano">Régimen Liviano</option>
+          <option value="Hipoglucídico">Hipoglucídico</option>
+        </select>
+      </div>
+    </div>
+    <div class="grid-2">
+      <div class="campo">
+        <label>Nombre Preparación</label>
+        <input type="text" id="nombre-prep" placeholder="Ej: Pollo al jugo con arroz" oninput="actualizarHeader()">
+      </div>
+      <div class="campo">
+        <label>Responsable ITE</label>
+        <input type="text" id="responsable" placeholder="Nombre del inspector">
+      </div>
+    </div>
+    <div class="grid-3" style="margin-top:10px">
+      <div class="campo">
+        <label>Servicio</label>
+        <select id="servicio">
+          <option>Almuerzo</option>
+          <option>Cena</option>
+          <option>Desayuno</option>
+        </select>
+      </div>
+      <div class="campo">
+        <label>Proceso</label>
+        <input type="text" id="proceso-display" class="auto" readonly>
+      </div>
+      <div class="campo">
+        <label>Establecimiento</label>
+        <input type="text" value="E.P. Santiago 1" class="auto" readonly>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MATERIAS PRIMAS — TABLA DINÁMICA POR INGREDIENTE -->
+<div class="card">
+  <div class="card-header gris" onclick="toggleCard(this)">
+    📦 Registro de Recepción — Servicio Completo
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="card-body" style="padding:10px 8px">
+
+    <div style="overflow-x:auto;">
+      <table id="tabla-mp" style="width:100%;border-collapse:collapse;font-size:12px;min-width:1000px">
+        <thead>
+          <tr style="background:var(--azul);color:#fff;">
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:110px">Componente</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:140px">Ingrediente / Producto</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:110px">Proveedor</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">N° Factura</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Fecha Venc.</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Lote</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Temp. (°C)</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Cond.</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Sens.</th>
+            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Acción</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-mp">
+          <!-- Filas de materias primas se insertarán aquí -->
+        </tbody>
+      </table>
+    </div>
+    <div class="btn-row" style="justify-content:flex-end;margin-top:10px">
+      <button class="btn btn-limpiar" onclick="agregarFilaMP()">➕ Agregar Fila</button>
+    </div>
+  </div>
+</div>
+
+<!-- ZONA INTERNA (ZI) -->
+<div class="zona-zi">
+  <!-- REGISTRO DE TEMPERATURAS -->
+  <div class="card">
+    <div class="card-header azul" onclick="toggleCard(this)">
+      🌡️ Registro de Temperaturas — Zona Interna
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="grid-3">
+        <div class="campo">
+          <label>Cámara Frigorífica</label>
+          <input type="number" id="temp-camara" placeholder="°C">
+        </div>
+        <div class="campo">
+          <label>Refrigerador</label>
+          <input type="number" id="temp-refrigerador" placeholder="°C">
+        </div>
+        <div class="campo">
+          <label>Congelador</label>
+          <input type="number" id="temp-congelador" placeholder="°C">
+        </div>
+      </div>
+      <div class="seccion-titulo">Temperaturas de Preparaciones</div>
+      <div class="grid-3">
+        <div class="campo">
+          <label>Enfriamiento Rápido</label>
+          <input type="number" id="temp-enfriamiento" placeholder="°C">
+        </div>
+        <div class="campo">
+          <label>Mantenimiento Caliente</label>
+          <input type="number" id="temp-mantenimiento" placeholder="°C">
+        </div>
+        <div class="campo">
+          <label>Servicio</label>
+          <input type="number" id="temp-servicio" placeholder="°C">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- REGISTRO DE RACIONES -->
+  <div class="card">
+    <div class="card-header azul" onclick="toggleCard(this)">
+      🍽️ Registro de Raciones — Zona Interna
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="grid-3">
+        <div class="campo">
+          <label>N° Raciones Producidas</label>
+          <input type="number" id="raciones-producidas" value="0" oninput="calcularRaciones()">
+        </div>
+        <div class="campo">
+          <label>N° Raciones Servidas</label>
+          <input type="number" id="raciones-servidas" value="0" oninput="calcularRaciones()">
+        </div>
+        <div class="campo">
+          <label>N° Raciones Desechadas</label>
+          <input type="number" id="raciones-desechadas" value="0" oninput="calcularRaciones()">
+        </div>
+      </div>
+      <div class="raciones-box">
+        <div class="raciones-titulo">Resumen de Raciones</div>
+        <div class="raciones-resultado" id="resumen-raciones">0</div>
+        <div class="raciones-sub">Raciones disponibles para el servicio</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ZONA EXTERNA (ZE) -->
+<div class="zona-ze">
+  <!-- REGISTRO DE TEMPERATURAS -->
+  <div class="card">
+    <div class="card-header verde" onclick="toggleCard(this)">
+      🌡️ Registro de Temperaturas — Zona Externa
+      <span class="toggle-icon">▼</span>
+    </div>
+    <div class="card-body">
+      <div class="grid-3">
+        <div class="campo">
+          <label>Temperatura Ambiente</label>
+          <input type="number" id="temp-ambiente-ze" placeholder="°C">
+        </div>
+        <div class="campo">
+          <label>Temperatura Transporte</label>
+          <input type="number" id="temp-transporte-ze" placeholder="°C">
+        </div>
+        <div class="campo">
+          <label>Temperatura Servicio</label>
+          <input type="number" id="temp-servicio-ze" placeholder="°C">
+        </div>
+      </div>
+      <div class="seccion-titulo">Horarios de Servicio</div>
+      <div class="horarios-grid">
+        <div class="campo">
+          <label>Inicio Servicio</label>
+          <input type="time" id="hora-inicio-ze">
+        </div>
+        <div class="campo">
+          <label>Fin Servicio</label>
+          <input type="time" id="hora-fin-ze">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DESVÍOS Y ACCIONES CORRECTIVAS -->
+<div class="card">
+  <div class="card-header rojo" onclick="toggleCard(this)">
+    ⚠️ Desvíos y Acciones Correctivas
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="card-body">
+    <div class="campo">
+      <label>¿Se detectaron desvíos?</label>
+      <select id="desvios-detectados" onchange="mostrarOcultarDesvios()">
+        <option value="no">No</option>
+        <option value="si">Sí</option>
+      </select>
+    </div>
+    <div id="panel-desvios" style="display:none;margin-top:10px">
+      <div class="seccion-titulo">Detalle de Desvíos</div>
+      <div class="grid-2">
+        <div class="campo">
+          <label>Tipo de Desvío</label>
+          <select id="tipo-desvio">
+            <option value="">Seleccionar...</option>
+            <option>Temperatura</option>
+            <option>Higiene</option>
+            <option>Materia Prima</option>
+            <option>Proceso</option>
+            <option>Otro</option>
+          </select>
+        </div>
+        <div class="campo">
+          <label>Descripción del Desvío</label>
+          <input type="text" id="desc-desvio" placeholder="Detalle del desvío">
+        </div>
+      </div>
+      <div class="seccion-titulo" style="margin-top:15px">Acción Correctiva Implementada</div>
+      <div class="campo">
+        <label>Acción Correctiva</label>
+        <textarea id="accion-correctiva" placeholder="Describa la acción tomada..."></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- OBSERVACIONES GENERALES -->
+<div class="card">
+  <div class="card-header gris" onclick="toggleCard(this)">
+    📝 Observaciones Generales
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="card-body">
+    <div class="campo">
+      <label>Observaciones</label>
+      <textarea id="observaciones-generales" placeholder="Notas adicionales..."></textarea>
+    </div>
+  </div>
+</div>
+
+<!-- BOTONES DE ACCIÓN -->
+<div class="btn-row">
+  <button class="btn btn-guardar" onclick="guardarRegistro()">💾 Guardar Registro</button>
+  <button class="btn btn-pdf" onclick="generarPDF()">📄 Generar PDF</button>
+  <button class="btn btn-limpiar" onclick="limpiarFormulario()">🧹 Limpiar Formulario</button>
+  <button class="btn btn-danger" onclick="eliminarRegistro()">🗑️ Eliminar Registro</button>
+</div>
+
+<!-- MODAL ACCIÓN CORRECTIVA -->
+<div id="modalAccionCorrectiva" class="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-header">
+      ⚠️ Acción Correctiva Requerida
+    </div>
+    <div class="modal-body">
+      <p>Se han detectado los siguientes desvíos:</p>
+      <div id="lista-desvios-modal" class="modal-desvios"></div>
+      <p>Por favor, describa la acción correctiva implementada:</p>
+      <div class="campo">
+        <textarea id="accion-correctiva-modal" placeholder="Describa la acción tomada..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-limpiar" onclick="cerrarModalAccionCorrectiva()">Cancelar</button>
+      <button class="btn btn-danger" onclick="confirmarAccionCorrectiva()">Confirmar Acción</button>
+    </div>
+  </div>
+</div>
+
+<!-- HISTORIAL -->
+<div class="card">
+  <div class="card-header verde" onclick="toggleCard(this)">
+    ⏳ Historial de Registros
+    <span class="toggle-icon">▼</span>
+  </div>
+  <div class="card-body">
+    <div id="historial-registros"></div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toast-container"></div>
+
+</div>
 
 <script>
-// CONFIGURACIÓN SUPABASE
+// ==============================================================================
+// CONFIGURACIÓN SUPABASE (INYECCIÓN QUIRÚRGICA)
+// ==============================================================================
 var supabaseClient = {
   url: function() { return localStorage.getItem('supabase_url') || ''; },
   key: function() { return localStorage.getItem('supabase_key') || ''; },
   async insert(table, data) {
     var url = this.url();
     var key = this.key();
-    if (!url || !key) return;
+    if (!url || !key) {
+      showToast('❌ Error: Configuración Supabase incompleta.', 'rojo');
+      return;
+    }
     try {
-      await fetch(url + '/rest/v1/' + table, {
+      showToast('☁️ Sincronizando con la nube...', 'verde');
+      const response = await fetch(url + '/rest/v1/' + table, {
         method: 'POST',
         headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json', 'Prefer': 'return=minimal' },
         body: JSON.stringify(data)
       });
-    } catch(e) { console.error(e); }
+      if (response.ok) {
+        showToast('✅ Guardado en Local y Nube', 'verde');
+      } else {
+        const errorData = await response.json();
+        showToast('❌ Error Supabase: ' + (errorData.message || response.statusText), 'rojo');
+        console.error('Error Supabase:', errorData);
+      }
+    } catch(e) {
+      showToast('❌ Error de red o Supabase: ' + e.message, 'rojo');
+      console.error('Error de red o Supabase:', e);
+    }
+  },
+  async fetchAll(table) {
+    var url = this.url();
+    var key = this.key();
+    if (!url || !key) {
+      showToast('❌ Error: Configuración Supabase incompleta.', 'rojo');
+      return [];
+    }
+    try {
+      const response = await fetch(url + '/rest/v1/' + table + '?select=*', {
+        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+      });
+      if (response.ok) {
+        return await response.json();
+      } else {
+        const errorData = await response.json();
+        showToast('❌ Error al cargar de Supabase: ' + (errorData.message || response.statusText), 'rojo');
+        console.error('Error al cargar de Supabase:', errorData);
+        return [];
+      }
+    } catch(e) {
+      showToast('❌ Error de red o Supabase al cargar: ' + e.message, 'rojo');
+      console.error('Error de red o Supabase al cargar:', e);
+      return [];
+    }
   }
 };
 
-// ... (Resto de la lógica original de trazabilidad) ...
+// ==============================================================================
+// FUNCIONES DE UTILIDAD (RESTO DEL CÓDIGO ORIGINAL)
+// ==============================================================================
+
+// Variables globales
+let nroRegistroCounter = parseInt(localStorage.getItem('nroRegistroCounter')) || 1;
+let currentProceso = 'zi'; // 'zi' para Zona Interna, 'ze' para Zona Externa
+
+// Función para mostrar toasts
+function showToast(message, type) {
+  const toastContainer = document.getElementById('toast-container');
+  if (!toastContainer) {
+    console.warn('Toast container not found.');
+    return;
+  }
+  const toast = document.createElement('div');
+  toast.className = `toast ${type} visible`;
+  toast.textContent = message;
+  toastContainer.appendChild(toast);
+
+  setTimeout(() => {
+    toast.classList.remove('visible');
+    toast.addEventListener('transitionend', () => toast.remove());
+  }, 3000);
+}
+
+// Función para alternar la visibilidad de las tarjetas
+function toggleCard(header) {
+  header.classList.toggle('collapsed');
+  const body = header.nextElementSibling;
+  if (body) {
+    body.classList.toggle('hidden');
+  }
+}
+
+// Generar número de registro
+function generarNroRegistro() {
+  const now = new Date();
+  const year = now.getFullYear().toString().slice(-2);
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const day = now.getDate().toString().padStart(2, '0');
+  const nro = nroRegistroCounter.toString().padStart(3, '0');
+  return `TRZ-${year}${month}${day}-${nro}`;
+}
+
+// Actualizar fecha y hora en el header
+function actualizarHeader() {
+  const now = new Date();
+  document.getElementById('hdr-fecha').textContent = now.toLocaleDateString('es-CL');
+  document.getElementById('hdr-hora').textContent = now.toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+  document.getElementById('hdr-reg').textContent = generarNroRegistro();
+}
+
+// Setear proceso (ZI o ZE)
+function setProceso(proceso) {
+  currentProceso = proceso;
+  document.body.className = `proceso-${proceso}`;
+  document.querySelectorAll('.proceso-btn').forEach(btn => btn.classList.remove('activo'));
+  document.querySelector(`.proceso-btn.${proceso}`).classList.add('activo');
+  document.getElementById('proceso-display').value = (proceso === 'zi' ? 'Zona Interna' : 'Zona Externa');
+}
+
+// Materias Primas
+let materiasPrimas = [];
+
+function agregarFilaMP() {
+  materiasPrimas.push({
+    componente: '', ingrediente: '', proveedor: '', factura: '', vencimiento: '', lote: '', temperatura: '', condicion: '', sensorial: '', accion: ''
+  });
+  renderTablaMP();
+}
+
+function eliminarFilaMP(index) {
+  materiasPrimas.splice(index, 1);
+  renderTablaMP();
+}
+
+function actualizarMP(index, field, value) {
+  materiasPrimas[index][field] = value;
+}
+
+function renderTablaMP() {
+  const tbody = document.getElementById('tbody-mp');
+  tbody.innerHTML = '';
+  materiasPrimas.forEach((mp, index) => {
+    const row = `
+      <tr>
+        <td><input type="text" value="${mp.componente}" oninput="actualizarMP(${index}, 'componente', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
+        <td><input type="text" value="${mp.ingrediente}" oninput="actualizarMP(${index}, 'ingrediente', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
+        <td><input type="text" value="${mp.proveedor}" oninput="actualizarMP(${index}, 'proveedor', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
+        <td><input type="text" value="${mp.factura}" oninput="actualizarMP(${index}, 'factura', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
+        <td><input type="date" value="${mp.vencimiento}" oninput="actualizarMP(${index}, 'vencimiento', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
+        <td><input type="text" value="${mp.lote}" oninput="actualizarMP(${index}, 'lote', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
+        <td><input type="number" value="${mp.temperatura}" oninput="actualizarMP(${index}, 'temperatura', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
+        <td><input type="text" value="${mp.condicion}" oninput="actualizarMP(${index}, 'condicion', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
+        <td><input type="text" value="${mp.sensorial}" oninput="actualizarMP(${index}, 'sensorial', this.value)" style="width:100%;border:1px solid #eee;padding:4px;font-size:11px"></td>
+        <td><button onclick="eliminarFilaMP(${index})" style="background:#fcebeb;color:#A32D2D;border:none;border-radius:4px;padding:4px 8px;font-size:10px;font-weight:bold;cursor:pointer">🗑️</button></td>
+      </tr>
+    `;
+    tbody.insertAdjacentHTML('beforeend', row);
+  });
+}
+
+// Raciones
+function calcularRaciones() {
+  const producidas = parseInt(document.getElementById('raciones-producidas').value) || 0;
+  const servidas = parseInt(document.getElementById('raciones-servidas').value) || 0;
+  const desechadas = parseInt(document.getElementById('raciones-desechadas').value) || 0;
+  document.getElementById('resumen-raciones').textContent = producidas - servidas - desechadas;
+}
+
+// Desvíos
+function mostrarOcultarDesvios() {
+  const desviosDetectados = document.getElementById('desvios-detectados').value;
+  document.getElementById('panel-desvios').style.display = (desviosDetectados === 'si' ? 'block' : 'none');
+}
+
+// Guardar Registro
+async function guardarRegistro() {
+  const nro_registro = document.getElementById('hdr-reg').textContent;
+  const fecha = document.getElementById('fecha-reg').textContent;
+  const hora = document.getElementById('hdr-hora').textContent;
+  const proceso = document.getElementById('proceso-display').value;
+  const regimen = document.getElementById('regimen-reg').value;
+  const nombre_preparacion = document.getElementById('nombre-prep').value;
+  const servicio = document.getElementById('servicio').value;
+  const responsable = document.getElementById('responsable').value;
+
+  const desviosDetectados = document.getElementById('desvios-detectados').value;
+  let desvios = [];
+  let accion_correctiva = '';
+
+  if (desviosDetectados === 'si') {
+    desvios.push({
+      tipo: document.getElementById('tipo-desvio').value,
+      descripcion: document.getElementById('desc-desvio').value
+    });
+    accion_correctiva = document.getElementById('accion-correctiva').value;
+  }
+
+  const observaciones_generales = document.getElementById('observaciones-generales').value;
+
+  const registro = {
+    nro_registro,
+    fecha,
+    hora,
+    proceso,
+    proceso_nombre: currentProceso === 'zi' ? 'Zona Interna' : 'Zona Externa',
+    regimen,
+    nombre_preparacion,
+    servicio,
+    responsable,
+    tiene_desvios: desviosDetectados === 'si',
+    desvios: JSON.stringify(desvios), // Guardar como JSON string
+    accion_correctiva,
+    obs_generales: observaciones_generales,
+    materias_primas: JSON.stringify(materiasPrimas) // Guardar como JSON string
+  };
+
+  // Guardar en localStorage
+  let historial = JSON.parse(localStorage.getItem('historial_trazabilidad')) || [];
+  historial.push(registro);
+  localStorage.setItem('historial_trazabilidad', JSON.stringify(historial));
+  showToast('✅ Registro guardado localmente', 'verde');
+
+  // Guardar en Supabase
+  await supabaseClient.insert('registros_trazabilidad', registro);
+
+  nroRegistroCounter++;
+  localStorage.setItem('nroRegistroCounter', nroRegistroCounter);
+  limpiarFormulario();
+  renderHistorial();
+}
+
+// Eliminar Registro
+function eliminarRegistro() {
+  if (confirm('¿Estás seguro de que quieres eliminar el último registro?')) {
+    let historial = JSON.parse(localStorage.getItem('historial_trazabilidad')) || [];
+    historial.pop();
+    localStorage.setItem('historial_trazabilidad', JSON.stringify(historial));
+    showToast('🗑️ Último registro eliminado', 'rojo');
+    renderHistorial();
+  }
+}
+
+// Limpiar Formulario
+function limpiarFormulario() {
+  document.getElementById('nombre-prep').value = '';
+  document.getElementById('responsable').value = '';
+  document.getElementById('servicio').value = 'Almuerzo';
+  document.getElementById('regimen-reg').value = 'Régimen Común';
+  document.getElementById('desvios-detectados').value = 'no';
+  mostrarOcultarDesvios();
+  document.getElementById('tipo-desvio').value = '';
+  document.getElementById('desc-desvio').value = '';
+  document.getElementById('accion-correctiva').value = '';
+  document.getElementById('observaciones-generales').value = '';
+
+  document.getElementById('temp-camara').value = '';
+  document.getElementById('temp-refrigerador').value = '';
+  document.getElementById('temp-congelador').value = '';
+  document.getElementById('temp-enfriamiento').value = '';
+  document.getElementById('temp-mantenimiento').value = '';
+  document.getElementById('temp-servicio').value = '';
+  document.getElementById('temp-ambiente-ze').value = '';
+  document.getElementById('temp-transporte-ze').value = '';
+  document.getElementById('temp-servicio-ze').value = '';
+  document.getElementById('hora-inicio-ze').value = '';
+  document.getElementById('hora-fin-ze').value = '';
+
+  document.getElementById('raciones-producidas').value = '0';
+  document.getElementById('raciones-servidas').value = '0';
+  document.getElementById('raciones-desechadas').value = '0';
+  calcularRaciones();
+
+  materiasPrimas = [];
+  renderTablaMP();
+
+  actualizarHeader();
+}
+
+// Renderizar Historial
+async function renderHistorial() {
+  const historialDiv = document.getElementById('historial-registros');
+  historialDiv.innerHTML = '';
+
+  // Cargar de Supabase
+  const supabaseHistorial = await supabaseClient.fetchAll('registros_trazabilidad');
+  if (supabaseHistorial.length > 0) {
+    showToast('☁️ Historial cargado de Supabase', 'verde');
+  }
+
+  // Combinar con localStorage (si existe y es diferente)
+  let localHistorial = JSON.parse(localStorage.getItem('historial_trazabilidad')) || [];
+  let combinedHistorial = [...localHistorial];
+
+  // Evitar duplicados si ya están en local
+  supabaseHistorial.forEach(s_rec => {
+    if (!localHistorial.some(l_rec => l_rec.nro_registro === s_rec.nro_registro)) {
+      combinedHistorial.push(s_rec);
+    }
+  });
+
+  combinedHistorial.sort((a, b) => new Date(b.fecha) - new Date(a.fecha)); // Ordenar por fecha
+
+  if (combinedHistorial.length === 0) {
+    historialDiv.innerHTML = '<p style="text-align:center;color:#888;padding:20px">No hay registros en el historial.</p>';
+    return;
+  }
+
+  combinedHistorial.forEach(registro => {
+    const desviosHtml = registro.tiene_desvios ? 
+      `<span class="historial-badge nc">⚠️ Desvíos</span>` : 
+      `<span class="historial-badge ok">✅ Sin Desvíos</span>`;
+    
+    const item = `
+      <div class="historial-item">
+        <div class="historial-item-header" onclick="toggleCard(this)">
+          <span style="font-weight:700;color:#1a2233">${registro.nro_registro}</span>
+          <span style="font-size:11px;color:#666;margin-left:8px">${registro.fecha} ${registro.hora}</span>
+          <span style="font-size:11px;color:#666;margin-left:auto">${registro.proceso_nombre}</span>
+          ${desviosHtml}
+          <span class="toggle-icon">▼</span>
+        </div>
+        <div class="historial-item-body hidden">
+          <div class="historial-detail-grid">
+            <div class="historial-detail-item"><span>Preparación</span><span>${registro.nombre_preparacion}</span></div>
+            <div class="historial-detail-item"><span>Servicio</span><span>${registro.servicio}</span></div>
+            <div class="historial-detail-item"><span>Responsable</span><span>${registro.responsable}</span></div>
+            <div class="historial-detail-item"><span>Régimen</span><span>${registro.regimen}</span></div>
+            <div class="historial-detail-item"><span>Observaciones</span><span>${registro.obs_generales || 'N/A'}</span></div>
+            ${registro.tiene_desvios ? `
+              <div class="historial-detail-item"><span>Desvíos</span><span>${JSON.parse(registro.desvios).map(d => d.tipo + ': ' + d.descripcion).join('; ')}</span></div>
+              <div class="historial-detail-item"><span>Acción Correctiva</span><span>${registro.accion_correctiva}</span></div>
+            ` : ''}
+          </div>
+          <div class="btn-row" style="justify-content:flex-end;margin-top:15px">
+            <button class="btn btn-pdf" onclick="generarPDF('${registro.nro_registro}')">📄 Ver PDF</button>
+          </div>
+        </div>
+      </div>
+    `;
+    historialDiv.insertAdjacentHTML('beforeend', item);
+  });
+}
+
+// Generar PDF (simplificado para ejemplo)
+function generarPDF(nroRegistro) {
+  showToast('Generando PDF (funcionalidad completa no implementada en este ejemplo)', 'verde');
+  // Aquí iría la lógica completa de jsPDF para generar el PDF con los datos del registro
+  // Por ahora, solo muestra un toast
+}
+
+// Inicialización
+document.addEventListener('DOMContentLoaded', () => {
+  actualizarHeader();
+  setProceso('zi'); // Iniciar en Zona Interna
+  renderTablaMP();
+  renderHistorial();
+});
+
+// ==============================================================================
+// BOTÓN DE CONFIGURACIÓN FLOTANTE (INYECCIÓN QUIRÚRGICA)
+// ==============================================================================
+const configButton = document.createElement('button');
+configButton.innerHTML = '⚙️';
+configButton.style.cssText = `
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #1A3A5C;
+  color: white;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 1000;
+`;
+configButton.onclick = () => {
+  const currentUrl = localStorage.getItem('supabase_url') || '';
+  const currentKey = localStorage.getItem('supabase_key') || '';
+  const newUrl = prompt('Ingrese la URL de Supabase:', currentUrl);
+  const newKey = prompt('Ingrese la Anon Public Key de Supabase:', currentKey);
+
+  if (newUrl && newKey) {
+    localStorage.setItem('supabase_url', newUrl);
+    localStorage.setItem('supabase_key', newKey);
+    showToast('✅ Configuración Supabase guardada', 'verde');
+  } else {
+    showToast('❌ Configuración Supabase incompleta', 'rojo');
+  }
+};
+document.body.appendChild(configButton);
+
 </script>
 </body>
 </html>
