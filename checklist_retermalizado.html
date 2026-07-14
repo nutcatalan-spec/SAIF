@@ -356,6 +356,7 @@ var supabaseClient = {
       });
       if (response.ok) {
         console.log('✅ Guardado en Supabase: ' + table);
+        toast('☁️ Registro guardado en la nube','#0F6E56');
       } else {
         var err = await response.json();
         console.error('❌ Error Supabase:', err);
@@ -364,6 +365,29 @@ var supabaseClient = {
     } catch(e) {
       console.error('Error de conexión:', e);
       alert('⚠️ El registro se guardó en este equipo pero NO se subió a la nube (sin conexión o error de red). Avisa al encargado del sistema.');
+    }
+  },
+  async select(table, queryString) {
+    var url = this.url();
+    var key = this.key();
+    if (!url || !key) { console.warn('Supabase no configurado'); return []; }
+    try {
+      var response = await fetch(url + '/rest/v1/' + table + (queryString||''), {
+        method: 'GET',
+        headers: {
+          'apikey': key,
+          'Authorization': 'Bearer ' + key
+        }
+      });
+      if (response.ok) {
+        return await response.json();
+      } else {
+        console.error('❌ Error al leer de Supabase:', await response.text());
+        return [];
+      }
+    } catch(e) {
+      console.error('Error de conexión al leer de Supabase:', e);
+      return [];
     }
   }
 };
@@ -568,24 +592,45 @@ function updTs(){
 function sH(){
   try{localStorage.setItem(SK+'_hist',JSON.stringify(hist));}catch(e){}
   try{localStorage.setItem('bpm_hist',JSON.stringify(hist));}catch(e){}
-  // Guardar en Supabase el primer registro (más reciente)
-  if(hist.length>0) {
-    (function(){
-      var e = hist[0];
-      var registroSupabase = {
-        fecha: e.fecha,
-        fiscalizador_nombre: e.fisc,
-        establecimiento: e.estab,
-        validado: e.validado,
-        pct: e.pct,
-        res: e.res,
-        data: e
-      };
-      supabaseClient.insert('registroretermalizado', registroSupabase).catch(function(err){console.error('Error Supabase:', err);});
-    })();
-  }
+}
+function guardarEnNube(e){
+  var registroSupabase = {
+    fecha: e.fecha,
+    fiscalizador_nombre: e.fisc,
+    establecimiento: e.estab,
+    validado: e.validado,
+    pct: e.pct,
+    res: e.res,
+    data: e
+  };
+  supabaseClient.insert('registroretermalizado', registroSupabase).catch(function(err){console.error('Error Supabase:', err);});
 }
 function lH(){ try{var v=localStorage.getItem(SK+'_hist');if(v)hist=JSON.parse(v)||[];}catch(e){} }
+
+var sincronizando = false;
+async function sincronizarDesdeNube(){
+  if (sincronizando) return;
+  sincronizando = true;
+  try {
+    var filas = await supabaseClient.select('registroretermalizado', '?select=data&order=fecha.desc&limit=2000');
+    lH();
+    var existentes = {};
+    hist.forEach(function(e){ if(e && e.ts) existentes[e.ts] = true; });
+    filas.forEach(function(fila){
+      var e = fila.data;
+      if (e && e.ts && !existentes[e.ts]) {
+        hist.push(e);
+        existentes[e.ts] = true;
+      }
+    });
+    hist.sort(function(a,b){ return (b.ts||0) - (a.ts||0); });
+    sH();
+  } catch(e) {
+    console.error('Error sincronizando desde la nube:', e);
+  } finally {
+    sincronizando = false;
+  }
+}
 
 // N° correlativo
 function nextNreg(){
@@ -759,6 +804,7 @@ function guardar(){
   lH();
   hist.unshift(entry);
   sH();
+  guardarEnNube(entry);
   renderHist(null);
   desbloquearValidacion();
   toast('✅ Registro guardado correctamente','#0F6E56');
@@ -786,20 +832,24 @@ function limpiar(){
 var MESES_N=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 var DIAS_N=['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
 
-function abrirHist(){
+async function abrirHist(){
+  document.getElementById('histOverlay').style.display='block';
+  var cntEl=document.getElementById('hCnt');
+  if(cntEl) cntEl.textContent='Sincronizando…';
+  await sincronizarDesdeNube();
   lH();
   var fEl=document.getElementById('hFecha');
   if(fEl) fEl.value='';
-  document.getElementById('histOverlay').style.display='block';
   renderHist(null);
 }
 function cerrarHist(){ document.getElementById('histOverlay').style.display='none'; }
-function buscarHist(){
+async function buscarHist(){
   var v=document.getElementById('hFecha').value;
   if(!v){toast('⚠️ Selecciona una fecha','#854F0B');return;}
+  await sincronizarDesdeNube();
   lH(); renderHist(v);
 }
-function verTodosHist(){ document.getElementById('hFecha').value=''; lH(); renderHist(null); }
+async function verTodosHist(){ document.getElementById('hFecha').value=''; await sincronizarDesdeNube(); lH(); renderHist(null); }
 
 function toggleH(gid){
   var body=document.getElementById(gid), arr=document.getElementById('arr_'+gid);
@@ -1082,7 +1132,9 @@ function cerrarPDF(){
 // ═══════════════════════════════════════════════════════════════
 // PDF MENSUAL
 // ═══════════════════════════════════════════════════════════════
-function verPDFMes(){
+async function verPDFMes(){
+  toast('Sincronizando con la nube…','#1D9E75');
+  await sincronizarDesdeNube();
   lH();
   if(!hist.length){toast('⚠️ No hay registros guardados','#854F0B');return;}
   var yr=new Date().getFullYear(), mm=new Date().getMonth()+1;
@@ -1154,7 +1206,9 @@ function verPDFMes(){
 // ═══════════════════════════════════════════════════════════════
 // PDF ANUAL
 // ═══════════════════════════════════════════════════════════════
-function verPDFAnual(){
+async function verPDFAnual(){
+  toast('Sincronizando con la nube…','#1D9E75');
+  await sincronizarDesdeNube();
   lH();
   if(!hist.length){toast('⚠️ No hay registros guardados','#854F0B');return;}
   var yr=new Date().getFullYear();
