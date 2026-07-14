@@ -337,8 +337,8 @@ body{font-family:Arial,Helvetica,sans-serif;background:#efefef;padding-bottom:30
 // ═══════════════════════════════════════════════════════════════
 // SUPABASE INTEGRATION
 var supabaseClient = {
-  url: function() { return localStorage.getItem('supabase_url') || ''; },
-  key: function() { return localStorage.getItem('supabase_key') || ''; },
+  url: function() { return 'https://pfzbxckmqapkfggkqtbh.supabase.co'; },
+  key: function() { return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmemJ4Y2ttcWFwa2ZnZ2txdGJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzc5MzQsImV4cCI6MjA5Njk1MzkzNH0.kFBxfXhVLyaxgLkwyldq2qXl0KPYM75Bf8vdXBXKXp4'; },
   async insert(table, data) {
     var url = this.url();
     var key = this.key();
@@ -359,8 +359,12 @@ var supabaseClient = {
       } else {
         var err = await response.json();
         console.error('❌ Error Supabase:', err);
+        alert('⚠️ El registro se guardó en este equipo pero NO se subió a la nube. Avisa al encargado del sistema. Detalle: ' + (err.message || JSON.stringify(err)));
       }
-    } catch(e) { console.error('Error de conexión:', e); }
+    } catch(e) {
+      console.error('Error de conexión:', e);
+      alert('⚠️ El registro se guardó en este equipo pero NO se subió a la nube (sin conexión o error de red). Avisa al encargado del sistema.');
+    }
   }
 };
 
@@ -566,7 +570,19 @@ function sH(){
   try{localStorage.setItem('bpm_hist',JSON.stringify(hist));}catch(e){}
   // Guardar en Supabase el primer registro (más reciente)
   if(hist.length>0) {
-    supabaseClient.insert('bpm_registros', hist[0]).catch(function(e){console.error('Error Supabase:', e);});
+    (function(){
+      var e = hist[0];
+      var registroSupabase = {
+        fecha: e.fecha,
+        fiscalizador_nombre: e.fisc,
+        establecimiento: e.estab,
+        validado: e.validado,
+        pct: e.pct,
+        res: e.res,
+        data: e
+      };
+      supabaseClient.insert('registroretermalizado', registroSupabase).catch(function(err){console.error('Error Supabase:', err);});
+    })();
   }
 }
 function lH(){ try{var v=localStorage.getItem(SK+'_hist');if(v)hist=JSON.parse(v)||[];}catch(e){} }
