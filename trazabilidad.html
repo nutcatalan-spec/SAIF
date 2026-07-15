@@ -1050,8 +1050,8 @@ body.proceso-ze .zona-ze { display: block; }
 // 2. Ve a Project Settings > API
 // 3. Copia la URL y la anon key aquí
 // ============================================================
-const SUPABASE_URL = localStorage.getItem('sb_url') || '';
-const SUPABASE_KEY = localStorage.getItem('sb_key') || '';
+const SUPABASE_URL = 'https://pfzbxckmqapkfggkqtbh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmemJ4Y2ttcWFwa2ZnZ2txdGJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzc5MzQsImV4cCI6MjA5Njk1MzkzNH0.kFBxfXhVLyaxgLkwyldq2qXl0KPYM75Bf8vdXBXKXp4';
 
 // Cliente Supabase simplificado (sin SDK — usa fetch directo)
 const sb = {
@@ -1102,6 +1102,34 @@ const sb = {
         }
       });
       return r.ok ? { ok: true } : { error: await r.json() };
+    } catch(e) { return { error: e.message }; }
+  },
+
+  async deleteWhere(table, column, value) {
+    if(!sb.configured()) return { error: 'No configurado' };
+    try {
+      const r = await fetch(`${sb.url}/rest/v1/${table}?${column}=eq.${value}`, {
+        method: 'DELETE',
+        headers: {
+          'apikey': sb.key,
+          'Authorization': `Bearer ${sb.key}`
+        }
+      });
+      return r.ok ? { ok: true } : { error: await r.json() };
+    } catch(e) { return { error: e.message }; }
+  },
+
+  async selectWhere(table, column, value) {
+    if(!sb.configured()) return { error: 'No configurado' };
+    try {
+      const r = await fetch(`${sb.url}/rest/v1/${table}?${column}=eq.${value}&select=id`, {
+        headers: {
+          'apikey': sb.key,
+          'Authorization': `Bearer ${sb.key}`
+        }
+      });
+      const json = await r.json();
+      return r.ok ? { data: json } : { error: json };
     } catch(e) { return { error: e.message }; }
   }
 };
@@ -2175,6 +2203,8 @@ async function ejecutarGuardado(accionCorrectiva) {
     mostrarToast('⏳ Guardando en la nube...', 'verde');
     const resultado = await guardarEnSupabase(reg);
     if(resultado.ok) {
+      reg._cloudId = resultado.id;
+      localStorage.setItem(KEY, JSON.stringify(todos));
       mostrarToast('✅ Guardado en la nube correctamente.', 'verde');
     } else {
       mostrarToast('⚠️ Guardado local OK — Error en nube: ' + resultado.error, 'rojo');
@@ -2183,6 +2213,40 @@ async function ejecutarGuardado(accionCorrectiva) {
     mostrarToast('✅ Registro guardado localmente.', 'verde');
   }
   cargarHistorial();
+}
+
+// =============================================
+// SINCRONIZACIÓN CON LA NUBE (para ver registros desde cualquier PC)
+// =============================================
+let sincronizandoTraz = false;
+async function sincronizarHistorialDesdeNube() {
+  if(sincronizandoTraz || !sb.configured()) return;
+  sincronizandoTraz = true;
+  try {
+    const { data, error } = await sb.select('registros_trazabilidad', 'select=id,data_completa');
+    if(error || !data) return;
+    const todos = JSON.parse(localStorage.getItem(KEY) || '[]');
+    const idsExistentes = {};
+    todos.forEach(r => { if(r._cloudId) idsExistentes[r._cloudId] = true; });
+    data.forEach(fila => {
+      if(fila.data_completa && !idsExistentes[fila.id]) {
+        const reg = fila.data_completa;
+        reg._cloudId = fila.id;
+        todos.push(reg);
+        idsExistentes[fila.id] = true;
+      }
+    });
+    todos.sort((a,b) => {
+      const da = (a.fecha||'').split('/').reverse().join('') + (a.hora||'');
+      const db = (b.fecha||'').split('/').reverse().join('') + (b.hora||'');
+      return db.localeCompare(da);
+    });
+    localStorage.setItem(KEY, JSON.stringify(todos));
+  } catch(e) {
+    console.error('Error sincronizando historial desde la nube:', e);
+  } finally {
+    sincronizandoTraz = false;
+  }
 }
 
 async function guardarEnSupabase(reg) {
@@ -2201,7 +2265,8 @@ async function guardarEnSupabase(reg) {
       tiene_desvios: reg.tieneDesvios,
       desvios: reg.desvios,
       accion_correctiva: reg.accionCorrectiva,
-      obs_generales: reg.obsGenerales
+      obs_generales: reg.obsGenerales,
+      data_completa: reg
     });
     if(regErr) return { error: JSON.stringify(regErr) };
 
@@ -2423,7 +2488,7 @@ async function guardarEnSupabase(reg) {
     }
 
     await Promise.all(inserts);
-    return { ok: true };
+    return { ok: true, id: regId };
   } catch(e) {
     return { error: e.message };
   }
@@ -2496,9 +2561,13 @@ function v(id) {
 // =============================================
 // HISTORIAL
 // =============================================
-function cargarHistorial() {
-  const todos = JSON.parse(localStorage.getItem(KEY) || '[]');
+async function cargarHistorial() {
   const cont = document.getElementById('historial-container');
+  if(sb.configured()) {
+    cont.innerHTML = '<p style="color:#888;font-size:13px;text-align:center;padding:20px 0;">Sincronizando con la nube…</p>';
+    await sincronizarHistorialDesdeNube();
+  }
+  const todos = JSON.parse(localStorage.getItem(KEY) || '[]');
   if(!todos.length) {
     cont.innerHTML = '<p style="color:#888;font-size:13px;text-align:center;padding:20px 0;">No hay registros guardados aún.</p>';
     return;
@@ -2534,13 +2603,51 @@ function toggleHistorial(i) {
   if(body) body.classList.toggle('visible');
 }
 
-function eliminarRegistro(i) {
-  if(!confirm('¿Eliminar este registro?')) return;
+async function eliminarDeNube(cloudId) {
+  try {
+    // Borrar hijos de sanitización (tabla con clave propia)
+    const { data: sanRows } = await sb.selectWhere('sanitizacion', 'registro_id', cloudId);
+    if(sanRows?.length) {
+      await Promise.all(sanRows.map(s => sb.deleteWhere('sanitizacion_productos', 'sanitizacion_id', s.id)));
+    }
+    // Borrar hijos de despacho (tabla con clave propia)
+    const { data: despRows } = await sb.selectWhere('despacho', 'registro_id', cloudId);
+    if(despRows?.length) {
+      await Promise.all(despRows.map(d => sb.deleteWhere('despacho_componentes', 'despacho_id', d.id)));
+    }
+    // Borrar el resto de tablas hijas directas por registro_id
+    const tablasHijas = [
+      'recepcion_materias_primas','sanitizacion','produccion_componentes',
+      'abatimiento_componentes','envasado_componentes','despacho',
+      'recepcion_retermalizado_componentes','retermalizado_componentes',
+      'banos_maria','casino_ze_temperaturas'
+    ];
+    await Promise.all(tablasHijas.map(t => sb.deleteWhere(t, 'registro_id', cloudId)));
+    // Finalmente, borrar el registro principal
+    return await sb.deleteWhere('registros_trazabilidad', 'id', cloudId);
+  } catch(e) {
+    return { error: e.message };
+  }
+}
+
+async function eliminarRegistro(i) {
+  if(!confirm('¿Eliminar este registro? Si estaba sincronizado, también se eliminará de la nube.')) return;
   const todos = JSON.parse(localStorage.getItem(KEY) || '[]');
+  const reg = todos[i];
+
+  if(reg?._cloudId && sb.configured()) {
+    mostrarToast('⏳ Eliminando de la nube...', 'verde');
+    const resultado = await eliminarDeNube(reg._cloudId);
+    if(resultado?.error) {
+      mostrarToast('⚠️ No se pudo eliminar de la nube. Intenta de nuevo.', 'rojo');
+      return;
+    }
+  }
+
   todos.splice(i, 1);
   localStorage.setItem(KEY, JSON.stringify(todos));
-  cargarHistorial();
   mostrarToast('Registro eliminado.', 'rojo');
+  cargarHistorial();
 }
 
 // =============================================
