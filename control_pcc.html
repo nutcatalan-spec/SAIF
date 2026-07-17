@@ -828,13 +828,101 @@ function updTabBadges(){
 // HISTORIAL
 var hist = [];
 try { var hd=localStorage.getItem("haccp_h4"); if(hd) hist=JSON.parse(hd); } catch(x){}
+
+// ── INTEGRACIÓN SUPABASE (nube) ───────────────────────────────────
+var supabaseClient = {
+  url: function() { return 'https://pfzbxckmqapkfggkqtbh.supabase.co'; },
+  key: function() { return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmemJ4Y2ttcWFwa2ZnZ2txdGJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzc5MzQsImV4cCI6MjA5Njk1MzkzNH0.kFBxfXhVLyaxgLkwyldq2qXl0KPYM75Bf8vdXBXKXp4'; },
+  async insert(table, data) {
+    var url = this.url(), key = this.key();
+    try {
+      var response = await fetch(url + '/rest/v1/' + table, {
+        method: 'POST',
+        headers: {
+          'apikey': key, 'Authorization': 'Bearer ' + key,
+          'Content-Type': 'application/json', 'Prefer': 'return=representation'
+        },
+        body: JSON.stringify(data)
+      });
+      if (response.ok) {
+        var rows = await response.json();
+        console.log('✅ Guardado en Supabase: ' + table);
+        return {ok:true, id: rows && rows[0] ? rows[0].id : null};
+      }
+      var err = await response.json();
+      console.error('❌ Error Supabase:', err);
+      return {ok:false, motivo: err.message || JSON.stringify(err)};
+    } catch(e) {
+      console.error('Error de conexión:', e);
+      return {ok:false, motivo:'sin_conexion'};
+    }
+  },
+  async select(table, queryString) {
+    var url = this.url(), key = this.key();
+    try {
+      var response = await fetch(url + '/rest/v1/' + table + (queryString||''), {
+        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+      });
+      if (response.ok) return await response.json();
+      console.error('❌ Error al leer de Supabase:', await response.text());
+      return [];
+    } catch(e) {
+      console.error('Error de conexión al leer de Supabase:', e);
+      return [];
+    }
+  },
+  async delete(table, id) {
+    var url = this.url(), key = this.key();
+    try {
+      var response = await fetch(url + '/rest/v1/' + table + '?id=eq.' + id, {
+        method: 'DELETE',
+        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key }
+      });
+      return response.ok ? {ok:true} : {ok:false};
+    } catch(e) { return {ok:false, motivo:'sin_conexion'}; }
+  }
+};
+
+function guardarEnNube(e) {
+  var registroSupabase = {
+    fecha: e.fecha,
+    fiscalizador_nombre: e.fisc,
+    establecimiento: e.estab,
+    validado: e.validado,
+    pct: e.pct,
+    res: e.risk,
+    data: e
+  };
+  return supabaseClient.insert('registrohaccp', registroSupabase);
+}
+
+var sincronizandoHaccp = false;
+async function sincronizarDesdeNube() {
+  if (sincronizandoHaccp) return;
+  sincronizandoHaccp = true;
+  try {
+    var filas = await supabaseClient.select('registrohaccp', '?select=id,data&order=fecha.desc&limit=2000');
+    var existentes = {};
+    hist.forEach(function(e){ if(e && e.ts) existentes[e.ts] = true; });
+    filas.forEach(function(fila){
+      var e = fila.data;
+      if (e && e.ts && !existentes[e.ts]) {
+        e._cloudId = fila.id;
+        hist.push(e);
+        existentes[e.ts] = true;
+      }
+    });
+    hist.sort(function(a,b){ return (b.ts||0) - (a.ts||0); });
+    sH();
+  } catch(e) {
+    console.error('Error sincronizando desde la nube:', e);
+  } finally {
+    sincronizandoHaccp = false;
+  }
+}
+
 function sH() {
   try { localStorage.setItem("haccp_h4",JSON.stringify(hist)); } catch(x){}
-  try { localStorage.setItem("haccp_hist",JSON.stringify(hist)); } catch(x){}
-  // Guardar en Supabase el primer registro (más reciente)
-  if(hist.length>0) {
-    supabaseClient.insert('haccp_registros', hist[0]).catch(function(e){console.error('Error Supabase:', e);});
-  }
   // Reconstruir anualH siempre desde hist para mantener sincronización
   reconstruirAnualH();
 }
@@ -910,60 +998,7 @@ document.getElementById("bGuardar").onclick = function() {
   // Sin límite de registros — localStorage aguanta >1000 registros
   sH(); rH(null);
   autoNreg();
-  alert("Registro guardado correctamente en el historial.");
 };
-
-// ═══════════════════════════════════════════════════════════════════════════
-// SUPABASE INTEGRATION
-// ═══════════════════════════════════════════════════════════════════════════
-var supabaseClient = {
-  url: function() { return localStorage.getItem('supabase_url') || ''; },
-  key: function() { return localStorage.getItem('supabase_key') || ''; },
-  async insert(table, data) {
-    var url = this.url();
-    var key = this.key();
-    if (!url || !key) { console.warn('Supabase no configurado'); return; }
-    try {
-      var response = await fetch(url + '/rest/v1/' + table, {
-        method: 'POST',
-        headers: {
-          'apikey': key,
-          'Authorization': 'Bearer ' + key,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify(data)
-      });
-      if (response.ok) {
-        console.log('✅ Guardado en Supabase: ' + table);
-      } else {
-        var err = await response.json();
-        console.error('❌ Error Supabase:', err);
-      }
-    } catch(e) { console.error('Error de conexión:', e); }
-  }
-};
-
-// Botón de configuración flotante
-(function(){
-  var btn = document.createElement('button');
-  btn.textContent = '⚙️';
-  btn.style.cssText = 'position:fixed;bottom:10px;right:10px;width:40px;height:40px;border-radius:50%;border:none;background:rgba(255,255,255,.9);cursor:pointer;font-size:20px;box-shadow:0 2px 8px rgba(0,0,0,.2);z-index:999';
-  btn.onclick = function() {
-    var modal = document.getElementById('supabaseConfigModal');
-    if (!modal) {
-      modal = document.createElement('div');
-      modal.id = 'supabaseConfigModal';
-      modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:2000';
-      modal.innerHTML = '<div style="background:white;width:90%;max-width:400px;border-radius:12px;padding:20px;box-shadow:0 10px 25px rgba(0,0,0,.3)"><h3 style="margin-bottom:15px;font-size:16px;color:#1A3A5C">Configuración Supabase</h3><label style="display:block;font-size:11px;color:#888;margin-bottom:4px;text-transform:uppercase;font-weight:bold">URL del Proyecto</label><input type="text" id="supaUrl" placeholder="https://xxxx.supabase.co" style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:15px;font-size:13px"><label style="display:block;font-size:11px;color:#888;margin-bottom:4px;text-transform:uppercase;font-weight:bold">Anon Public Key</label><input type="text" id="supaKey" placeholder="eyJhbGciOiJIUzI1NiI..." style="width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;margin-bottom:15px;font-size:13px"><div style="display:flex;gap:10px"><button onclick="(function(){localStorage.setItem(\'supabase_url\',document.getElementById(\'supaUrl\').value);localStorage.setItem(\'supabase_key\',document.getElementById(\'supaKey\').value);document.getElementById(\'supabaseConfigModal\').style.display=\'none\';alert(\'✅ Configuración guardada\');})()" style="flex:1;padding:12px;background:#1D9E75;color:white;border:none;border-radius:8px;font-weight:bold;cursor:pointer">Guardar</button><button onclick="document.getElementById(\'supabaseConfigModal\').style.display=\'none\'" style="flex:1;padding:12px;background:#eee;color:#555;border:none;border-radius:8px;font-weight:bold;cursor:pointer">Cancelar</button></div></div>';
-      document.body.appendChild(modal);
-    }
-    modal.style.display = 'flex';
-    document.getElementById('supaUrl').value = localStorage.getItem('supabase_url') || '';
-    document.getElementById('supaKey').value = localStorage.getItem('supabase_key') || '';
-  };
-  document.body.appendChild(btn);
-})();
 
 document.getElementById("bLimpiar").onclick = function() {
   if (!confirm("Limpiar todos los valores del formulario?")) return;
@@ -2292,7 +2327,7 @@ function cerrarAnual(){
 
 // --- PATCH bGuardar: guardar nvis + validacion + anual --------------------
 var _origGuardar=document.getElementById("bGuardar").onclick;
-document.getElementById("bGuardar").onclick=function(){
+document.getElementById("bGuardar").onclick=async function(){
   _origGuardar.call(this);
   if(hist.length>0){
     function gv(id){var e=document.getElementById(id);return e?e.value:"";}
@@ -2350,6 +2385,16 @@ document.getElementById("bGuardar").onclick=function(){
     try{localStorage.setItem(key,last);}catch(e){}
     resetVal();
     document.getElementById("valCard").style.display="none";
+
+    haccpToast('⏳ Guardando en la nube...', '#1A3A5C');
+    var resultado = await guardarEnNube(hist[0]);
+    if (resultado.ok) {
+      hist[0]._cloudId = resultado.id;
+      sH();
+      haccpToast('☁️ Registro guardado en la nube', '#0F6E56');
+    } else {
+      alert('⚠️ El registro se guardó en este equipo pero NO se subió a la nube. Avisa al encargado del sistema.' + (resultado.motivo ? ' Detalle: ' + resultado.motivo : ''));
+    }
   }
 };
 
@@ -3563,7 +3608,9 @@ function hmAccTable(accs,acsTab){
 }
 
 // --- ABRIR MODAL ---------------------------------------------------------
-function abrirModalHACCP(tipo){
+async function abrirModalHACCP(tipo){
+  haccpToast('Sincronizando con la nube…','#1D9E75');
+  await sincronizarDesdeNube();
   if(tipo==="dia"){
     // Si hay datos en el formulario actual (ST evaluados), usar formulario
     // Si no hay datos en formulario pero sí en historial, usar historial[0]
@@ -3971,7 +4018,17 @@ function buscarHACCP(){
   rH(val);
 }
 function todosHACCP(){document.getElementById("haccpFechaBuscar").value="";rH(null);}
-function dH(i){if(!confirm("¿Eliminar este registro?"))return;hist.splice(i,1);sH();rH(null);}
+async function dH(i){
+  if(!confirm("¿Eliminar este registro? Si estaba sincronizado, también se eliminará de la nube."))return;
+  var reg=hist[i];
+  if(reg && reg._cloudId){
+    haccpToast('⏳ Eliminando de la nube...', '#1A3A5C');
+    var r=await supabaseClient.delete('registrohaccp', reg._cloudId);
+    if(!r.ok){ alert('⚠️ No se pudo eliminar de la nube. Intenta de nuevo.'); return; }
+  }
+  hist.splice(i,1);sH();rH(null);
+  haccpToast('Registro eliminado.', '#A32D2D');
+}
 function verInformeHACCP(idx){
   try {
     if(!hist[idx]){ alert("Registro no encontrado."); return; }
@@ -4040,25 +4097,30 @@ window.addEventListener('DOMContentLoaded', function(){
 // ── HISTORIAL HACCP — Overlay estilo BPM ─────────────────────────────────
 var MESES_HH = ["Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"];
 
-function abrirHistHACCP(){
+async function abrirHistHACCP(){
+  document.getElementById("histOverlayHACCP").style.display="block";
+  var cntEl=document.getElementById("hCntOverlay");
+  if(cntEl) cntEl.textContent="Sincronizando…";
   // Recargar datos desde localStorage
   try{ var _hd=localStorage.getItem("haccp_h4"); if(_hd){ var _hp=JSON.parse(_hd); if(_hp&&_hp.length) hist=_hp; } }catch(e){}
+  await sincronizarDesdeNube();
   // Limpiar filtro de fecha para mostrar todos los registros
   var fEl=document.getElementById("haccpFechaBuscar");
   if(fEl) fEl.value="";
-  document.getElementById("histOverlayHACCP").style.display="block";
   renderHistHACCP(null);
 }
 function cerrarHistHACCP(){
   document.getElementById("histOverlayHACCP").style.display="none";
 }
-function buscarHACCP(){
+async function buscarHACCP(){
   var val=document.getElementById("haccpFechaBuscar").value;
   if(!val){alert("Selecciona una fecha.");return;}
+  await sincronizarDesdeNube();
   renderHistHACCP(val);
 }
-function todosHACCP(){
+async function todosHACCP(){
   document.getElementById("haccpFechaBuscar").value="";
+  await sincronizarDesdeNube();
   renderHistHACCP(null);
 }
 function eliminarPorFechaHACCP(){
@@ -4218,12 +4280,18 @@ function renderHistHACCP(filtro){
   renderAnualHACCP();
 }
 
-function eliminarRegistroHACCP(ts){
+async function eliminarRegistroHACCP(ts){
   ts=parseInt(ts);
-  if(confirm("¿Eliminar este registro?")){
-    hist=hist.filter(function(r){return r.ts!==ts;});
-    sH();renderHistHACCP(null);
+  if(!confirm("¿Eliminar este registro? Si estaba sincronizado, también se eliminará de la nube.")) return;
+  var reg=hist.find(function(r){return r.ts===ts;});
+  if(reg && reg._cloudId){
+    haccpToast('⏳ Eliminando de la nube...', '#1A3A5C');
+    var r=await supabaseClient.delete('registrohaccp', reg._cloudId);
+    if(!r.ok){ alert('⚠️ No se pudo eliminar de la nube. Intenta de nuevo.'); return; }
   }
+  hist=hist.filter(function(r){return r.ts!==ts;});
+  sH();renderHistHACCP(null);
+  haccpToast('Registro eliminado.', '#A32D2D');
 }
 function toggleGrpH(gid){
   var body=document.getElementById(gid);
