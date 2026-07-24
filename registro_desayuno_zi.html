@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Desayuno ZI - Cobertura de Leche - ITE</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#efefef;padding-bottom:20px;font-size:14px}
+.top{background:#1D9E75;padding:11px 13px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50}
+.top h1{color:#fff;font-size:13px;font-weight:bold;margin:0}
+.top p{color:rgba(255,255,255,.75);font-size:9px;margin:2px 0 0}
+.top-r{display:flex;gap:5px}
+.tb{border:none;padding:7px 10px;border-radius:6px;font-size:11px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+.tbs{background:#fff;color:#0F6E56}
+.tbo{background:transparent;border:2px solid #fff;color:#fff}
+.tabs{display:flex;background:#fff;border-bottom:2px solid #eee;position:sticky;top:52px;z-index:40}
+.tab{flex:1;padding:10px 4px;text-align:center;font-size:11px;font-weight:bold;color:#aaa;cursor:pointer;border-bottom:3px solid transparent;margin-bottom:-2px}
+.tab.on{color:#1D9E75;border-bottom-color:#1D9E75}
+.pan{display:none}.pan.on{display:block}
+.card{background:#fff;margin:10px;border-radius:8px;border:1px solid #ddd;overflow:hidden}
+.ch{padding:9px 12px;font-size:10px;font-weight:bold;letter-spacing:.07em;text-transform:uppercase;color:#fff}
+.g2{display:grid;grid-template-columns:1fr 1fr}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr}
+.fi{padding:8px 11px;border-bottom:1px solid #f2f2f2}
+.fi:nth-child(odd){border-right:1px solid #f2f2f2}
+.fi label{display:block;font-size:9px;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:2px}
+.fi input,.fi select{width:100%;border:none;font-size:13px;color:#1a56a0;background:transparent;outline:none;font-family:Arial,sans-serif}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr)}
+.kpi{padding:9px 4px;text-align:center;border-right:1px solid #f2f2f2;border-bottom:1px solid #f2f2f2}
+.kpi:nth-child(4n){border-right:none}
+.kpi-l{font-size:8px;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:3px}
+.kpi-v{font-size:20px;font-weight:bold;color:#1a56a0}
+.kpi-v.g{color:#0F6E56}.kpi-v.am{color:#854F0B}.kpi-v.r{color:#A32D2D}.kpi-v.b{color:#1A3A5C}
+.risk-bar{padding:8px 12px;border-top:1px solid #f2f2f2}
+.risk-pill{display:inline-block;font-size:13px;font-weight:bold;padding:5px 15px;border-radius:6px;background:#f0f0f0;color:#888}
+.risk-pill.bajo{background:#e1f5ee;color:#0F6E56}
+.risk-pill.medio{background:#fff3cd;color:#854F0B}
+.risk-pill.alto{background:#fcebeb;color:#A32D2D}
+.mtbl-wrap{overflow-x:auto;margin:10px;border-radius:8px;border:1px solid #ddd;background:#fff}
+.mtbl{width:100%;border-collapse:collapse;font-size:11px;min-width:760px}
+.mtbl th{background:#1A3A5C;color:#fff;padding:6px 5px;font-size:9px;text-transform:uppercase;text-align:center;position:sticky;top:0}
+.mtbl td{padding:4px 5px;border-bottom:1px solid #f2f2f2;text-align:center;vertical-align:middle}
+.mtbl tr:nth-child(even) td{background:#f9fbff}
+.mtbl tr.falta td{background:#fff3f3}
+.mtbl input{width:60px;border:1.5px solid #dde8f5;border-radius:5px;padding:5px 3px;font-size:12px;font-weight:bold;color:#1a56a0;text-align:center;background:#eef4ff;outline:none;font-family:Arial,sans-serif}
+.mtbl .ro{color:#555;font-weight:600}
+.mtbl .pill{font-size:9px;font-weight:bold;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.mtbl .pill.ok{background:#e1f5ee;color:#0F6E56}
+.mtbl .pill.al{background:#fff3cd;color:#854F0B}
+.mtbl .pill.no{background:#fcebeb;color:#A32D2D}
+.mtbl tfoot td{background:#eef2f8;font-weight:bold;color:#1A3A5C;border-top:2px solid #1A3A5C}
+.actions-row{padding:12px;display:flex;gap:8px;flex-wrap:wrap}
+.btn-eval{background:#1A3A5C;color:#fff;border:none;border-radius:8px;padding:12px 18px;font-size:14px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+.btn-eval:active{background:#0d2240}
+.btn-g{background:#1D9E75;color:#fff;border:none;border-radius:6px;padding:9px 13px;font-size:12px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+.btn-r2{background:#fcebeb;color:#A32D2D;border:none;border-radius:6px;padding:9px 13px;font-size:12px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+.htool{padding:10px 12px;display:flex;gap:8px;align-items:center;border-bottom:1px solid #f2f2f2;flex-wrap:wrap}
+.hcnt{font-size:11px;color:#aaa;margin-left:auto}
+.hlist{max-height:520px;overflow-y:auto}
+.hrow{padding:11px 12px;border-bottom:1px solid #f2f2f2}
+.hrow:last-child{border-bottom:none}
+.hrow:hover{background:#fafbff}
+.hdate{font-size:13px;font-weight:bold;color:#1A3A5C;margin-bottom:5px}
+.hchips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:4px}
+.chip{font-size:11px;font-weight:bold;padding:3px 8px;border-radius:20px}
+.chip.c{background:#e1f5ee;color:#0F6E56}
+.chip.a{background:#fff3cd;color:#854F0B}
+.chip.n{background:#fcebeb;color:#A32D2D}
+.chip.k{background:#1A3A5C;color:#fff}
+.hdel{float:right;background:none;border:1px solid #ddd;border-radius:4px;padding:3px 9px;font-size:11px;color:#aaa;cursor:pointer;font-family:Arial,sans-serif}
+.hview{background:none;border:1px solid #1D9E75;border-radius:4px;padding:3px 9px;font-size:11px;color:#1D9E75;cursor:pointer;font-family:Arial,sans-serif;margin-right:6px}
+.hempty{padding:30px 20px;text-align:center;color:#aaa;font-size:14px}
+.ai{padding:11px 12px;border-bottom:1px solid #f2f2f2}
+.ai:last-child{border-bottom:none}
+.ai:hover{background:#fafafa}
+.ai-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:9px}
+.ai-n{font-size:12px;font-weight:bold;color:#A32D2D}
+.fl{font-size:9px;color:#aaa;font-weight:bold;text-transform:uppercase;display:block;margin-bottom:3px}
+.fta{width:100%;border:1px solid #ddd;border-radius:6px;padding:7px 9px;font-size:13px;font-family:Arial,sans-serif;resize:none;outline:none;min-height:40px}
+.decl{padding:10px 12px;background:#f5f5f5;font-size:11px;color:#aaa;line-height:1.5}
+#haccpModal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:300;overflow-y:auto}
+#haccpModal.open{display:block}
+#haccpWrap{background:white;margin:14px auto;max-width:210mm;border-radius:8px;overflow:hidden}
+.hm-bar{background:#1A3A5C;color:white;padding:10px 14px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}
+.hm-bar span{font-size:13px;font-weight:bold}
+.hm-btns{display:flex;gap:8px}
+.hm-btns button{padding:6px 14px;border:none;border-radius:6px;font-size:11px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+.hm-btn-print{background:#1D9E75;color:white}
+.hm-btn-close{background:white;color:#1A3A5C}
+.hm-page{font-family:Arial,sans-serif;font-size:8pt;color:#222;width:100%}
+.hm-hdr{background:linear-gradient(135deg,#1A3A5C,#0F6E56);color:white;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.hm-hdr h1{font-size:11pt;font-weight:bold;margin:0 0 2px}
+.hm-hdr p{font-size:7.5pt;opacity:.85;margin:0}
+.hm-badge{background:rgba(255,255,255,.2);color:white;font-size:9pt;font-weight:bold;padding:5px 12px;border-radius:20px;white-space:nowrap}
+.hm-meta{display:grid;border:1px solid #ddd;border-top:none}
+.hm-mi{padding:5px 8px;border-right:1px solid #ddd;border-bottom:1px solid #ddd}
+.hm-mi:last-child{border-right:none}
+.hm-ml{font-size:6.5pt;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:1px}
+.hm-mv{font-size:8.5pt;font-weight:bold;color:#1A3A5C}
+.hm-kpis{display:grid;border:1px solid #ddd;border-top:none}
+.hm-kpi{padding:6px 4px;border-right:1px solid #ddd;text-align:center}
+.hm-kpi:last-child{border-right:none}
+.hm-kpi-l{font-size:6.5pt;color:#aaa;text-transform:uppercase;font-weight:bold}
+.hm-kpi-v{font-size:16pt;font-weight:bold;margin-top:2px}
+.hm-kpi-v.b{color:#1A3A5C}.hm-kpi-v.g{color:#0F6E56}.hm-kpi-v.am{color:#854F0B}.hm-kpi-v.r{color:#A32D2D}
+.hm-sec{border:1px solid #ddd;border-top:none;border-bottom:none;padding:5px 12px;background:#f5f7fa;font-size:7pt;font-weight:bold;color:#1A3A5C;text-transform:uppercase;letter-spacing:.06em}
+.hm-tabla{width:100%;border-collapse:collapse;border:1px solid #ddd;border-top:none;font-size:7pt}
+.hm-tabla th{background:#1A3A5C;color:white;padding:4px 6px;font-size:6.5pt;text-align:left}
+.hm-tabla th.c{text-align:center}
+.hm-tabla td{padding:3px 6px;border-bottom:1px solid #f0f0f0;vertical-align:middle}
+.hm-tabla td.c{text-align:center}
+.hm-tabla tr:nth-child(even){background:#f9f9f9}
+.hm-pill{font-size:6.5pt;font-weight:bold;padding:1px 6px;border-radius:10px;white-space:nowrap}
+.hm-pill.conf{background:#e1f5ee;color:#0F6E56}
+.hm-pill.alert{background:#fff3cd;color:#854F0B}
+.hm-pill.noconf{background:#fcebeb;color:#A32D2D}
+.hm-acc{border:1px solid #ddd;border-top:none;padding:6px 12px}
+.hm-acc-l{font-size:6.5pt;color:#aaa;text-transform:uppercase;font-weight:bold;margin-bottom:4px}
+.hm-acc-t{width:100%;border-collapse:collapse;font-size:7pt;margin-top:3px}
+.hm-acc-t th{background:#f0f4ff;padding:3px 5px;border:1px solid #e0e4ec;font-size:6.5pt;color:#1A3A5C}
+.hm-acc-t td{padding:3px 5px;border:1px solid #eee}
+.hm-acc-t tr:nth-child(even){background:#fafafa}
+.hm-firma{border:1px solid #ddd;border-top:none;padding:8px 14px}
+.hm-firma-l{font-size:7pt;font-weight:bold;color:#1A3A5C;text-transform:uppercase;letter-spacing:.04em}
+.hm-firma-v{font-size:9pt;font-weight:bold;color:#111;margin-top:2px}
+.hm-firma-line{border-top:1px solid #ccc;margin-top:14px;padding-top:2px;font-size:6pt;color:#aaa;text-align:center}
+.hm-footer{background:#1A3A5C;color:rgba(255,255,255,.7);font-size:6.5pt;padding:5px 12px;text-align:center}
+.hcal-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:9px 12px;border-bottom:2px solid #f0f2f6;background:#f8faff}
+.hcal-cnt{font-size:11px;font-weight:bold;color:#1A3A5C;white-space:nowrap}
+.hcal-lbl{font-size:11px;color:#888;white-space:nowrap}
+.hcal-inp{border:1.5px solid #dde8f5;border-radius:8px;padding:6px 10px;font-size:12px;color:#1A3A5C;font-family:Arial,sans-serif;background:white;outline:none;cursor:pointer}
+.hcal-btn{background:#1D9E75;color:white;border:none;border-radius:8px;padding:6px 16px;font-size:12px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+.hcal-todos{background:white;color:#1D9E75;border:1.5px solid #1D9E75;border-radius:8px;padding:6px 14px;font-size:12px;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif}
+.haccp-toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:12px 24px;border-radius:10px;font-size:13px;font-weight:bold;color:white;z-index:9999;font-family:Arial,sans-serif;box-shadow:0 4px 20px rgba(0,0,0,.25)}
+.anio-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:8px}
+@media print{
+  @page{size:A4;margin:8mm}
+  body>*:not(#haccpModal){display:none !important}
+  #haccpModal{display:block !important;position:static !important;background:none !important;overflow:visible !important}
+  #haccpWrap{margin:0 !important;border-radius:0 !important;max-width:100% !important}
+  .hm-bar{display:none !important}
+  *{-webkit-print-color-adjust:exact !important;print-color-adjust:exact !important}
+}
+.calh{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.calh b{font-size:13px;color:#1A3A5C}
+.calh button{background:#f0f2f6;border:none;border-radius:6px;padding:5px 11px;font-size:13px;font-weight:bold;color:#1A3A5C;cursor:pointer}
+.calgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
+.caldow{font-size:9px;text-align:center;color:#aaa;font-weight:bold;text-transform:uppercase;padding:3px 0}
+.calday{font-size:11px;text-align:center;padding:7px 2px;border-radius:6px;color:#bbb;cursor:default}
+.calday.vacio{visibility:hidden}
+.calday.conf{background:#e1f5ee;color:#0F6E56;font-weight:bold;cursor:pointer}
+.calday.noconf{background:#fcebeb;color:#A32D2D;font-weight:bold;cursor:pointer}
+.calday.conf:hover,.calday.noconf:hover{outline:2px solid #1A3A5C}
+.calleyenda{display:flex;gap:14px;margin-top:8px;font-size:10px;color:#888}
+.calleyenda span{display:inline-flex;align-items:center;gap:4px}
+.calleyenda i{width:10px;height:10px;border-radius:3px;display:inline-block}
+.graf-wrap{display:flex;align-items:flex-end;gap:6px;min-height:140px;padding:6px 4px 0}
+.graf-bar-col{display:flex;flex-direction:column;align-items:center;width:20px}
+.graf-bar{width:16px;border-radius:3px 3px 0 0}
+.graf-bar.conf{background:#0F6E56}
+.graf-bar.noconf{background:#A32D2D}
+.graf-lbl{font-size:8px;color:#aaa;margin-top:4px;white-space:nowrap;transform:rotate(-40deg);transform-origin:top left;width:10px}
+.graf-pct{font-size:8px;color:#555;font-weight:bold;margin-bottom:2px}
+</style>
+</head>
+<body>
+
+<div class="top" id="topbar">
+  <div><h1>Registro Desayuno ZI — Cobertura de Leche</h1><p>Inspeccion Tecnica de Explotacion (ITE) | Zona Interna | Decreto 977 RSA</p></div>
+  <div class="top-r" style="display:flex;align-items:center;gap:8px">
+    <button class="tb tbo" onclick="abrirModalDesayuno('dia')">📄 Diario</button>
+    <button class="tb tbo" onclick="abrirModalDesayuno('mes')">📅 Mensual</button>
+    <button class="tb tbo" onclick="abrirModalDesayuno('anual')">📊 Anual</button>
+  </div>
+</div>
+
+<div id="ac">
+<div class="tabs">
+  <div class="tab on" id="t0" onclick="sT(0)">Registro</div>
+  <div class="tab" id="t1" onclick="abrirHistDesayuno()">Historial</div>
+  <div class="tab" id="t2" onclick="sT(2)">Acc. Correctivas</div>
+</div>
+
+<!-- TAB 0: REGISTRO -->
+<div class="pan on" id="p0">
+
+<div class="card">
+  <div class="ch" style="background:#0F6E56">Identificacion del Registro</div>
+  <div class="g2">
+    <div class="fi"><label>Fecha</label><input type="date" id="fFecha" oninput="sincronizarFirma()"></div>
+    <div class="fi"><label>Establecimiento</label><input type="text" id="fEstab" value="E.P. Santiago 1"></div>
+    <div class="fi"><label>Fiscalizador (ITE)</label><input type="text" id="fFisc" placeholder="Nombre completo" oninput="sincronizarFirma()"></div>
+    <div class="fi"><label>Turno</label>
+      <select id="fTurno">
+        <option value="Desayuno">Desayuno</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="ch" style="background:#1A3A5C">Resumen del Dia</div>
+  <div class="kpis">
+    <div class="kpi"><div class="kpi-l">Internos con Regimen Comun</div><div class="kpi-v b" id="kInternos">0</div></div>
+    <div class="kpi"><div class="kpi-l">Kg Ofertado</div><div class="kpi-v b" id="kOfertado">0</div></div>
+    <div class="kpi"><div class="kpi-l">Kg Fiscalizado</div><div class="kpi-v b" id="kFiscalizado">0</div></div>
+    <div class="kpi"><div class="kpi-l">Kg Faltante</div><div class="kpi-v r" id="kFaltante">0</div></div>
+    <div class="kpi"><div class="kpi-l">% Cobertura</div><div class="kpi-v g" id="kCobertura">0%</div></div>
+    <div class="kpi"><div class="kpi-l">Raciones Faltantes</div><div class="kpi-v r" id="kRaciones">0</div></div>
+    <div class="kpi"><div class="kpi-l">Modulos con Faltante</div><div class="kpi-v am" id="kModsFalta">0</div></div>
+    <div class="kpi"><div class="kpi-l">Modulos Conformes</div><div class="kpi-v g" id="kModsOk">0</div></div>
+  </div>
+  <div class="risk-bar">
+    <span class="risk-pill" id="riskPill">Sin evaluar</span>
+  </div>
+</div>
+
+<div class="mtbl-wrap">
+  <table class="mtbl" id="tblModulos">
+    <thead>
+      <tr>
+        <th>Modulo</th>
+        <th>Total<br>Internos</th>
+        <th>Internos<br>c/Dieta Esp.</th>
+        <th>Reg. Comun<br>(auto)</th>
+        <th>Kg Ofertado<br>(auto, 25g/porcion)</th>
+        <th>Kg Fiscalizado<br>(en terreno)</th>
+        <th>Kg Faltante</th>
+        <th>% Cobertura</th>
+        <th>Raciones<br>Faltantes</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody id="tbodyModulos"></tbody>
+    <tfoot id="tfootModulos"></tfoot>
+  </table>
+</div>
+
+<div class="actions-row">
+  <button class="btn-eval" onclick="guardarRegistro()">💾 Guardar Registro del Dia</button>
+  <button class="btn-g" onclick="document.getElementById('inputExcelDietas').click()">📥 Importar Dietas desde Excel</button>
+  <input type="file" id="inputExcelDietas" accept=".xlsx,.xls" style="display:none" onchange="manejarArchivoExcel(event)">
+  <button class="btn-r2" onclick="limpiarRegistro()">🗑 Limpiar Formulario</button>
+</div>
+
+<div class="card">
+  <div class="ch" style="background:#1A3A5C">Firma Responsable</div>
+  <div class="g2">
+    <div class="fi"><label>Fiscalizador ITE</label><input type="text" id="fFisc2" placeholder="Se completa con el nombre de arriba" disabled></div>
+    <div class="fi"><label>Fecha de Registro</label><input type="text" id="fFechaReg2" disabled></div>
+  </div>
+  <div class="decl">Declaro que los datos consignados corresponden a la fiscalizacion de cobertura de desayuno (leche) realizada en la Zona Interna del establecimiento en la fecha indicada, conforme al procedimiento ITE y al Decreto 977/RSA.</div>
+</div>
+
+</div>
+<!-- FIN TAB 0 -->
+
+<!-- TAB 2: ACCIONES CORRECTIVAS -->
+<div class="pan" id="p2">
+  <div class="card">
+    <div class="ch" style="background:#A32D2D">Modulos con Faltante de Leche — Registro Actual</div>
+    <div id="listaAcciones"><div class="hempty">Sin modulos con faltante en el registro actual.</div></div>
+  </div>
+  <div class="actions-row">
+    <button class="btn-eval" onclick="guardarRegistro()">💾 Guardar Acciones en el Registro</button>
+  </div>
+</div>
+
+</div>
+<!-- FIN #ac -->
+
+<!-- HISTORIAL OVERLAY -->
+<div id="histOverlayDesayuno" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:#efefef;z-index:200;overflow-y:auto;padding:12px">
+  <div style="max-width:900px;margin:0 auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <h2 style="margin:0;font-size:14px;font-weight:bold;color:#1A3A5C">Historial — Desayuno ZI</h2>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button onclick="cerrarHistDesayuno()" style="background:#1A3A5C;color:white;border:none;border-radius:6px;padding:7px 16px;font-size:12px;font-weight:bold;cursor:pointer">✕ Cerrar</button>
+      </div>
+    </div>
+    <div class="hcal-bar" style="border-radius:8px;margin-bottom:8px">
+      <span class="hcal-cnt" id="hCntOverlay">0 registros</span>
+      <label class="hcal-lbl">Buscar por fecha:</label>
+      <input type="date" id="desFechaBuscar" class="hcal-inp">
+      <button onclick="buscarDesayuno()" class="hcal-btn">Buscar</button>
+      <button onclick="todosDesayuno()" class="hcal-todos">Ver todos</button>
+      <button onclick="toggleCalendarioDesayuno()" class="hcal-todos">📅 Calendario</button>
+      <button onclick="eliminarPorFechaDesayuno()" style="background:#c0392b;color:white;border:none;border-radius:6px;padding:6px 12px;font-size:11px;font-weight:bold;cursor:pointer;margin-left:auto">🗑 Eliminar fecha</button>
+    </div>
+
+    <div id="calendarioDesayuno" style="display:none;background:white;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:12px;margin-bottom:8px"></div>
+
+    <div style="background:white;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:12px;margin-bottom:8px">
+      <div style="font-size:10px;color:#aaa;font-weight:bold;text-transform:uppercase;margin-bottom:8px">Cumplimientos e Incumplimientos por Fiscalizacion</div>
+      <div id="graficoCumplimiento" style="overflow-x:auto"></div>
+    </div>
+
+    <div style="background:white;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);margin-bottom:8px">
+      <div id="hListDesayuno"><div class="hempty">Sin registros guardados.</div></div>
+    </div>
+    <div style="background:white;border-radius:8px;box-shadow:0 1px 4px rgba(0,0,0,.08);padding:12px">
+      <div style="font-size:10px;color:#aaa;font-weight:bold;text-transform:uppercase;margin-bottom:8px">Resumen Anual por Mes</div>
+      <div id="anualTabsDesayuno" class="anio-tabs"></div>
+      <div id="anualPansDesayuno"><div style="color:#aaa;font-size:12px">Sin registros anuales.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL PDF -->
+<div id="haccpModal">
+  <div id="haccpWrap">
+    <div class="hm-bar">
+      <span id="desModalTit">Informe Desayuno ZI</span>
+      <div class="hm-btns">
+        <button class="hm-btn-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+        <button class="hm-btn-close" onclick="cerrarModalDesayuno()">✕ Cerrar</button>
+      </div>
+    </div>
+    <div id="desModalContent"></div>
+  </div>
+</div>
+
+<!-- MODAL IMPORTAR EXCEL DE DIETAS -->
+<div id="importModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:400;overflow-y:auto">
+  <div style="background:white;margin:20px auto;max-width:700px;border-radius:8px;overflow:hidden">
+    <div class="hm-bar">
+      <span>Importar Cantidad de Dieta desde Excel</span>
+      <div class="hm-btns"><button class="hm-btn-close" onclick="cerrarImportModal()">✕ Cerrar</button></div>
+    </div>
+    <div style="padding:14px">
+      <div id="importPasoSelector" style="display:none">
+        <p style="font-size:12px;color:#555;margin-bottom:10px">Archivo: <b id="importNombreArchivo"></b> — Hoja: <select id="importSelectHoja" onchange="cambiarHojaImport()" style="font-size:12px;padding:4px"></select></p>
+        <p style="font-size:11px;color:#888;margin-bottom:8px">El listado trae un interno por fila. El sistema cuenta automaticamente cuantos internos con dieta hay por cada modulo (igual que tu planilla Excel original).</p>
+        <div class="fi" style="border:1px solid #eee;border-radius:6px;margin-bottom:10px">
+          <label>Columna con Nº de Modulo (ej: "MOD")</label><select id="colModulo" onchange="recalcularPreviewImport()"></select>
+        </div>
+        <div style="max-height:280px;overflow-y:auto;border:1px solid #eee;border-radius:6px">
+          <table style="width:100%;border-collapse:collapse;font-size:11px" id="tblPreviewImport"></table>
+        </div>
+        <div id="importOmitidos" style="font-size:11px;color:#854F0B;margin-top:6px"></div>
+        <div style="margin-top:12px;display:flex;gap:8px">
+          <button class="btn-eval" onclick="aplicarImportacion()">✅ Aplicar Cambios al Registro Actual</button>
+          <button class="btn-r2" onclick="cerrarImportModal()">Cancelar</button>
+        </div>
+      </div>
+      <div id="importSinDatos" style="color:#aaa;font-size:13px;padding:20px;text-align:center">Selecciona un archivo Excel (.xlsx) con el listado de dietas especiales por modulo.</div>
+    </div>
+  </div>
+</div>
+
+<script>
+var RACION_KG = 0.025;
+var MODULOS_DEF = [
+  {n:1,  total:0, dieta:0}, {n:2,  total:0, dieta:0},
+  {n:3,  total:0, dieta:0}, {n:4,  total:0, dieta:0},
+  {n:13, total:0, dieta:0}, {n:14, total:0, dieta:0},
+  {n:15, total:0, dieta:0}, {n:16, total:0, dieta:0},
+  {n:17, total:0, dieta:0}, {n:18, total:0, dieta:0},
+  {n:19, total:0, dieta:0}, {n:20, total:0, dieta:0},
+  {n:21, total:0, dieta:0}, {n:22, total:0, dieta:0},
+  {n:23, total:0, dieta:0}, {n:24, total:0, dieta:0},
+  {n:25, total:0, dieta:0}, {n:26, total:0, dieta:0},
+  {n:31, total:0, dieta:0}, {n:32, total:0, dieta:0},
+  {n:11, total:0, dieta:0}, {n:33, total:0, dieta:0},
+  {n:34, total:0, dieta:0}, {n:35, total:0, dieta:0},
+  {n:36, total:0, dieta:0}, {n:37, total:0, dieta:0},
+  {n:38, total:0, dieta:0}, {n:12, total:0, dieta:0},
+  {n:87, total:0, dieta:0}, {n:88, total:0, dieta:0},
+  {n:'ASA', total:0, dieta:0}
+];
+var MESES_D = ["Ene","Feb","Mar","Abr","May","Jun","Jul","Ago","Sep","Oct","Nov","Dic"];
+
+// ── ESTADO ──
+var modActual = MODULOS_DEF.map(function(m){ return {numero:m.n, total:m.total, dieta:m.dieta, fiscalizado:null}; });
+var hist = [];
+try { var hd = localStorage.getItem("desayuno_h1"); if(hd) hist = JSON.parse(hd); } catch(x){}
+
+// ── SUPABASE ──
+var supabaseClient = {
+  url: function() { return 'https://pfzbxckmqapkfggkqtbh.supabase.co'; },
+  key: function() { return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmemJ4Y2ttcWFwa2ZnZ2txdGJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzc5MzQsImV4cCI6MjA5Njk1MzkzNH0.kFBxfXhVLyaxgLkwyldq2qXl0KPYM75Bf8vdXBXKXp4'; },
+  async insert(table, data) {
+    var url = this.url(), key = this.key();
+    try {
+      var response = await fetch(url + '/rest/v1/' + table, {
+        method: 'POST',
+        headers: { 'apikey': key, 'Authorization': 'Bearer ' + key, 'Content-Type': 'application/json', 'Prefer': 'return=representation' },
+        body: JSON.stringify(data)
+      });
+      if (response.ok) { var rows = await response.json(); return {ok:true, id: rows && rows[0] ? rows[0].id : null}; }
+      var err = await response.json(); return {ok:false, motivo: err.message || JSON.stringify(err)};
+    } catch(e) { return {ok:false, motivo:'sin_conexion'}; }
+  },
+  async select(table, queryString) {
+    var url = this.url(), key = this.key();
+    try {
+      var response = await fetch(url + '/rest/v1/' + table + (queryString||''), { headers: { 'apikey': key, 'Authorization': 'Bearer ' + key } });
+      if (response.ok) return await response.json();
+      return [];
+    } catch(e) { return []; }
+  },
+  async delete(table, id) {
+    var url = this.url(), key = this.key();
+    try {
+      var response = await fetch(url + '/rest/v1/' + table + '?id=eq.' + id, { method: 'DELETE', headers: { 'apikey': key, 'Authorization': 'Bearer ' + key } });
+      return response.ok ? {ok:true} : {ok:false};
+    } catch(e) { return {ok:false, motivo:'sin_conexion'}; }
+  }
+};
+
+function guardarEnNube(e) {
+  var registroSupabase = { fecha: e.fecha, fiscalizador_nombre: e.fisc, establecimiento: e.estab, validado: true, pct: e.pctCobertura, res: e.riesgo, data: e };
+  return supabaseClient.insert('registrodesayuno', registroSupabase);
+}
+
+var sincronizando = false;
+async function sincronizarDesdeNube() {
+  if (sincronizando) return;
+  sincronizando = true;
+  try {
+    var filas = await supabaseClient.select('registrodesayuno', '?select=id,data&order=fecha.desc&limit=2000');
+    var existentes = {};
+    hist.forEach(function(e){ if(e && e.ts) existentes[e.ts] = true; });
+    var nuevos = false;
+    filas.forEach(function(fila){
+      var e = fila.data;
+      if (e && e.ts && !existentes[e.ts]) { e._cloudId = fila.id; hist.push(e); nuevos = true; }
+    });
+    if (nuevos) { hist.sort(function(a,b){ return (b.fecha||"").localeCompare(a.fecha||""); }); guardarLocal(); }
+  } catch(e){}
+  sincronizando = false;
+}
+
+function guardarLocal(){ try{ localStorage.setItem("desayuno_h1", JSON.stringify(hist)); }catch(x){} }
+
+// ── CALCULO ──
+function calcModulo(m){
+  var regimenComun = Math.max((parseFloat(m.total)||0) - (parseFloat(m.dieta)||0), 0);
+  var kgOfertado = regimenComun * RACION_KG;
+  var fisc = (m.fiscalizado === null || m.fiscalizado === "" || isNaN(m.fiscalizado)) ? null : parseFloat(m.fiscalizado);
+  var kgFisc = fisc === null ? 0 : fisc;
+  var kgFaltante = Math.max(kgOfertado - kgFisc, 0);
+  var cobertura = kgOfertado > 0 ? Math.min(kgFisc / kgOfertado, 1) : 0;
+  var racFaltantes = kgFaltante / RACION_KG;
+  return { regimenComun: regimenComun, kgOfertado: kgOfertado, kgFisc: kgFisc, tieneDato: fisc !== null, kgFaltante: kgFaltante, cobertura: cobertura, racFaltantes: racFaltantes };
+}
+
+function estadoModulo(c){
+  if(!c.tieneDato) return {cls:'', txt:'Pendiente'};
+  if(c.cobertura >= 0.99) return {cls:'ok', txt:'Conforme'};
+  return {cls:'no', txt:'No Conforme'};
+}
+
+function riesgoGlobal(pct, hayFaltantes){
+  if(pct === null) return {txt:'Sin evaluar', cls:''};
+  if(pct >= 0.99) return {txt:'CONFORME', cls:'bajo'};
+  return {txt:'NO CONFORME', cls:'alto'};
+}
+
+// ── RENDER TABLA REGISTRO ──
+function filaHtml(m, i){
+  var c = calcModulo(m);
+  var est = estadoModulo(c);
+  return '<tr id="fila'+i+'" class="'+(c.tieneDato && c.kgFaltante>0.0001 ? 'falta':'')+'">'+
+      '<td class="ro">'+m.numero+'</td>'+
+      '<td><input type="number" min="0" step="1" value="'+m.total+'" oninput="onTotal('+i+',this.value)"></td>'+
+      '<td><input type="number" min="0" step="1" value="'+m.dieta+'" oninput="onDieta('+i+',this.value)"></td>'+
+      '<td class="ro" id="rc'+i+'">'+c.regimenComun+'</td>'+
+      '<td class="ro" id="ko'+i+'">'+c.kgOfertado.toFixed(3)+'</td>'+
+      '<td><input type="number" min="0" step="0.001" value="'+(m.fiscalizado===null?'':m.fiscalizado)+'" placeholder="—" oninput="onFiscalizado('+i+',this.value)"></td>'+
+      '<td class="ro" id="kf'+i+'">'+(c.tieneDato ? c.kgFaltante.toFixed(3) : '—')+'</td>'+
+      '<td class="ro" id="cb'+i+'">'+(c.tieneDato ? Math.round(c.cobertura*100)+'%' : '—')+'</td>'+
+      '<td class="ro" id="rf'+i+'">'+(c.tieneDato ? Math.round(c.racFaltantes) : '—')+'</td>'+
+      '<td id="es'+i+'"><span class="pill '+est.cls+'">'+est.txt+'</span></td>'+
+    '</tr>';
+}
+
+function renderTabla(){
+  var tb = document.getElementById("tbodyModulos");
+  var rows = "";
+  modActual.forEach(function(m, i){ rows += filaHtml(m, i); });
+  tb.innerHTML = rows;
+  renderTotales();
+  renderAcciones();
+}
+
+function actualizarFila(i){
+  var m = modActual[i];
+  var c = calcModulo(m);
+  var est = estadoModulo(c);
+  document.getElementById("fila"+i).className = (c.tieneDato && c.kgFaltante>0.0001 ? 'falta':'');
+  document.getElementById("rc"+i).textContent = c.regimenComun;
+  document.getElementById("ko"+i).textContent = c.kgOfertado.toFixed(3);
+  document.getElementById("kf"+i).textContent = c.tieneDato ? c.kgFaltante.toFixed(3) : '—';
+  document.getElementById("cb"+i).textContent = c.tieneDato ? Math.round(c.cobertura*100)+'%' : '—';
+  document.getElementById("rf"+i).textContent = c.tieneDato ? Math.round(c.racFaltantes) : '—';
+  document.getElementById("es"+i).innerHTML = '<span class="pill '+est.cls+'">'+est.txt+'</span>';
+}
+
+function totalesRegistro(){
+  var tInternos=0,tOfertado=0,tFisc=0,tFaltante=0,tRac=0,modsConDato=0,modsOk=0,modsFalta=0,internosFiscalizados=0;
+  modActual.forEach(function(m){
+    var c = calcModulo(m);
+    tInternos += c.regimenComun; tOfertado += c.kgOfertado;
+    if(c.tieneDato){ modsConDato++; internosFiscalizados += c.regimenComun; tFisc += c.kgFisc; tFaltante += c.kgFaltante; tRac += c.racFaltantes;
+      if(c.kgFaltante>0.0001) modsFalta++; else modsOk++;
+    }
+  });
+  var pct = (modsConDato>0 && tOfertado>0) ? Math.min(tFisc/tOfertado,1) : null;
+  return {tInternos:tInternos, tOfertado:tOfertado, tFisc:tFisc, tFaltante:tFaltante, tRac:tRac, pct:pct, modsConDato:modsConDato, modsOk:modsOk, modsFalta:modsFalta, internosFiscalizados:internosFiscalizados};
+}
+
+function MODtotalSum(){ return modActual.reduce(function(a,m){return a+(parseFloat(m.total)||0);},0); }
+function MODdietaSum(){ return modActual.reduce(function(a,m){return a+(parseFloat(m.dieta)||0);},0); }
+function renderTotales(){
+  var t = totalesRegistro();
+  document.getElementById("kInternos").textContent = t.tInternos;
+  document.getElementById("kOfertado").textContent = t.tOfertado.toFixed(2);
+  document.getElementById("kFiscalizado").textContent = t.tFisc.toFixed(2);
+  document.getElementById("kFaltante").textContent = t.tFaltante.toFixed(2);
+  document.getElementById("kCobertura").textContent = t.pct===null ? '—' : Math.round(t.pct*100)+'%';
+  document.getElementById("kRaciones").textContent = Math.round(t.tRac);
+  document.getElementById("kModsFalta").textContent = t.modsFalta;
+  document.getElementById("kModsOk").textContent = t.modsOk;
+  var r = riesgoGlobal(t.pct);
+  var pill = document.getElementById("riskPill");
+  pill.textContent = t.pct===null ? 'Sin evaluar' : (r.txt+' — '+Math.round(t.pct*100)+'% cobertura');
+  pill.className = 'risk-pill ' + r.cls;
+
+  var tf = document.getElementById("tfootModulos");
+  tf.innerHTML = '<tr><td>TOTAL</td><td>'+MODtotalSum()+'</td><td>'+MODdietaSum()+'</td><td>'+t.tInternos+'</td><td>'+t.tOfertado.toFixed(3)+'</td><td>'+t.tFisc.toFixed(3)+'</td><td>'+t.tFaltante.toFixed(3)+'</td><td>'+(t.pct===null?'—':Math.round(t.pct*100)+'%')+'</td><td>'+Math.round(t.tRac)+'</td><td></td></tr>';
+}
+
+function onTotal(i,val){ modActual[i].total = parseFloat(val)||0; actualizarFila(i); renderTotales(); renderAccionesLive(i); }
+function onDieta(i,val){ modActual[i].dieta = parseFloat(val)||0; actualizarFila(i); renderTotales(); renderAccionesLive(i); }
+function onFiscalizado(i,val){ modActual[i].fiscalizado = (val==="" ? null : val); actualizarFila(i); renderTotales(); renderAccionesLive(i); }
+
+function sincronizarFirma(){
+  document.getElementById("fFisc2").value = document.getElementById("fFisc").value;
+  document.getElementById("fFechaReg2").value = document.getElementById("fFecha").value;
+}
+
+function renderAccionesLive(){ renderAcciones(); }
+
+// ── ACCIONES CORRECTIVAS (tab) ──
+var accionesTexto = {}; // {numeroModulo: texto}
+function renderAcciones(){
+  var cont = document.getElementById("listaAcciones");
+  var faltantes = modActual.filter(function(m){ var c=calcModulo(m); return c.tieneDato && c.kgFaltante>0.0001; });
+  if(!faltantes.length){ cont.innerHTML = '<div class="hempty">Sin modulos con faltante en el registro actual.</div>'; return; }
+  var h = "";
+  faltantes.forEach(function(m){
+    var c = calcModulo(m);
+    h += '<div class="ai"><div class="ai-h"><span class="ai-n">Modulo '+m.numero+' — Faltan '+c.kgFaltante.toFixed(3)+' kg ('+Math.round(c.racFaltantes)+' raciones, '+Math.round((1-c.cobertura)*100)+'% del modulo)</span></div>'+
+      '<label class="fl">Accion Correctiva</label>'+
+      '<textarea class="fta" oninput="accionesTexto['+m.numero+']=this.value" placeholder="Ej: se solicito reposicion a CAL, se informo a jefatura de turno...">'+(accionesTexto[m.numero]||'')+'</textarea></div>';
+  });
+  cont.innerHTML = h;
+}
+
+// ── TABS ──
+function sT(i){
+  for(var k=0;k<3;k++){
+    var p = document.getElementById("p"+k); var t = document.getElementById("t"+k);
+    if(p) p.classList.toggle("on", k===i);
+    if(t) t.classList.toggle("on", k===i);
+  }
+}
+
+// ── TOAST ──
+function toast(msg, color){
+  var d = document.createElement("div");
+  d.className = "haccp-toast"; d.style.background = color||"#1D9E75"; d.textContent = msg;
+  document.body.appendChild(d);
+  setTimeout(function(){ d.remove(); }, 3000);
+}
+
+// ── GUARDAR REGISTRO ──
+function limpiarRegistro(){
+  modActual = MODULOS_DEF.map(function(m){ return {numero:m.n, total:m.total, dieta:m.dieta, fiscalizado:null}; });
+  accionesTexto = {};
+  document.getElementById("fFecha").value = "";
+  document.getElementById("fFisc").value = "";
+  sincronizarFirma();
+  renderTabla();
+}
+
+function guardarRegistro(){
+  var fecha = document.getElementById("fFecha").value;
+  var fisc = document.getElementById("fFisc").value.trim();
+  var estab = document.getElementById("fEstab").value.trim();
+  if(!fecha){ toast("Debes indicar la fecha", "#A32D2D"); return; }
+  if(!fisc){ toast("Debes indicar el nombre del fiscalizador", "#A32D2D"); return; }
+  var t = totalesRegistro();
+  var acciones = [];
+  modActual.forEach(function(m){
+    var c = calcModulo(m);
+    if(c.tieneDato && c.kgFaltante>0.0001){
+      acciones.push({ modulo:m.numero, kgFaltante: c.kgFaltante, racFaltantes: c.racFaltantes, texto: accionesTexto[m.numero]||"" });
+    }
+  });
+  var r = riesgoGlobal(t.pct);
+  var registro = {
+    ts: Date.now(),
+    fecha: fecha, fisc: fisc, estab: estab, turno: document.getElementById("fTurno").value,
+    modulos: modActual.map(function(m){ return {numero:m.numero, total:m.total, dieta:m.dieta, regimenComun:calcModulo(m).regimenComun, fiscalizado:m.fiscalizado}; }),
+    tInternos: t.tInternos, tOfertado: t.tOfertado, tFisc: t.tFisc, tFaltante: t.tFaltante, tRac: t.tRac,
+    pctCobertura: t.pct, modsOk: t.modsOk, modsFalta: t.modsFalta, modsFiscalizados: t.modsConDato,
+    internosFiscalizados: t.internosFiscalizados, riesgo: r.txt,
+    acciones: acciones
+  };
+  hist.unshift(registro);
+  guardarLocal();
+  document.getElementById("fFisc2").value = fisc;
+  document.getElementById("fFechaReg2").value = fecha;
+  guardarEnNube(registro).then(function(res){
+    if(res.ok){ registro._cloudId = res.id; guardarLocal(); toast("✓ Registro guardado y sincronizado con SAIF"); }
+    else { toast("Registro guardado localmente (sin conexion a la nube)", "#854F0B"); }
+  });
+}
+
+// ── HISTORIAL ──
+function abrirHistDesayuno(){
+  document.getElementById("histOverlayDesayuno").style.display = "block";
+  sincronizarDesdeNube().then(function(){ todosDesayuno(); renderAnualDesayuno(); renderGraficoCumplimiento(); if(document.getElementById('calendarioDesayuno').style.display==='block') renderCalendarioDesayuno(); });
+  todosDesayuno();
+  renderAnualDesayuno();
+  renderGraficoCumplimiento();
+}
+function cerrarHistDesayuno(){ document.getElementById("histOverlayDesayuno").style.display = "none"; sT(0); }
+
+function pintarListaHist(data){
+  var cont = document.getElementById("hListDesayuno");
+  document.getElementById("hCntOverlay").textContent = data.length + " registro" + (data.length===1?"":"s");
+  if(!data.length){ cont.innerHTML = '<div class="hempty">Sin registros para el filtro seleccionado.</div>'; return; }
+  var h = "";
+  data.forEach(function(r){
+    var pct = r.pctCobertura===null||r.pctCobertura===undefined ? null : Math.round(r.pctCobertura*100);
+    var chipCls = r.riesgo==='CONFORME'?'c':'n';
+    h += '<div class="hrow"><div class="hdate">'+r.fecha+' — '+r.estab+'</div>'+
+      '<div class="hchips">'+
+        '<span class="chip k">'+r.fisc+'</span>'+
+        '<span class="chip '+chipCls+'">Cobertura '+(pct===null?'—':pct+'%')+'</span>'+
+        '<span class="chip a">'+Math.round(r.tRac)+' raciones faltantes</span>'+
+        '<span class="chip n">'+(r.modsFalta||0)+' modulos con faltante</span>'+
+      '</div>'+
+      '<button class="hview" onclick="verRegistro('+r.ts+')">Ver / Imprimir</button>'+
+      '<button class="hdel" onclick="eliminarRegistro('+r.ts+')">Eliminar</button>'+
+    '</div>';
+  });
+  cont.innerHTML = h;
+}
+function todosDesayuno(){ pintarListaHist(hist); }
+function buscarDesayuno(){
+  var f = document.getElementById("desFechaBuscar").value;
+  if(!f){ toast("Selecciona una fecha","#854F0B"); return; }
+  pintarListaHist(hist.filter(function(r){ return r.fecha===f; }));
+}
+function eliminarPorFechaDesayuno(){
+  var f = document.getElementById("desFechaBuscar").value;
+  if(!f){ toast("Selecciona una fecha","#854F0B"); return; }
+  if(!confirm("¿Eliminar todos los registros de "+f+"?")) return;
+  var borrar = hist.filter(function(r){ return r.fecha===f; });
+  borrar.forEach(function(r){ if(r._cloudId) supabaseClient.delete('registrodesayuno', r._cloudId); });
+  hist = hist.filter(function(r){ return r.fecha!==f; });
+  guardarLocal(); todosDesayuno(); renderAnualDesayuno(); renderGraficoCumplimiento(); if(document.getElementById('calendarioDesayuno').style.display==='block') renderCalendarioDesayuno();
+}
+function eliminarRegistro(ts){
+  if(!confirm("¿Eliminar este registro?")) return;
+  var reg = hist.find(function(r){ return r.ts===ts; });
+  if(reg && reg._cloudId) supabaseClient.delete('registrodesayuno', reg._cloudId);
+  hist = hist.filter(function(r){ return r.ts!==ts; });
+  guardarLocal(); todosDesayuno(); renderAnualDesayuno(); renderGraficoCumplimiento(); if(document.getElementById('calendarioDesayuno').style.display==='block') renderCalendarioDesayuno();
+}
+
+// ── RESUMEN ANUAL (historial overlay) ──
+function renderAnualDesayuno(){
+  var aH = {};
+  hist.forEach(function(r){
+    if(!r.fecha) return;
+    var p = r.fecha.split("-"); if(p.length<3) return;
+    var yr = p[0], mm = parseInt(p[1])-1;
+    if(!aH[yr]) aH[yr] = {};
+    if(!aH[yr][mm]) aH[yr][mm] = [];
+    aH[yr][mm].push(r);
+  });
+  var tabsEl = document.getElementById("anualTabsDesayuno");
+  var pansEl = document.getElementById("anualPansDesayuno");
+  var anios = Object.keys(aH).sort().reverse();
+  if(!anios.length){ tabsEl.innerHTML=""; pansEl.innerHTML='<div style="color:#aaa;font-size:12px">Sin registros anuales.</div>'; return; }
+  tabsEl.innerHTML = anios.map(function(yr,i){
+    return '<button type="button" onclick="switchAnioDesayuno(\''+yr+'\')" id="tabD_'+yr+'" style="padding:5px 14px;border:none;border-radius:6px;font-size:12px;font-weight:bold;cursor:pointer;background:'+(i===0?'#1A3A5C':'#f0f0f0')+';color:'+(i===0?'white':'#555')+'">'+yr+'</button>';
+  }).join("");
+  window._aH_ = aH;
+  switchAnioDesayuno(anios[0]);
+}
+function switchAnioDesayuno(yr){
+  var aH = window._aH_ || {};
+  document.querySelectorAll("[id^='tabD_']").forEach(function(b){
+    var on = b.id === "tabD_"+yr;
+    b.style.background = on ? "#1A3A5C" : "#f0f0f0"; b.style.color = on ? "white" : "#555";
+  });
+  var pansEl = document.getElementById("anualPansDesayuno"); if(!pansEl) return;
+  var meses = aH[yr] ? Object.keys(aH[yr]).map(Number).sort(function(a,b){return a-b;}) : [];
+  if(!meses.length){ pansEl.innerHTML='<div style="color:#aaa;font-size:12px">Sin registros para '+yr+'.</div>'; return; }
+  var tbl = '<table style="width:100%;border-collapse:collapse;font-size:11px"><thead><tr style="background:#f5f7fa">'+
+    '<th style="padding:6px 10px;text-align:left;color:#1A3A5C;border-bottom:2px solid #eee">Mes</th>'+
+    ['Registros','Cobertura Prom.','Raciones Falt.','Riesgo'].map(function(h){ return '<th style="padding:6px 6px;text-align:center;color:#1A3A5C;border-bottom:2px solid #eee">'+h+'</th>'; }).join("")+
+  '</tr></thead><tbody>';
+  meses.forEach(function(mm,i){
+    var regs = aH[yr][mm];
+    var pcts = regs.filter(function(r){return r.pctCobertura!==null && r.pctCobertura!==undefined;}).map(function(r){return r.pctCobertura;});
+    var pctProm = pcts.length ? (pcts.reduce(function(a,b){return a+b;},0)/pcts.length) : null;
+    var tRac = regs.reduce(function(a,r){return a+(r.tRac||0);},0);
+    var risk = pctProm===null ? '—' : (pctProm>=0.99?'CONFORME':'NO CONFORME');
+    var col = risk==='NO CONFORME'?'#A32D2D':(risk==='CONFORME'?'#0F6E56':'#888');
+    var bg = risk==='NO CONFORME'?'#fcebeb':(risk==='CONFORME'?'#e1f5ee':'#f0f0f0');
+    var rowBg = i%2===0?'white':'#fafbff';
+    tbl += '<tr style="background:'+rowBg+'">'+
+      '<td style="padding:5px 10px;font-weight:600;color:#1A3A5C">'+MESES_D[mm]+' '+yr+'</td>'+
+      '<td style="padding:5px;text-align:center;font-weight:bold">'+regs.length+'</td>'+
+      '<td style="padding:5px;text-align:center;font-weight:bold;color:'+col+'">'+(pctProm===null?'—':Math.round(pctProm*100)+'%')+'</td>'+
+      '<td style="padding:5px;text-align:center;font-weight:bold">'+Math.round(tRac)+'</td>'+
+      '<td style="padding:5px;text-align:center"><span style="font-size:9px;font-weight:bold;padding:2px 7px;border-radius:10px;background:'+bg+';color:'+col+'">'+risk+'</span></td>'+
+    '</tr>';
+  });
+  tbl += '</tbody></table>';
+  pansEl.innerHTML = tbl;
+}
+
+// ── VER REGISTRO (abre PDF diario de un registro del historial) ──
+function verRegistro(ts){
+  var reg = hist.find(function(r){ return r.ts===ts; });
+  if(!reg) return;
+  abrirModalDesayuno('dia', reg);
+}
+
+// ── MODAL PDF ──
+function abrirModalDesayuno(tipo, regOverride){
+  var modal = document.getElementById("haccpModal");
+  var tit = document.getElementById("desModalTit");
+  var cont = document.getElementById("desModalContent");
+  if(tipo==='dia'){
+    var reg = regOverride || registroActualComoObjeto();
+    tit.textContent = "Informe Diario — Desayuno ZI — " + (reg.fecha||"");
+    cont.innerHTML = htmlInformeDiario(reg);
+    modal.classList.add("open");
+  } else if(tipo==='mes'){
+    tit.textContent = "Informe Mensual — Desayuno ZI";
+    cont.innerHTML = htmlSelectorMes();
+    modal.classList.add("open");
+  } else if(tipo==='anual'){
+    tit.textContent = "Informe Anual — Desayuno ZI";
+    cont.innerHTML = htmlSelectorAnio();
+    modal.classList.add("open");
+  }
+}
+function cerrarModalDesayuno(){ document.getElementById("haccpModal").classList.remove("open"); }
+
+function registroActualComoObjeto(){
+  var t = totalesRegistro();
+  var acciones = [];
+  modActual.forEach(function(m){
+    var c = calcModulo(m);
+    if(c.tieneDato && c.kgFaltante>0.0001) acciones.push({modulo:m.numero, kgFaltante:c.kgFaltante, racFaltantes:c.racFaltantes, texto:accionesTexto[m.numero]||""});
+  });
+  var r = riesgoGlobal(t.pct);
+  return {
+    fecha: document.getElementById("fFecha").value || "(sin fecha)",
+    fisc: document.getElementById("fFisc").value || "(sin fiscalizador)",
+    estab: document.getElementById("fEstab").value,
+    modulos: modActual.map(function(m){ return {numero:m.numero, total:m.total, dieta:m.dieta, fiscalizado:m.fiscalizado}; }),
+    tInternos:t.tInternos, tOfertado:t.tOfertado, tFisc:t.tFisc, tFaltante:t.tFaltante, tRac:t.tRac,
+    pctCobertura:t.pct, modsOk:t.modsOk, modsFalta:t.modsFalta, modsFiscalizados:t.modsConDato,
+    internosFiscalizados:t.internosFiscalizados, riesgo:r.txt, acciones:acciones
+  };
+}
+
+function pillEstado(cls, txt){ return '<span class="hm-pill '+cls+'">'+txt+'</span>'; }
+
+function htmlInformeDiario(reg){
+  var pct = reg.pctCobertura===null||reg.pctCobertura===undefined ? null : Math.round(reg.pctCobertura*100);
+  var kpiCls = reg.riesgo==='CONFORME'?'g':'r';
+  var modsFiscalizados = reg.modsFiscalizados!==undefined ? reg.modsFiscalizados : (reg.modulos||[]).filter(function(m){return m.fiscalizado!==null && m.fiscalizado!=="" && !isNaN(parseFloat(m.fiscalizado));}).length;
+  var internosFiscalizados = reg.internosFiscalizados!==undefined ? reg.internosFiscalizados : reg.modulos.reduce(function(a,m){
+    var c = calcModulo(m);
+    return a + (c.tieneDato ? c.regimenComun : 0);
+  }, 0);
+  var filasMod = reg.modulos.map(function(m){
+    var c = calcModulo(m);
+    var est = estadoModulo(c);
+    var pillCls = est.cls==='ok'?'conf':(est.cls==='no'?'noconf':'nd');
+    return '<tr>'+
+      '<td class="c">'+m.numero+'</td>'+
+      '<td class="c">'+m.total+'</td>'+
+      '<td class="c">'+m.dieta+'</td>'+
+      '<td class="c">'+c.regimenComun+'</td>'+
+      '<td class="c">'+c.kgOfertado.toFixed(3)+'</td>'+
+      '<td class="c">'+(c.tieneDato?c.kgFisc.toFixed(3):'—')+'</td>'+
+      '<td class="c">'+(c.tieneDato?c.kgFaltante.toFixed(3):'—')+'</td>'+
+      '<td class="c">'+(c.tieneDato?Math.round(c.cobertura*100)+'%':'—')+'</td>'+
+      '<td class="c">'+pillEstado(pillCls, est.txt)+'</td>'+
+    '</tr>';
+  }).join("");
+  var filasAcc = (reg.acciones||[]).length ? reg.acciones.map(function(a){
+    return '<tr><td>Modulo '+a.modulo+'</td><td>'+a.kgFaltante.toFixed(3)+' kg / '+Math.round(a.racFaltantes)+' rac.</td><td>'+(a.texto||'—')+'</td></tr>';
+  }).join("") : '<tr><td colspan="3" style="text-align:center;color:#aaa">Sin acciones correctivas registradas.</td></tr>';
+
+  return '<div class="hm-page">'+
+    '<div class="hm-hdr"><div><h1>INFORME DIARIO — DESAYUNO ZI (COBERTURA DE LECHE)</h1><p>Inspeccion Tecnica de Explotacion | Zona Interna</p></div><div class="hm-badge">'+reg.riesgo+'</div></div>'+
+    '<div class="hm-meta" style="grid-template-columns:1fr 1fr 1fr 1fr">'+
+      '<div class="hm-mi"><div class="hm-ml">Fecha</div><div class="hm-mv">'+reg.fecha+'</div></div>'+
+      '<div class="hm-mi"><div class="hm-ml">Establecimiento</div><div class="hm-mv">'+reg.estab+'</div></div>'+
+      '<div class="hm-mi"><div class="hm-ml">Fiscalizador ITE</div><div class="hm-mv">'+reg.fisc+'</div></div>'+
+      '<div class="hm-mi"><div class="hm-ml">Turno</div><div class="hm-mv">Desayuno</div></div>'+
+    '</div>'+
+    '<div class="hm-kpis" style="grid-template-columns:repeat(4,1fr)">'+
+      '<div class="hm-kpi"><div class="hm-kpi-l">Total Internos Reg. Comun</div><div class="hm-kpi-v b">'+reg.tInternos+'</div></div>'+
+      '<div class="hm-kpi"><div class="hm-kpi-l">Kg Ofertado</div><div class="hm-kpi-v b">'+reg.tOfertado.toFixed(2)+'</div></div>'+
+      '<div class="hm-kpi"><div class="hm-kpi-l">Total Modulos Fiscalizados</div><div class="hm-kpi-v b">'+modsFiscalizados+'</div></div>'+
+      '<div class="hm-kpi"><div class="hm-kpi-l">Nº Internos Fiscalizado</div><div class="hm-kpi-v b">'+Math.round(internosFiscalizados)+'</div></div>'+
+      '<div class="hm-kpi"><div class="hm-kpi-l">Kg Fiscalizado</div><div class="hm-kpi-v b">'+reg.tFisc.toFixed(2)+'</div></div>'+
+      '<div class="hm-kpi"><div class="hm-kpi-l">Kg Faltante</div><div class="hm-kpi-v r">'+reg.tFaltante.toFixed(2)+'</div></div>'+
+      '<div class="hm-kpi"><div class="hm-kpi-l">% de Cobertura</div><div class="hm-kpi-v '+kpiCls+'">'+(pct===null?'—':pct+'%')+'</div></div>'+
+      '<div class="hm-kpi"><div class="hm-kpi-l">Raciones Faltantes</div><div class="hm-kpi-v r">'+Math.round(reg.tRac)+'</div></div>'+
+    '</div>'+
+    '<div class="hm-sec">Detalle por Modulo</div>'+
+    '<table class="hm-tabla"><thead><tr><th class="c">Modulo</th><th class="c">Tot. Internos</th><th class="c">Con Dieta</th><th class="c">Reg. Comun</th><th class="c">Kg Ofertado</th><th class="c">Kg Fiscalizado</th><th class="c">Kg Faltante</th><th class="c">% Cobertura</th><th class="c">Estado</th></tr></thead><tbody>'+filasMod+'</tbody></table>'+
+    '<div class="hm-acc"><div class="hm-acc-l">Acciones Correctivas</div><table class="hm-acc-t"><thead><tr><th>Modulo</th><th>Faltante</th><th>Accion</th></tr></thead><tbody>'+filasAcc+'</tbody></table></div>'+
+    '<div class="hm-firma"><div class="hm-firma-l">Fiscalizador Responsable</div><div class="hm-firma-v">'+reg.fisc+'</div><div class="hm-firma-line">Firma / Timbre ITE</div></div>'+
+    '<div class="hm-footer">Generado por SAIF — Sistema de Alimentacion | Decreto 977/RSA — Chile</div>'+
+  '</div>';
+}
+
+// ── SELECTOR MES / AÑO para informes ──
+function mesesConDatos(){
+  var s = {};
+  hist.forEach(function(r){ if(r.fecha){ s[r.fecha.slice(0,7)] = true; } });
+  return Object.keys(s).sort().reverse();
+}
+function aniosConDatos(){
+  var s = {};
+  hist.forEach(function(r){ if(r.fecha){ s[r.fecha.slice(0,4)] = true; } });
+  return Object.keys(s).sort().reverse();
+}
+function htmlSelectorMes(){
+  var opts = mesesConDatos();
+  if(!opts.length) return '<div style="padding:30px;text-align:center;color:#aaa">Sin registros guardados para generar informe mensual.</div>';
+  var sel = '<select id="selMesInforme" style="font-size:14px;padding:8px;border-radius:6px;border:1px solid #ddd">'+
+    opts.map(function(m){ return '<option value="'+m+'">'+m+'</option>'; }).join("")+'</select>';
+  return '<div style="padding:20px"><p style="margin-bottom:10px;font-size:13px;color:#555">Selecciona el mes a generar:</p>'+sel+
+    '<button class="hm-btn-print" style="margin-left:10px;padding:8px 16px;border-radius:6px;border:none;font-weight:bold;cursor:pointer" onclick="generarInformeMes()">Generar</button>'+
+    '<div id="mesInformeCont" style="margin-top:14px"></div></div>';
+}
+function htmlSelectorAnio(){
+  var opts = aniosConDatos();
+  if(!opts.length) return '<div style="padding:30px;text-align:center;color:#aaa">Sin registros guardados para generar informe anual.</div>';
+  var sel = '<select id="selAnioInforme" style="font-size:14px;padding:8px;border-radius:6px;border:1px solid #ddd">'+
+    opts.map(function(a){ return '<option value="'+a+'">'+a+'</option>'; }).join("")+'</select>';
+  return '<div style="padding:20px"><p style="margin-bottom:10px;font-size:13px;color:#555">Selecciona el año a generar:</p>'+sel+
+    '<button class="hm-btn-print" style="margin-left:10px;padding:8px 16px;border-radius:6px;border:none;font-weight:bold;cursor:pointer" onclick="generarInformeAnio()">Generar</button>'+
+    '<div id="anioInformeCont" style="margin-top:14px"></div></div>';
+}
+
+function generarInformeMes(){
+  var ym = document.getElementById("selMesInforme").value;
+  var regs = hist.filter(function(r){ return r.fecha && r.fecha.slice(0,7)===ym; }).sort(function(a,b){ return a.fecha.localeCompare(b.fecha); });
+  var tRac=0, pcts=[], tOfertado=0, tFisc=0;
+  var filas = regs.map(function(r){
+    var pct = r.pctCobertura===null||r.pctCobertura===undefined?null:Math.round(r.pctCobertura*100);
+    if(r.pctCobertura!==null && r.pctCobertura!==undefined) pcts.push(r.pctCobertura);
+    tRac += r.tRac||0; tOfertado += r.tOfertado||0; tFisc += r.tFisc||0;
+    var pillCls = r.riesgo==='CONFORME'?'conf':'noconf';
+    return '<tr><td class="c">'+r.fecha+'</td><td class="c">'+r.tInternos+'</td><td class="c">'+(r.tOfertado||0).toFixed(2)+'</td><td class="c">'+(r.tFisc||0).toFixed(2)+'</td><td class="c">'+(pct===null?'—':pct+'%')+'</td><td class="c">'+Math.round(r.tRac||0)+'</td><td class="c">'+pillEstado(pillCls, r.riesgo)+'</td></tr>';
+  }).join("") || '<tr><td colspan="7" style="text-align:center;color:#aaa">Sin registros para este mes.</td></tr>';
+  var pctProm = pcts.length ? Math.round((pcts.reduce(function(a,b){return a+b;},0)/pcts.length)*100) : null;
+  var html = '<div class="hm-page">'+
+    '<div class="hm-hdr"><div><h1>INFORME MENSUAL — DESAYUNO ZI</h1><p>Inspeccion Tecnica de Explotacion | Zona Interna</p></div><div class="hm-badge">'+ym+'</div></div>'+
+    '<div class="hm-kpis" style="grid-template-columns:repeat(4,1fr)">'+
+      '<div class="hm-kpi"><div class="hm-kpi-l">Registros</div><div class="hm-kpi-v b">'+regs.length+'</div></div>'+
+      '<div class="hm-kpi"><div class="hm-kpi-l">Kg Ofertado Total</div><div class="hm-kpi-v b">'+tOfertado.toFixed(2)+'</div></div>'+
+      '<div class="hm-kpi"><div class="hm-kpi-l">Cobertura Promedio</div><div class="hm-kpi-v g">'+(pctProm===null?'—':pctProm+'%')+'</div></div>'+
+      '<div class="hm-kpi"><div class="hm-kpi-l">Raciones Faltantes</div><div class="hm-kpi-v r">'+Math.round(tRac)+'</div></div>'+
+    '</div>'+
+    '<div class="hm-sec">Detalle por Dia</div>'+
+    '<table class="hm-tabla"><thead><tr><th class="c">Fecha</th><th class="c">Internos</th><th class="c">Kg Ofertado</th><th class="c">Kg Fiscalizado</th><th class="c">% Cobertura</th><th class="c">Rac. Faltantes</th><th class="c">Riesgo</th></tr></thead><tbody>'+filas+'</tbody></table>'+
+    '<div class="hm-footer">Generado por SAIF — Sistema de Alimentacion | Decreto 977/RSA — Chile</div>'+
+  '</div>';
+  document.getElementById("mesInformeCont").innerHTML = html;
+}
+
+function generarInformeAnio(){
+  var yr = document.getElementById("selAnioInforme").value;
+  var regsAnio = hist.filter(function(r){ return r.fecha && r.fecha.slice(0,4)===yr; });
+  var porMes = {};
+  regsAnio.forEach(function(r){ var mm = parseInt(r.fecha.slice(5,7))-1; if(!porMes[mm]) porMes[mm]=[]; porMes[mm].push(r); });
+  var meses = Object.keys(porMes).map(Number).sort(function(a,b){return a-b;});
+  var filas = meses.map(function(mm){
+    var regs = porMes[mm];
+    var pcts = regs.filter(function(r){return r.pctCobertura!==null && r.pctCobertura!==undefined;}).map(function(r){return r.pctCobertura;});
+    var pctProm = pcts.length ? Math.round((pcts.reduce(function(a,b){return a+b;},0)/pcts.length)*100) : null;
+    var tRac = regs.reduce(function(a,r){return a+(r.tRac||0);},0);
+    var risk = pctProm===null?'—':(pctProm>=99?'CONFORME':'NO CONFORME');
+    var pillCls = risk==='CONFORME'?'conf':(risk==='NO CONFORME'?'noconf':'nd');
+    return '<tr><td class="c">'+MESES_D[mm]+' '+yr+'</td><td class="c">'+regs.length+'</td><td class="c">'+(pctProm===null?'—':pctProm+'%')+'</td><td class="c">'+Math.round(tRac)+'</td><td class="c">'+pillEstado(pillCls, risk)+'</td></tr>';
+  }).join("") || '<tr><td colspan="5" style="text-align:center;color:#aaa">Sin registros para este año.</td></tr>';
+  var html = '<div class="hm-page">'+
+    '<div class="hm-hdr"><div><h1>INFORME ANUAL — DESAYUNO ZI</h1><p>Inspeccion Tecnica de Explotacion | Zona Interna</p></div><div class="hm-badge">'+yr+'</div></div>'+
+    '<div class="hm-kpis" style="grid-template-columns:repeat(2,1fr)">'+
+      '<div class="hm-kpi"><div class="hm-kpi-l">Total Registros</div><div class="hm-kpi-v b">'+regsAnio.length+'</div></div>'+
+      '<div class="hm-kpi"><div class="hm-kpi-l">Meses con Datos</div><div class="hm-kpi-v b">'+meses.length+'</div></div>'+
+    '</div>'+
+    '<div class="hm-sec">Resumen por Mes</div>'+
+    '<table class="hm-tabla"><thead><tr><th class="c">Mes</th><th class="c">Registros</th><th class="c">Cobertura Prom.</th><th class="c">Rac. Faltantes</th><th class="c">Riesgo</th></tr></thead><tbody>'+filas+'</tbody></table>'+
+    '<div class="hm-footer">Generado por SAIF — Sistema de Alimentacion | Decreto 977/RSA — Chile</div>'+
+  '</div>';
+  document.getElementById("anioInformeCont").innerHTML = html;
+}
+
+// ── INIT ──
+(function init(){
+  var hoy = new Date();
+  var iso = hoy.getFullYear()+"-"+String(hoy.getMonth()+1).padStart(2,"0")+"-"+String(hoy.getDate()).padStart(2,"0");
+  document.getElementById("fFecha").value = iso;
+  sincronizarFirma();
+  renderTabla();
+  sincronizarDesdeNube();
+})();
+
+// ── IMPORTAR DIETAS DESDE EXCEL (SheetJS) ──
+// El archivo trae UN INTERNO POR FILA con su modulo (col "MOD") y tipo de dieta (texto).
+// El sistema cuenta cuantas filas hay por cada modulo = cantidad de internos con dieta especial de ese modulo.
+var importWorkbook = null;
+var importRawRows = []; // filas crudas de la hoja activa (array de arrays)
+var MODULOS_VALIDOS = MODULOS_DEF.map(function(m){ return m.n; });
+
+function normalizarTxt(s){
+  return String(s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").trim();
+}
+
+function manejarArchivoExcel(ev){
+  var file = ev.target.files[0];
+  if(!file) return;
+  document.getElementById("importNombreArchivo").textContent = file.name;
+  var reader = new FileReader();
+  reader.onload = function(e){
+    try {
+      var data = new Uint8Array(e.target.result);
+      importWorkbook = XLSX.read(data, {type:"array"});
+      var selHoja = document.getElementById("importSelectHoja");
+      selHoja.innerHTML = importWorkbook.SheetNames.map(function(n){ return '<option value="'+n+'">'+n+'</option>'; }).join("");
+      document.getElementById("importPasoSelector").style.display = "block";
+      document.getElementById("importSinDatos").style.display = "none";
+      document.getElementById("importModal").style.display = "block";
+      cambiarHojaImport();
+    } catch(err){
+      toast("No se pudo leer el archivo Excel","#A32D2D");
+    }
+  };
+  reader.readAsArrayBuffer(file);
+  ev.target.value = "";
+}
+
+function cambiarHojaImport(){
+  var nombreHoja = document.getElementById("importSelectHoja").value;
+  var hoja = importWorkbook.Sheets[nombreHoja];
+  importRawRows = XLSX.utils.sheet_to_json(hoja, {header:1, defval:""});
+  // detectar fila de encabezado y columna de modulo automaticamente (busca "mod" en el texto del encabezado)
+  var headerRowIdx = 0, colM = 0;
+  for(var r=0; r<Math.min(importRawRows.length,10); r++){
+    var fila = importRawRows[r];
+    for(var c=0; c<fila.length; c++){
+      var txt = normalizarTxt(fila[c]);
+      if(txt==="mod" || txt==="modulo" || /^mod\.?$/.test(txt) || /n.?\s*modulo/.test(txt)){
+        headerRowIdx = r; colM = c;
+      }
+    }
+  }
+  window._importHeaderRow = headerRowIdx;
+  var colsCount = importRawRows.reduce(function(a,f){ return Math.max(a,f.length); },0);
+  var opciones = "";
+  for(var c=0;c<colsCount;c++){
+    var letra = XLSX.utils.encode_col(c);
+    var ejemplo = importRawRows[headerRowIdx] ? importRawRows[headerRowIdx][c] : "";
+    opciones += '<option value="'+c+'">'+letra+(ejemplo?(' — '+ejemplo):'')+'</option>';
+  }
+  document.getElementById("colModulo").innerHTML = opciones;
+  document.getElementById("colModulo").value = colM;
+  recalcularPreviewImport();
+}
+
+function recalcularPreviewImport(){
+  var colM = parseInt(document.getElementById("colModulo").value);
+  var headerRowIdx = window._importHeaderRow || 0;
+  var conteo = {};
+  var omitidos = {}; // valores de modulo que no coinciden con ningun modulo del sistema (ej: H externo, vacio)
+  for(var r=headerRowIdx+1; r<importRawRows.length; r++){
+    var fila = importRawRows[r];
+    if(!fila || fila.length===0) continue;
+    var modRaw = fila[colM];
+    if(modRaw === "" || modRaw === null || modRaw === undefined) continue;
+    var raw = String(modRaw).trim();
+    var modNum = parseInt(raw);
+    if(!isNaN(modNum) && MODULOS_VALIDOS.indexOf(modNum) !== -1){
+      conteo[modNum] = (conteo[modNum]||0) + 1;
+    } else if(normalizarTxt(raw) === "asa" && MODULOS_VALIDOS.indexOf("ASA") !== -1){
+      conteo["ASA"] = (conteo["ASA"]||0) + 1;
+    } else {
+      omitidos[raw] = (omitidos[raw]||0) + 1;
+    }
+  }
+  var cambios = MODULOS_VALIDOS.map(function(modNum){
+    var actual = modActual.find(function(m){ return m.numero===modNum; });
+    var nueva = conteo[modNum] || 0;
+    return { modulo: modNum, dietaActual: actual?actual.dieta:'—', dietaNueva: nueva, cambia: actual && actual.dieta!==nueva };
+  });
+  window._importCambios = cambios;
+  var tbl = '<thead><tr><th style="background:#1A3A5C;color:white;padding:5px 8px;font-size:10px">Modulo</th><th style="background:#1A3A5C;color:white;padding:5px 8px;font-size:10px">Dieta Actual</th><th style="background:#1A3A5C;color:white;padding:5px 8px;font-size:10px">Dieta Nueva (contada)</th></tr></thead><tbody>';
+  cambios.forEach(function(c){
+    tbl += '<tr style="'+(c.cambia?'background:#fff3cd':'')+'"><td style="padding:4px 8px;text-align:center">'+c.modulo+'</td><td style="padding:4px 8px;text-align:center;color:#888">'+c.dietaActual+'</td><td style="padding:4px 8px;text-align:center;font-weight:bold;color:#1a56a0">'+c.dietaNueva+'</td></tr>';
+  });
+  tbl += '</tbody>';
+  document.getElementById("tblPreviewImport").innerHTML = tbl;
+
+  var omitKeys = Object.keys(omitidos);
+  var omitEl = document.getElementById("importOmitidos");
+  if(omitKeys.length){
+    omitEl.textContent = "⚠ Filas con codigo de modulo no reconocido (no se cuentan en ningun modulo): " + omitKeys.map(function(k){ return k+" ("+omitidos[k]+")"; }).join(", ");
+  } else {
+    omitEl.textContent = "";
+  }
+}
+
+function aplicarImportacion(){
+  var cambios = window._importCambios || [];
+  if(!cambios.length){ toast("No hay datos para aplicar","#854F0B"); return; }
+  var aplicados = 0;
+  cambios.forEach(function(c){
+    var idx = modActual.findIndex(function(m){ return m.numero===c.modulo; });
+    if(idx>-1 && modActual[idx].dieta !== c.dietaNueva){ modActual[idx].dieta = c.dietaNueva; aplicados++; }
+  });
+  renderTabla();
+  cerrarImportModal();
+  toast("✓ "+aplicados+" modulos actualizados con la nueva cantidad de dieta");
+}
+
+function cerrarImportModal(){
+  document.getElementById("importModal").style.display = "none";
+}
+
+// ── CALENDARIO DE FISCALIZACIONES (Historial) ──
+var calMes, calAnio;
+(function initCal(){
+  var hoy = new Date();
+  calMes = hoy.getMonth();
+  calAnio = hoy.getFullYear();
+})();
+
+function toggleCalendarioDesayuno(){
+  var cal = document.getElementById("calendarioDesayuno");
+  var abierto = cal.style.display === "block";
+  cal.style.display = abierto ? "none" : "block";
+  if(!abierto) renderCalendarioDesayuno();
+}
+
+function cambiarMesCalendario(delta){
+  calMes += delta;
+  if(calMes<0){ calMes=11; calAnio--; }
+  if(calMes>11){ calMes=0; calAnio++; }
+  renderCalendarioDesayuno();
+}
+
+function mapaRegistrosPorFecha(){
+  var mapa = {};
+  hist.forEach(function(r){ if(r.fecha) mapa[r.fecha] = r; });
+  return mapa;
+}
+
+function renderCalendarioDesayuno(){
+  var mapa = mapaRegistrosPorFecha();
+  var primerDia = new Date(calAnio, calMes, 1);
+  var diasEnMes = new Date(calAnio, calMes+1, 0).getDate();
+  var offset = primerDia.getDay(); // 0=domingo
+  var dow = ["Dom","Lun","Mar","Mie","Jue","Vie","Sab"];
+  var h = '<div class="calh"><button onclick="cambiarMesCalendario(-1)">‹</button><b>'+MESES_D[calMes]+' '+calAnio+'</b><button onclick="cambiarMesCalendario(1)">›</button></div>';
+  h += '<div class="calgrid">';
+  dow.forEach(function(d){ h += '<div class="caldow">'+d+'</div>'; });
+  for(var i=0;i<offset;i++){ h += '<div class="calday vacio">.</div>'; }
+  for(var d=1; d<=diasEnMes; d++){
+    var mm = String(calMes+1).padStart(2,"0"), dd = String(d).padStart(2,"0");
+    var fechaStr = calAnio+"-"+mm+"-"+dd;
+    var reg = mapa[fechaStr];
+    if(reg){
+      var cls = reg.riesgo==='CONFORME' ? 'conf' : 'noconf';
+      var titleTxt = (reg.pctCobertura!==null && reg.pctCobertura!==undefined) ? (Math.round(reg.pctCobertura*100)+"% cobertura") : "";
+      h += "<div class=\"calday "+cls+"\" onclick='seleccionarDiaCalendario(\""+fechaStr+"\")' title=\""+titleTxt+"\">"+d+"</div>";
+    } else {
+      h += '<div class="calday">'+d+'</div>';
+    }
+  }
+  h += '</div>';
+  h += '<div class="calleyenda"><span><i style="background:#e1f5ee;border:1px solid #0F6E56"></i>Conforme</span><span><i style="background:#fcebeb;border:1px solid #A32D2D"></i>No Conforme</span><span><i style="background:#f5f5f5;border:1px solid #ddd"></i>Sin registro</span></div>';
+  document.getElementById("calendarioDesayuno").innerHTML = h;
+}
+
+function seleccionarDiaCalendario(fechaStr){
+  document.getElementById("desFechaBuscar").value = fechaStr;
+  buscarDesayuno();
+  document.getElementById("calendarioDesayuno").style.display = "none";
+}
+
+// ── GRAFICO DE CUMPLIMIENTOS E INCUMPLIMIENTOS ──
+function renderGraficoCumplimiento(){
+  var cont = document.getElementById("graficoCumplimiento");
+  if(!cont) return;
+  var datos = hist.filter(function(r){ return r.fecha; }).slice().sort(function(a,b){ return a.fecha.localeCompare(b.fecha); });
+  if(!datos.length){ cont.innerHTML = '<div class="hempty">Sin registros para graficar.</div>'; return; }
+  var h = '<div class="graf-wrap">';
+  datos.forEach(function(r){
+    var pct = r.pctCobertura===null||r.pctCobertura===undefined ? 0 : Math.round(r.pctCobertura*100);
+    var cls = r.riesgo==='CONFORME' ? 'conf':'noconf';
+    var alturaPx = Math.max(4, Math.round(pct*1.0)); // 1px por cada 1% (max 100px)
+    var fechaCorta = r.fecha.slice(8,10)+"/"+r.fecha.slice(5,7);
+    h += '<div class="graf-bar-col" title="'+r.fecha+' — '+pct+'% — '+r.riesgo+'">'+
+      '<div class="graf-pct">'+pct+'%</div>'+
+      '<div class="graf-bar '+cls+'" style="height:'+alturaPx+'px"></div>'+
+      '<div class="graf-lbl">'+fechaCorta+'</div>'+
+    '</div>';
+  });
+  h += '</div>';
+  h += '<div class="calleyenda" style="margin-top:16px"><span><i style="background:#0F6E56"></i>Conforme (≥99%)</span><span><i style="background:#A32D2D"></i>No Conforme (&lt;99%)</span></div>';
+  cont.innerHTML = h;
+}
+</script>
+</body>
+</html>
