@@ -340,7 +340,7 @@ body.proceso-ze .zona-ze { display: block; }
 <div class="proceso-selector">
   <button class="proceso-btn zi activo" onclick="setProceso('zi')">
     🏢 Zona Interna<br>
-    <span class="badge">INTERNOS — RÉGIMEN COMÚN</span>
+    <span class="badge">INTERNOS</span>
   </button>
   <button class="proceso-btn ze" onclick="setProceso('ze')">
     👔 Zona Externa<br>
@@ -595,12 +595,11 @@ body.proceso-ze .zona-ze { display: block; }
         <thead>
           <tr style="background:var(--azul);color:#fff;">
             <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:120px">Componente</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Lote Envasado</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Cantidad</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:95px">Tipo</th>
             <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Hora Inicio</th>
-            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">T° Inicial ⚠️<br><span style="font-weight:400;font-size:10px">(≤ 5°C)</span></th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">T° Inicial ⚠️</th>
             <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Hora Final</th>
-            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">T° Final ⚠️<br><span style="font-weight:400;font-size:10px">(≤ 5°C)</span></th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">T° Final ⚠️</th>
             <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:120px">Responsable</th>
             <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;min-width:130px">Obs. / AC</th>
             <th style="padding:8px 6px;min-width:36px"></th>
@@ -648,9 +647,6 @@ body.proceso-ze .zona-ze { display: block; }
         <thead>
           <tr style="background:var(--azul);color:#fff;">
             <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:120px">Componente</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Lote</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">F. Vencimiento</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Cantidad</th>
             <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:100px">Fecha Despacho</th>
             <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Hora Despacho</th>
             <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:85px">T° Despacho ⚠️<br><span style="font-weight:400;font-size:10px">(≤ 5°C)</span></th>
@@ -683,8 +679,6 @@ body.proceso-ze .zona-ze { display: block; }
         <thead>
           <tr style="background:var(--azul);color:#fff;">
             <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:130px">Componente / Producto</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Lote</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Cantidad</th>
             <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:100px">Fecha Recepción</th>
             <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Hora Recepción</th>
             <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:85px">T° Recepción ⚠️<br><span style="font-weight:400;font-size:10px">(≤ 5°C)</span></th>
@@ -716,9 +710,6 @@ body.proceso-ze .zona-ze { display: block; }
         <thead>
           <tr style="background:#8B1A1A;color:#fff;">
             <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:120px">Componente</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Lote</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">F. Vencimiento</th>
-            <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Cantidad</th>
             <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">N° Equipo</th>
             <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:75px">H. Inicio</th>
             <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:72px">T° Inicial</th>
@@ -1371,6 +1362,12 @@ function recopilarRecepcion() {
     if(!items[idx]) items[idx] = {};
     items[idx][el.dataset.field] = el.value;
   });
+  // Capturar el resultado de raciones ya calculado en pantalla para cada fila
+  items.forEach((item, idx) => {
+    if(!item) return;
+    const racEl = document.getElementById('rac-result-' + idx);
+    item.raciones = racEl ? racEl.textContent : '—';
+  });
   return items.filter(Boolean);
 }
 
@@ -1765,10 +1762,12 @@ function agregarFilaEnv() {
       ${inp('componente','text','Ej: Pescado frito')}
     </td>
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
-      ${inp('lote','text','N° lote')}
-    </td>
-    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
-      ${inp('cantidad','text','GN / kg / bolsas')}
+      <select data-env="${idx}" data-field="tipo" id="env-tipo-${idx}"
+        onchange="revalidarEnvFila(${idx})"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 4px;font-size:12px;font-weight:700;background:#fff">
+        <option value="frio">❄️ Frío</option>
+        <option value="caliente">🔥 Caliente</option>
+      </select>
     </td>
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
       ${inp('hora-ini','time','','style="min-width:80px"')}
@@ -1776,8 +1775,9 @@ function agregarFilaEnv() {
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
       <input type="number" step="0.1" data-env="${idx}" data-field="t-ini"
         placeholder="°C" id="env-t-ini-${idx}"
-        oninput="validarTempTablaGen(this, 'env-nc-ini-${idx}', 5, 'max')"
+        oninput="validarTempEnv(${idx}, 'ini')"
         style="width:70px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;background:#fff">
+      <div id="env-rango-ini-${idx}" style="font-size:9px;color:#7A8699;margin-top:2px">≤ 5°C</div>
       <div id="env-nc-ini-${idx}" style="display:none;font-size:10px;color:var(--rojo);font-weight:700;margin-top:2px">⚠ NC</div>
     </td>
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
@@ -1786,8 +1786,9 @@ function agregarFilaEnv() {
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
       <input type="number" step="0.1" data-env="${idx}" data-field="t-fin"
         placeholder="°C" id="env-t-fin-${idx}"
-        oninput="validarTempTablaGen(this, 'env-nc-fin-${idx}', 5, 'max')"
+        oninput="validarTempEnv(${idx}, 'fin')"
         style="width:70px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;background:#fff">
+      <div id="env-rango-fin-${idx}" style="font-size:9px;color:#7A8699;margin-top:2px">≤ 5°C</div>
       <div id="env-nc-fin-${idx}" style="display:none;font-size:10px;color:var(--rojo);font-weight:700;margin-top:2px">⚠ NC</div>
     </td>
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
@@ -1803,6 +1804,32 @@ function agregarFilaEnv() {
     </td>
   `;
   tbody.appendChild(tr);
+}
+
+// Frío: debe mantenerse ≤ 5°C · Caliente: debe mantenerse ≥ 65°C
+function revalidarEnvFila(idx) {
+  const tipoEl = document.getElementById('env-tipo-' + idx);
+  const tipo = tipoEl ? tipoEl.value : 'frio';
+  const rangoTxt = tipo === 'caliente' ? '≥ 65°C' : '≤ 5°C';
+  const rIni = document.getElementById('env-rango-ini-' + idx);
+  const rFin = document.getElementById('env-rango-fin-' + idx);
+  if(rIni) rIni.textContent = rangoTxt;
+  if(rFin) rFin.textContent = rangoTxt;
+  validarTempEnv(idx, 'ini');
+  validarTempEnv(idx, 'fin');
+}
+
+function validarTempEnv(idx, momento) {
+  const tipoEl = document.getElementById('env-tipo-' + idx);
+  const tipo = tipoEl ? tipoEl.value : 'frio';
+  const input = document.getElementById('env-t-' + momento + '-' + idx);
+  const ncId = 'env-nc-' + momento + '-' + idx;
+  if(!input) return;
+  if(tipo === 'caliente') {
+    validarTempTablaGen(input, ncId, 65, 'min');
+  } else {
+    validarTempTablaGen(input, ncId, 5, 'max');
+  }
 }
 
 function recopilarEnvasado() {
@@ -1842,15 +1869,6 @@ function agregarFilaDesp() {
   tr.innerHTML = `
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
       ${inp('componente','text','Ej: Pescado frito')}
-    </td>
-    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
-      ${inp('lote','text','Lote')}
-    </td>
-    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
-      ${inp('fecha-venc','date')}
-    </td>
-    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
-      ${inp('cantidad','text','GN / kg / bolsas')}
     </td>
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
       ${inp('fecha','date','','style="min-width:110px"')}
@@ -1917,12 +1935,6 @@ function agregarFilaRR() {
   tr.innerHTML = `
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
       ${inp('componente','text','Ej: Pescado frito')}
-    </td>
-    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
-      ${inp('lote','text','Lote')}
-    </td>
-    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
-      ${inp('cantidad','text','GN / kg / bolsas')}
     </td>
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
       ${inp('fecha','date','','style="min-width:110px"')}
@@ -1996,15 +2008,6 @@ function agregarFilaRT() {
   tr.innerHTML = `
     <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top">
       ${inp('componente','text','Ej: Pescado frito')}
-    </td>
-    <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top">
-      ${inp('lote','text','Lote')}
-    </td>
-    <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top">
-      ${inp('fecha-venc','date')}
-    </td>
-    <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top">
-      ${inp('cantidad','text','GN / kg / bolsas')}
     </td>
     <td style="padding:4px 6px;border-bottom:1px solid #F0DADA;vertical-align:top;text-align:center">
       <select data-rt="${idx}" data-field="equipo"
@@ -2742,11 +2745,11 @@ function construirPDF(data) {
   }
   y += 2;
   // Encabezado tabla
-  const colsMP = [18,28,22,16,14,18,18,16,16,18,16,14,16];
-  const hdrsMP = ['Componente','Ingrediente','Proveedor','Factura','Lote','F.Elab.','F.Venc.','F.Recep.','H.Recep.','Encargado','Cantidad','T°','Rac.'];
+  const colsMP = [22,19,15,14,12,15,26,20,14,10,13];
+  const hdrsMP = ['Componente','Ingrediente','Proveedor','Factura','Lote','Elab./Venc.','Fecha/Hora Recep.','Encargado','Cantidad','T°','Rac.'];
   doc.setFillColor(11,61,107);
   doc.rect(M, y-4, W-2*M, 7, 'F');
-  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(6.5);
   let cx = M+1;
   hdrsMP.forEach((h,j) => { doc.text(h, cx, y); cx += colsMP[j]; });
   doc.setTextColor(0,0,0); y += 5;
@@ -2757,18 +2760,19 @@ function construirPDF(data) {
     const bg = i%2===0 ? [255,255,255] : [245,248,252];
     doc.setFillColor(...bg);
     doc.rect(M, y-4, W-2*M, 7, 'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(11,61,107);
+    doc.setFont('helvetica','bold'); doc.setFontSize(6.5); doc.setTextColor(11,61,107);
     const vals = [
       `${i+1}.${mp.nombre}`, mp.producto||'—', mp.proveedor||'—', mp.factura||'—',
-      mp['lote-prov']||'—', mp['fecha-elab']||'—', mp['fecha-venc']||'—',
+      mp.lote||'—', `${mp['fecha-elab']||'—'}/${mp['fecha-venc']||'—'}`,
+      `${mp['fecha-recep']||'—'} ${mp['hora-recep']||''}`, mp.encargado||'—',
       mp.cantidad||'—', mp['t-recep']?mp['t-recep']+'°C':'—', mp.raciones||'—'
     ];
     cx = M+1; doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
     vals.forEach((val,j) => {
-      const t = parseFloat(j===11?val:'');
-      if(j===11 && !isNaN(t) && t>5) doc.setTextColor(192,57,43);
+      const t = parseFloat(j===9?val:'');
+      if(j===9 && !isNaN(t) && t>5) doc.setTextColor(192,57,43);
       else doc.setTextColor(0,0,0);
-      doc.text(String(val).substring(0,14), cx, y);
+      doc.text(String(val).substring(0,j===0?13:j===6?15:8), cx, y);
       cx += colsMP[j];
     });
     doc.setTextColor(0,0,0);
@@ -2784,11 +2788,11 @@ function construirPDF(data) {
   if(data.produccion && data.produccion.componentes && data.produccion.componentes.length) {
     seccion('REGISTRO DE PRODUCCIÓN', [11,61,107]);
     // Encabezado tabla
-    const colsProd = [28,20,16,18,18,14,14,14,14,14,14,40];
-    const hdrsProd = ['Componente','Tipo','Lote','F.Elab.','F.Venc.','H.Ini','T°Ini','H.Fin','T°Fin','H.Ent.','T°Ent.','Sensorial'];
+    const colsProd = [26,16,14,24,22,22,22,34];
+    const hdrsProd = ['Componente','Tipo','Lote','Elab./Venc.','Inicio (h/T°)','Fin (h/T°)⚠','Entrega (h/T°)⚠','Sensorial'];
     doc.setFillColor(11,61,107);
     doc.rect(M, y-4, W-2*M, 7, 'F');
-    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
+    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(6.5);
     let cxp = M+1;
     hdrsProd.forEach((h,j) => { doc.text(h, cxp, y); cxp += colsProd[j]; });
     doc.setTextColor(0,0,0); y += 5;
@@ -2797,26 +2801,24 @@ function construirPDF(data) {
       if(y > 262) { doc.addPage(); y = 15; }
       doc.setFillColor(i%2===0?255:245, i%2===0?255:248, i%2===0?255:252);
       doc.rect(M, y-4, W-2*M, 7, 'F');
-      doc.setFont('helvetica','normal'); doc.setFontSize(7);
+      doc.setFont('helvetica','normal'); doc.setFontSize(6.5);
       const tFin = parseFloat(c['t-fin']);
       const tEnt = parseFloat(c['t-entrega']);
       const ncFin = !isNaN(tFin) && tFin < 74;
       const ncEnt = !isNaN(tEnt) && tEnt < 63;
       const vals = [
         c.componente||'—', c['tipo-cocc']||'—', c.lote||'—',
-        c['fecha-elab']||'—', c['fecha-venc']||'—',
-        c['hora-ini']||'—', c['t-ini']?c['t-ini']+'°':'—',
-        c['hora-fin']||'—',
-        (c['t-fin']?c['t-fin']+'°':'—') + (ncFin?' ⚠':''),
-        c['hora-entrega']||'—',
-        (c['t-entrega']?c['t-entrega']+'°':'—') + (ncEnt?' ⚠':''),
+        `${c['fecha-elab']||'—'}/${c['fecha-venc']||'—'}`,
+        `${c['hora-ini']||'—'} ${c['t-ini']?c['t-ini']+'°':''}`,
+        `${c['hora-fin']||'—'} ${c['t-fin']?c['t-fin']+'°':''}` + (ncFin?' ⚠':''),
+        `${c['hora-entrega']||'—'} ${c['t-entrega']?c['t-entrega']+'°':''}` + (ncEnt?' ⚠':''),
         `C:${c['sens-color']?.charAt(0)||'—'} A:${c['sens-aroma']?.charAt(0)||'—'} S:${c['sens-sabor']?.charAt(0)||'—'} T:${c['sens-textura']?.charAt(0)||'—'}`
       ];
       cxp = M+1;
       vals.forEach((val,j) => {
-        if((j===8 && ncFin)||(j===10 && ncEnt)) doc.setTextColor(192,57,43);
+        if((j===5 && ncFin)||(j===6 && ncEnt)) doc.setTextColor(192,57,43);
         else doc.setTextColor(0,0,0);
-        doc.text(String(val).substring(0, j===0?14:j===11?18:8), cxp, y);
+        doc.text(String(val).substring(0, j===0?13:j===7?18:11), cxp, y);
         cxp += colsProd[j];
       });
       doc.setTextColor(0,0,0);
@@ -2890,41 +2892,12 @@ function construirPDF(data) {
     y += 2;
   }
 
-if(data.sanitizacion && data.sanitizacion.productos && data.sanitizacion.productos.length) {
-    seccion('SANITIZACIÓN DE FRUTAS Y VERDURAS', [11,61,107]);
-    fila('Área / Servicio', `${data.sanitizacion.area||'—'} / ${data.sanitizacion.servicio||'—'}`);
-    fila('pH Sanitizante (común)', data.sanitizacion.ph ? data.sanitizacion.ph + ' pH' : '—');
-    y += 2;
-    // Tabla productos
-    const colsSan = [8,38,26,16,16,14,30,28];
-    const hdrsSan = ['N°','Producto','Lote','H.Ini','H.Fin','Min','Responsable','Obs.'];
-    doc.setFillColor(26,107,60);
-    doc.rect(M, y-4, W-2*M, 7, 'F');
-    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
-    let cxs = M+1;
-    hdrsSan.forEach((h,j) => { doc.text(h, cxs, y); cxs += colsSan[j]; });
-    doc.setTextColor(0,0,0); y += 5;
-    data.sanitizacion.productos.forEach((p,i) => {
-      if(!p.producto) return;
-      if(y > 265) { doc.addPage(); y = 15; }
-      doc.setFillColor(i%2===0?255:245, i%2===0?255:248, i%2===0?255:252);
-      doc.rect(M, y-4, W-2*M, 7, 'F');
-      doc.setFont('helvetica','normal'); doc.setFontSize(7);
-      const vals = [String(i+1), p.producto||'—', p.lote||'—', p['hora-ini']||'—',
-        p['hora-fin']||'—', p.tiempo||'—', p.responsable||'—', p.obs||'—'];
-      cxs = M+1;
-      vals.forEach((val,j) => { doc.text(String(val).substring(0,j===1||j===6?16:8), cxs, y); cxs += colsSan[j]; });
-      y += 6;
-    });
-    y += 2;
-  }
-
   // ZI: Envasado, Despacho, Retermalización
   if(data.proceso === 'zi' && data.envasado) {
     seccion('ENVASADO / DESPACHO / RETERMALIZACIÓN', [11,61,107]);
     if(data.envasado.componentes && data.envasado.componentes.length) {
-      const colsEnv=[30,18,18,14,14,14,14,26];
-      const hdrsEnv=['Componente','Lote','Cantidad','H.Ini','T°Ini⚠','H.Fin','T°Fin⚠','Responsable'];
+      const colsEnv=[36,22,20,24,20,24,26];
+      const hdrsEnv=['Componente','Tipo','H.Ini','T°Ini⚠','H.Fin','T°Fin⚠','Responsable'];
       doc.setFillColor(11,61,107); doc.rect(M,y-4,W-2*M,7,'F');
       doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
       let cxe=M+1; hdrsEnv.forEach((h,j)=>{doc.text(h,cxe,y);cxe+=colsEnv[j];});
@@ -2933,14 +2906,17 @@ if(data.sanitizacion && data.sanitizacion.productos && data.sanitizacion.product
         if(!c.componente)return; if(y>265){doc.addPage();y=15;}
         doc.setFillColor(i%2===0?255:245,i%2===0?255:248,i%2===0?255:252);
         doc.rect(M,y-4,W-2*M,7,'F'); doc.setFont('helvetica','normal'); doc.setFontSize(7);
+        const esCaliente = c.tipo==='caliente';
+        const limite = esCaliente?65:5;
         const tI=parseFloat(c['t-ini']),tF=parseFloat(c['t-fin']);
-        const ncI=!isNaN(tI)&&tI>5, ncF=!isNaN(tF)&&tF>5;
-        const vals=[c.componente||'—',c.lote||'—',c.cantidad||'—',c['hora-ini']||'—',
+        const ncI=!isNaN(tI)&&(esCaliente?tI<limite:tI>limite);
+        const ncF=!isNaN(tF)&&(esCaliente?tF<limite:tF>limite);
+        const vals=[c.componente||'—',esCaliente?'🔥 Caliente':'❄️ Frío',c['hora-ini']||'—',
           (c['t-ini']?c['t-ini']+'°':'—')+(ncI?' ⚠':''),c['hora-fin']||'—',
           (c['t-fin']?c['t-fin']+'°':'—')+(ncF?' ⚠':''),c.responsable||'—'];
         cxe=M+1; vals.forEach((val,j)=>{
-          if((j===4&&ncI)||(j===6&&ncF))doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
-          doc.text(String(val).substring(0,j===0?14:j===7?12:8),cxe,y); cxe+=colsEnv[j];});
+          if((j===3&&ncI)||(j===5&&ncF))doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
+          doc.text(String(val).substring(0,j===0?16:j===6?14:9),cxe,y); cxe+=colsEnv[j];});
         doc.setTextColor(0,0,0); y+=6;
       }); y+=2;
     }
@@ -2948,8 +2924,8 @@ if(data.sanitizacion && data.sanitizacion.productos && data.sanitizacion.product
     if(data.despacho?.obsVehiculo) fila('Obs. Vehículo', data.despacho.obsVehiculo);
     if(data.despacho?.componentes && data.despacho.componentes.length) {
       y += 2;
-      const colsD=[28,16,18,16,18,14,14,28];
-      const hdrsD=['Componente','Lote','F.Venc.','Cantidad','Fecha','Hora','T°⚠','Obs.'];
+      const colsD=[46,26,20,22,66];
+      const hdrsD=['Componente','Fecha','Hora','T°⚠','Obs.'];
       doc.setFillColor(11,61,107); doc.rect(M,y-4,W-2*M,7,'F');
       doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
       let cxd=M+1; hdrsD.forEach((h,j)=>{doc.text(h,cxd,y);cxd+=colsD[j];});
@@ -2959,11 +2935,10 @@ if(data.sanitizacion && data.sanitizacion.productos && data.sanitizacion.product
         doc.setFillColor(i%2===0?255:245,i%2===0?255:248,i%2===0?255:252);
         doc.rect(M,y-4,W-2*M,7,'F'); doc.setFont('helvetica','normal'); doc.setFontSize(7);
         const tD=parseFloat(c.t); const ncD=!isNaN(tD)&&tD>5;
-        const vals=[c.componente||'—',c.lote||'—',c['fecha-venc']||'—',c.cantidad||'—',
-          c.fecha||'—',c.hora||'—',(c.t?c.t+'°':'—')+(ncD?' ⚠':''),c.obs||'—'];
+        const vals=[c.componente||'—',c.fecha||'—',c.hora||'—',(c.t?c.t+'°':'—')+(ncD?' ⚠':''),c.obs||'—'];
         cxd=M+1; vals.forEach((val,j)=>{
-          if(j===6&&ncD)doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
-          doc.text(String(val).substring(0,j===0?14:j===7?14:8),cxd,y); cxd+=colsD[j];});
+          if(j===3&&ncD)doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
+          doc.text(String(val).substring(0,j===0?22:j===4?32:9),cxd,y); cxd+=colsD[j];});
         doc.setTextColor(0,0,0); y+=6;
       }); y+=2;
     }
@@ -2972,8 +2947,8 @@ if(data.sanitizacion && data.sanitizacion.productos && data.sanitizacion.product
       y += 2;
       doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(11,61,107);
       doc.text('Recepción en Retermalizado:', M+2, y); y += 5;
-      const colsRR=[32,16,16,18,14,14,22,22];
-      const hdrsRR=['Componente','Lote','Cantidad','Fecha','Hora','T°⚠','Vehículo','Obs.'];
+      const colsRR=[40,20,20,22,36,22];
+      const hdrsRR=['Componente','Fecha','Hora','T°⚠','Vehículo','Obs.'];
       doc.setFillColor(11,61,107); doc.rect(M,y-4,W-2*M,7,'F');
       doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
       let cxrr=M+1; hdrsRR.forEach((h,j)=>{doc.text(h,cxrr,y);cxrr+=colsRR[j];});
@@ -2983,12 +2958,11 @@ if(data.sanitizacion && data.sanitizacion.productos && data.sanitizacion.product
         doc.setFillColor(i%2===0?255:245,i%2===0?255:248,i%2===0?255:252);
         doc.rect(M,y-4,W-2*M,7,'F'); doc.setFont('helvetica','normal'); doc.setFontSize(7);
         const tRR=parseFloat(c.t); const ncRR=!isNaN(tRR)&&tRR>5;
-        const vals=[c.componente||'—',c.lote||'—',c.cantidad||'—',
-          c.fecha||'—',c.hora||'—',(c.t?c.t+'°':'—')+(ncRR?' ⚠':''),
+        const vals=[c.componente||'—',c.fecha||'—',c.hora||'—',(c.t?c.t+'°':'—')+(ncRR?' ⚠':''),
           c.vehiculo||'—',c.obs||'—'];
         cxrr=M+1; vals.forEach((val,j)=>{
-          if(j===5&&ncRR)doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
-          doc.text(String(val).substring(0,j===0?16:j===6||j===7?12:8),cxrr,y); cxrr+=colsRR[j];});
+          if(j===3&&ncRR)doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
+          doc.text(String(val).substring(0,j===0?20:j===4||j===5?16:9),cxrr,y); cxrr+=colsRR[j];});
         doc.setTextColor(0,0,0); y+=6;
       }); y+=2;
     }
@@ -2997,8 +2971,8 @@ if(data.sanitizacion && data.sanitizacion.productos && data.sanitizacion.product
       y += 2;
       doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(139,26,26);
       doc.text('Retermalización y Despacho a Reposteros:', M+2, y); y += 5;
-      const colsRT=[24,14,18,14,12,14,14,14,14,14,20];
-      const hdrsRT=['Componente','Lote','F.Venc.','Cantidad','Equipo','H.Ini','T°Ini','H.Fin','T°Fin⚠','T°Resp⚠','Obs.'];
+      const colsRT=[30,18,18,18,18,18,22,38];
+      const hdrsRT=['Componente','Equipo','H.Ini','T°Ini','H.Fin','T°Fin⚠','T°Resp⚠','Obs.'];
       doc.setFillColor(139,26,26); doc.rect(M,y-4,W-2*M,7,'F');
       doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
       let cxrt=M+1; hdrsRT.forEach((h,j)=>{doc.text(h,cxrt,y);cxrt+=colsRT[j];});
@@ -3009,13 +2983,13 @@ if(data.sanitizacion && data.sanitizacion.productos && data.sanitizacion.product
         doc.rect(M,y-4,W-2*M,7,'F'); doc.setFont('helvetica','normal'); doc.setFontSize(7);
         const tF=parseFloat(c['t-fin']),tR=parseFloat(c['t-repostero']);
         const ncF=!isNaN(tF)&&tF<74, ncR=!isNaN(tR)&&tR<63;
-        const vals=[c.componente||'—',c.lote||'—',c['fecha-venc']||'—',c.cantidad||'—',
+        const vals=[c.componente||'—',
           c.equipo?'Eq.'+c.equipo:'—',c['hora-ini']||'—',c['t-ini']?c['t-ini']+'°':'—',
           c['hora-fin']||'—',(c['t-fin']?c['t-fin']+'°':'—')+(ncF?' ⚠':''),
           (c['t-repostero']?c['t-repostero']+'°':'—')+(ncR?' ⚠':''),c.obs||'—'];
         cxrt=M+1; vals.forEach((val,j)=>{
-          if((j===8&&ncF)||(j===9&&ncR))doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
-          doc.text(String(val).substring(0,j===0?12:j===10?10:8),cxrt,y); cxrt+=colsRT[j];});
+          if((j===5&&ncF)||(j===6&&ncR))doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
+          doc.text(String(val).substring(0,j===0?16:j===7?24:9),cxrt,y); cxrt+=colsRT[j];});
         doc.setTextColor(0,0,0); y+=6;
       }); y+=2;
       // Baños María
@@ -3064,6 +3038,9 @@ if(data.sanitizacion && data.sanitizacion.productos && data.sanitizacion.product
     doc.setFontSize(8); doc.text(lines, M+3, y); y += lines.length * 5 + 3;
   }
 
+  // Resumen gráfico de la trazabilidad (nueva página)
+  y = agregarResumenGraficoPDF(doc, data);
+
   // Firma
   if(y > 240) { doc.addPage(); y = 15; }
   y = Math.max(y, 240);
@@ -3079,6 +3056,105 @@ if(data.sanitizacion && data.sanitizacion.productos && data.sanitizacion.product
   const nombre = `Trazabilidad_${data.proceso.toUpperCase()}_${regStr}_${data.nroRegistro}_${data.fecha?.replace(/\//g,'-')}.pdf`;
   doc.save(nombre);
   mostrarToast('📄 PDF generado correctamente.', 'verde');
+}
+
+// Calcula cuántos puntos de control (temperaturas) están conformes vs no conformes en todo el registro
+function calcularCumplimiento(data) {
+  let ok = 0, nc = 0;
+  const chk = (val, limite, modo) => {
+    const v = parseFloat(val);
+    if (isNaN(v)) return;
+    const fuera = modo === 'min' ? v < limite : v > limite;
+    fuera ? nc++ : ok++;
+  };
+  (data.materiasPrimas||[]).forEach(mp => chk(mp['t-recep'], 5, 'max'));
+  (data.produccion?.componentes||[]).forEach(c => { chk(c['t-fin'],74,'min'); chk(c['t-entrega'],63,'min'); });
+  (data.abatimiento?.componentes||[]).forEach(c => chk(c['t-fin'],5,'max'));
+  (data.envasado?.componentes||[]).forEach(c => {
+    const cal = c.tipo === 'caliente';
+    chk(c['t-ini'], cal?65:5, cal?'min':'max');
+    chk(c['t-fin'], cal?65:5, cal?'min':'max');
+  });
+  (data.despacho?.componentes||[]).forEach(c => chk(c.t, 5, 'max'));
+  (data.recepcionReterm?.componentes||[]).forEach(c => chk(c.t, 5, 'max'));
+  (data.retermalizado?.componentes||[]).forEach(c => { chk(c['t-fin'],74,'min'); chk(c['t-repostero'],63,'min'); });
+  (data.retermalizado?.banosMaria||[]).forEach(b => chk(b.t, 63, 'min'));
+  if(data.proceso === 'ze' && data.casinoZE) {
+    ['1130','1230','1330','1430'].forEach(h => chk(data.casinoZE['t'+h], 63, 'min'));
+  }
+  return { ok, nc };
+}
+
+// Agrega una página de resumen gráfico (temperaturas por etapa + cumplimiento general) al PDF
+function agregarResumenGraficoPDF(doc, data) {
+  doc.addPage();
+  doc.setFillColor(11,61,107); doc.rect(0,0,W,14,'F');
+  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(12);
+  doc.text('RESUMEN GRÁFICO DE TRAZABILIDAD', W/2, 9, {align:'center'});
+  doc.setTextColor(0,0,0);
+  let y = 26;
+
+  const cump = calcularCumplimiento(data);
+  const temps = extraerTemps(data);
+  const puntos = [
+    {k:'tRecep', label:'Recepción', limite:5, modo:'max'},
+    {k:'tCocc', label:'Cocción', limite:74, modo:'min'},
+    {k:'tAbat', label:'Abatimiento', limite:5, modo:'max'},
+    {k:'tReterm', label:'Retermaliz.', limite:74, modo:'min'},
+    {k:'tCasino', label:'Casino/Reposteros', limite:63, modo:'min'},
+    {k:'tDesp', label:'Despacho', limite:5, modo:'max'}
+  ];
+  const etiquetas=[], valores=[], colores=[];
+  puntos.forEach(p => {
+    const v = temps[p.k];
+    if(v === null || v === undefined) return;
+    etiquetas.push(p.label); valores.push(v);
+    const fuera = p.modo==='min' ? v<p.limite : v>p.limite;
+    colores.push(fuera ? '#C0392B' : '#27AE60');
+  });
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(11,61,107);
+  doc.text('Temperatura mínima registrada por etapa del proceso', M, y); y += 6;
+
+  if(etiquetas.length) {
+    const canvas1 = document.createElement('canvas');
+    canvas1.width = 900; canvas1.height = 420;
+    new Chart(canvas1, {
+      type: 'bar',
+      data: { labels: etiquetas, datasets: [{ label: 'Temperatura (°C)', data: valores, backgroundColor: colores }] },
+      options: {
+        responsive:false, animation:false,
+        plugins: { legend: { display:false } },
+        scales: { y: { beginAtZero:true } }
+      }
+    });
+    doc.addImage(canvas1, 'PNG', M, y, 180, 84);
+    y += 90;
+  } else {
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(120,120,120);
+    doc.text('No hay temperaturas registradas para graficar en este registro.', M, y);
+    y += 10;
+  }
+
+  if(cump.ok + cump.nc > 0) {
+    doc.setFont('helvetica','bold'); doc.setFontSize(9); doc.setTextColor(11,61,107);
+    doc.text('Cumplimiento general de puntos de control (temperaturas)', M, y); y += 4;
+    const canvas2 = document.createElement('canvas');
+    canvas2.width = 500; canvas2.height = 400;
+    new Chart(canvas2, {
+      type: 'doughnut',
+      data: {
+        labels: ['Conformes', 'No conformes'],
+        datasets: [{ data: [cump.ok, cump.nc], backgroundColor: ['#27AE60','#C0392B'] }]
+      },
+      options: { responsive:false, animation:false, plugins: { legend:{position:'bottom'} } }
+    });
+    doc.addImage(canvas2, 'PNG', M+40, y, 80, 64);
+    doc.setFont('helvetica','normal'); doc.setFontSize(9); doc.setTextColor(0,0,0);
+    doc.text(`Total puntos evaluados: ${cump.ok+cump.nc}   ·   Conformes: ${cump.ok}   ·   No conformes: ${cump.nc}`, M, y+72);
+    y += 80;
+  }
+  return y;
 }
 
 // =============================================
