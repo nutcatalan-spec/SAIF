@@ -595,12 +595,13 @@ body.proceso-ze .zona-ze { display: block; }
         <thead>
           <tr style="background:var(--azul);color:#fff;">
             <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:120px">Componente</th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Tipo</th>
             <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Lote Envasado</th>
             <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:90px">Cantidad</th>
             <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Hora Inicio</th>
-            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">T° Inicial ⚠️<br><span style="font-weight:400;font-size:10px">(≤ 5°C)</span></th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">T° Inicial ⚠️<br><span style="font-weight:400;font-size:10px">(según tipo)</span></th>
             <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">Hora Final</th>
-            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">T° Final ⚠️<br><span style="font-weight:400;font-size:10px">(≤ 5°C)</span></th>
+            <th style="padding:8px 6px;text-align:center;font-weight:700;font-size:11px;white-space:nowrap;min-width:80px">T° Final ⚠️<br><span style="font-weight:400;font-size:10px">(según tipo)</span></th>
             <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;white-space:nowrap;min-width:120px">Responsable</th>
             <th style="padding:8px 6px;text-align:left;font-weight:700;font-size:11px;min-width:130px">Obs. / AC</th>
             <th style="padding:8px 6px;min-width:36px"></th>
@@ -851,46 +852,6 @@ body.proceso-ze .zona-ze { display: block; }
 </div>
 
 <!-- HISTORIAL -->
-<!-- PANEL CONFIGURACIÓN SUPABASE -->
-<div class="card" style="margin-top:20px;border:2px solid #1A6B3C">
-  <div class="card-header verde" onclick="toggleCard(this)">
-    ☁️ Configuración Supabase — Guardado en la Nube
-    <span class="toggle-icon">▼</span>
-  </div>
-  <div class="card-body hidden">
-    <div style="background:#E6F4EC;border-radius:8px;padding:10px 14px;margin-bottom:12px;font-size:12px;color:#1A6B3C;line-height:1.6">
-      <strong>¿Cómo conectar?</strong><br>
-      1. Crea tu proyecto gratuito en <a href="https://supabase.com" target="_blank" style="color:#1A6B3C">supabase.com</a><br>
-      2. Ve a <strong>Project Settings → API</strong><br>
-      3. Copia la <strong>Project URL</strong> y la <strong>anon public key</strong><br>
-      4. Pégalas aquí y presiona Guardar Configuración
-    </div>
-    <div class="grid-2" style="margin-bottom:10px">
-      <div class="campo">
-        <label>Project URL</label>
-        <input type="text" id="config-sb-url" placeholder="https://xxxx.supabase.co"
-          value="${localStorage.getItem('sb_url')||''}"
-          style="font-size:12px">
-      </div>
-      <div class="campo">
-        <label>Anon Public Key</label>
-        <input type="text" id="config-sb-key" placeholder="eyJhbGciOiJIUzI1..."
-          value="${localStorage.getItem('sb_key')||''}"
-          style="font-size:12px">
-      </div>
-    </div>
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <button class="btn btn-guardar" style="font-size:12px;padding:8px 16px" onclick="guardarConfigSupabase()">
-        💾 Guardar Configuración
-      </button>
-      <button class="btn btn-limpiar" style="font-size:12px;padding:8px 16px" onclick="probarConexionSupabase()">
-        🔌 Probar Conexión
-      </button>
-      <span id="sb-status" style="font-size:12px;font-weight:600"></span>
-    </div>
-  </div>
-</div>
-
 <div class="card" style="margin-top:20px">
   <div class="card-header azul" onclick="toggleCard(this)">
     📚 Historial de Registros
@@ -1042,22 +1003,16 @@ body.proceso-ze .zona-ze { display: block; }
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- SUPABASE CONFIG — Editar con tus credenciales -->
+<!-- SUPABASE — Credenciales de producción -->
 <script>
-// ============================================================
-// CONFIGURACIÓN SUPABASE
-// 1. Crea tu proyecto en https://supabase.com (gratis)
-// 2. Ve a Project Settings > API
-// 3. Copia la URL y la anon key aquí
-// ============================================================
-const SUPABASE_URL = localStorage.getItem('sb_url') || '';
-const SUPABASE_KEY = localStorage.getItem('sb_key') || '';
+const SUPABASE_URL = 'https://pfzbxckmqapkfggkqtbh.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBmemJ4Y2ttcWFwa2ZnZ2txdGJoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzc5MzQsImV4cCI6MjA5Njk1MzkzNH0.kFBxfXhVLyaxgLkwyldq2qXl0KPYM75Bf8vdXBXKXp4';
 
-// Cliente Supabase simplificado (sin SDK — usa fetch directo)
+// Cliente Supabase
 const sb = {
   url: SUPABASE_URL,
   key: SUPABASE_KEY,
-  configured: () => !!(sb.url && sb.key),
+  configured: () => true,
 
   async insert(table, data) {
     if(!sb.configured()) return { error: 'No configurado' };
@@ -1736,6 +1691,14 @@ function agregarFilaEnv() {
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
       ${inp('componente','text','Ej: Pescado frito')}
     </td>
+    <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
+      <select data-env="${idx}" data-field="tipo-envasado" id="env-tipo-${idx}"
+        onchange="actualizarLimitesEnv(${idx})"
+        style="width:100%;border:1px solid #D0D7E2;border-radius:5px;padding:5px 4px;font-size:12px;background:#fff;font-weight:600">
+        <option value="frio" style="color:#1A6B3C">❄️ Frío</option>
+        <option value="caliente" style="color:#C0392B">🔥 Caliente</option>
+      </select>
+    </td>
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
       ${inp('lote','text','N° lote')}
     </td>
@@ -1748,8 +1711,9 @@ function agregarFilaEnv() {
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
       <input type="number" step="0.1" data-env="${idx}" data-field="t-ini"
         placeholder="°C" id="env-t-ini-${idx}"
-        oninput="validarTempTablaGen(this, 'env-nc-ini-${idx}', 5, 'max')"
+        oninput="validarTempEnv(${idx})"
         style="width:70px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;background:#fff">
+      <div id="env-lim-ini-${idx}" style="font-size:10px;color:#888;margin-top:2px">≤ 5°C</div>
       <div id="env-nc-ini-${idx}" style="display:none;font-size:10px;color:var(--rojo);font-weight:700;margin-top:2px">⚠ NC</div>
     </td>
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
@@ -1758,8 +1722,9 @@ function agregarFilaEnv() {
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top;text-align:center">
       <input type="number" step="0.1" data-env="${idx}" data-field="t-fin"
         placeholder="°C" id="env-t-fin-${idx}"
-        oninput="validarTempTablaGen(this, 'env-nc-fin-${idx}', 5, 'max')"
+        oninput="validarTempEnv(${idx})"
         style="width:70px;border:1px solid #D0D7E2;border-radius:5px;padding:5px 6px;font-size:13px;font-weight:700;text-align:center;background:#fff">
+      <div id="env-lim-fin-${idx}" style="font-size:10px;color:#888;margin-top:2px">≤ 5°C</div>
       <div id="env-nc-fin-${idx}" style="display:none;font-size:10px;color:var(--rojo);font-weight:700;margin-top:2px">⚠ NC</div>
     </td>
     <td style="padding:4px 6px;border-bottom:1px solid #E8ECF2;vertical-align:top">
@@ -1775,6 +1740,43 @@ function agregarFilaEnv() {
     </td>
   `;
   tbody.appendChild(tr);
+}
+
+function actualizarLimitesEnv(idx) {
+  const tipo = document.getElementById('env-tipo-' + idx)?.value;
+  const esFrio = tipo === 'frio';
+  const limite = esFrio ? '≤ 5°C' : '≥ 63°C';
+  const limIni = document.getElementById('env-lim-ini-' + idx);
+  const limFin = document.getElementById('env-lim-fin-' + idx);
+  if(limIni) limIni.textContent = limite;
+  if(limFin) limFin.textContent = limite;
+  // Revalidar si ya hay valores
+  validarTempEnv(idx);
+}
+
+function validarTempEnv(idx) {
+  const tipo = document.getElementById('env-tipo-' + idx)?.value || 'frio';
+  const esFrio = tipo === 'frio';
+  const limite = esFrio ? 5 : 63;
+  const tipoVal = esFrio ? 'max' : 'min';
+  ['ini','fin'].forEach(sf => {
+    const input = document.getElementById('env-t-' + sf + '-' + idx);
+    const alerta = document.getElementById('env-nc-' + sf + '-' + idx);
+    if(!input) return;
+    const val = parseFloat(input.value);
+    if(isNaN(val)) {
+      input.style.background = '#fff';
+      input.style.color = '#1a2233';
+      input.style.borderColor = '#D0D7E2';
+      if(alerta) alerta.style.display = 'none';
+      return;
+    }
+    const fuera = tipoVal === 'min' ? val < limite : val > limite;
+    input.style.background = fuera ? '#FDECEA' : '#F0FBF4';
+    input.style.color = fuera ? '#C0392B' : '#1A6B3C';
+    input.style.borderColor = fuera ? '#C0392B' : '#27AE60';
+    if(alerta) alerta.style.display = fuera ? 'block' : 'none';
+  });
 }
 
 function recopilarEnvasado() {
@@ -2165,22 +2167,18 @@ async function ejecutarGuardado(accionCorrectiva) {
   reg.tieneDesvios = desviosActuales.length > 0;
   reg.desvios = desviosActuales;
 
-  // 1. Guardar siempre en localStorage (funciona offline)
+  // Guardar en localStorage como respaldo offline
   const todos = JSON.parse(localStorage.getItem(KEY) || '[]');
   todos.unshift(reg);
   localStorage.setItem(KEY, JSON.stringify(todos));
 
-  // 2. Si Supabase está configurado, guardar también en la nube
-  if(sb.configured()) {
-    mostrarToast('⏳ Guardando en la nube...', 'verde');
-    const resultado = await guardarEnSupabase(reg);
-    if(resultado.ok) {
-      mostrarToast('✅ Guardado en la nube correctamente.', 'verde');
-    } else {
-      mostrarToast('⚠️ Guardado local OK — Error en nube: ' + resultado.error, 'rojo');
-    }
+  // Guardar en Supabase
+  mostrarToast('⏳ Guardando en la nube...', 'verde');
+  const resultado = await guardarEnSupabase(reg);
+  if(resultado.ok) {
+    mostrarToast('✅ Registro guardado correctamente.', 'verde');
   } else {
-    mostrarToast('✅ Registro guardado localmente.', 'verde');
+    mostrarToast('⚠️ Guardado local OK — Error: ' + resultado.error, 'rojo');
   }
   cargarHistorial();
 }
@@ -2572,417 +2570,435 @@ function generarPDFHistorial(i) {
 function construirPDF(data) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  const W = 210; const M = 15;
-  let y = 15;
+  const W = 210; const M = 12;
+  let y = 0;
 
-  // Header
+  // ── HELPERS ────────────────────────────────────────────────
+  const checkPage = (needed = 10) => {
+    if (y + needed > 282) { doc.addPage(); y = 14; }
+  };
+
+  const txt = (text, x, yy, opts = {}) => {
+    doc.text(String(text ?? '—').substring(0, opts.maxLen || 999), x, yy, opts);
+  };
+
+  const fila = (label, valor, indent = 0) => {
+    checkPage(6);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(80, 80, 80);
+    txt(label + ':', M + indent, y);
+    doc.setFont('helvetica', 'normal'); doc.setTextColor(30, 30, 30);
+    const lines = doc.splitTextToSize(String(valor ?? '—'), W - M - 60 - indent);
+    doc.text(lines, M + 52 + indent, y);
+    y += Math.max(5, lines.length * 4.5);
+  };
+
+  const seccion = (titulo, r, g, b) => {
+    checkPage(14);
+    doc.setFillColor(r, g, b);
+    doc.rect(M, y, W - 2 * M, 8, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(9);
+    txt(titulo, M + 3, y + 5.5);
+    doc.setTextColor(30, 30, 30);
+    y += 11;
+  };
+
+  const miniTabla = (headers, rows, colWidths, ncCols = []) => {
+    const totalW = colWidths.reduce((a, b) => a + b, 0);
+    checkPage(10);
+    // Header
+    doc.setFillColor(52, 73, 94);
+    doc.rect(M, y, totalW, 6, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(6.5);
+    let cx = M + 1;
+    headers.forEach((h, j) => { txt(h, cx, y + 4, { maxLen: Math.floor(colWidths[j] / 1.8) }); cx += colWidths[j]; });
+    y += 7;
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(6.5);
+    rows.forEach((row, ri) => {
+      checkPage(7);
+      if (ri % 2 === 1) { doc.setFillColor(245, 247, 250); doc.rect(M, y - 3.5, totalW, 6, 'F'); }
+      cx = M + 1;
+      row.forEach((cell, j) => {
+        const isNC = ncCols.includes(j) && cell && cell.toString().includes('⚠');
+        doc.setTextColor(isNC ? 192 : 30, isNC ? 57 : 30, isNC ? 43 : 30);
+        doc.setFont('helvetica', isNC ? 'bold' : 'normal');
+        txt(String(cell ?? '—'), cx, y, { maxLen: Math.floor(colWidths[j] / 1.8) });
+        cx += colWidths[j];
+      });
+      doc.setTextColor(30, 30, 30);
+      y += 6;
+    });
+    y += 3;
+  };
+
+  // Convierte temperatura a string con badge NC
+  const tStr = (val, limite, tipo) => {
+    if (val === undefined || val === null || val === '') return '—';
+    const v = parseFloat(val);
+    if (isNaN(v)) return '—';
+    const nc = tipo === 'max' ? v > limite : v < limite;
+    return v + '°C' + (nc ? ' ⚠' : ' ✓');
+  };
+
+  // ── PORTADA / ENCABEZADO ───────────────────────────────────
   doc.setFillColor(11, 61, 107);
-  doc.rect(0, 0, W, 28, 'F');
-  doc.setTextColor(255,255,255);
-  doc.setFontSize(12); doc.setFont('helvetica','bold');
-  doc.text('EJERCICIO DE TRAZABILIDAD — SERVICIO DE ALIMENTACIÓN', W/2, 10, {align:'center'});
-  doc.text('E.P. SANTIAGO 1 — INSPECCIÓN TÉCNICA DE EXPLOTACIÓN', W/2, 17, {align:'center'});
-  doc.setFontSize(9); doc.setFont('helvetica','normal');
-  doc.text(`N° Registro: ${data.nroRegistro}   Régimen: ${data.regimen||'—'}   ${data.fecha} ${data.hora}`, W/2, 24, {align:'center'});
+  doc.rect(0, 0, W, 32, 'F');
+  doc.setFillColor(26, 107, 60);
+  doc.rect(0, 32, W, 3, 'F');
 
-  doc.setFillColor(26,107,60);
-  doc.rect(0, 28, W, 4, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(13);
+  txt('INFORME DE TRAZABILIDAD ALIMENTARIA', W / 2, 12, { align: 'center' });
+  doc.setFontSize(10);
+  txt('SERVICIO DE ALIMENTACIÓN — E.P. SANTIAGO 1', W / 2, 19, { align: 'center' });
+  doc.setFont('helvetica', 'normal'); doc.setFontSize(8.5);
+  txt(`N° Registro: ${data.nroRegistro}   |   ${data.fecha} ${data.hora}   |   ${data.procesoNombre}`, W / 2, 27, { align: 'center' });
 
-  y = 40;
-  doc.setTextColor(0,0,0);
+  y = 42;
 
-  function seccion(titulo, color) {
-    if(y > 260) { doc.addPage(); y = 15; }
-    doc.setFillColor(...color);
-    doc.rect(M, y, W-2*M, 7, 'F');
-    doc.setTextColor(255,255,255);
-    doc.setFont('helvetica','bold'); doc.setFontSize(9);
-    doc.text(titulo, M+3, y+5);
-    doc.setTextColor(0,0,0);
-    y += 10;
-  }
-
-  function fila(label, valor, indent=0) {
-    if(y > 270) { doc.addPage(); y = 15; }
-    doc.setFont('helvetica','bold'); doc.setFontSize(8);
-    doc.text(String(label)+':', M+indent, y);
-    doc.setFont('helvetica','normal');
-    doc.text(String(valor||'—'), M+55+indent, y);
-    y += 5;
-  }
-
-  function filaNC(label, valor) {
-    if(y > 270) { doc.addPage(); y = 15; }
-    doc.setFillColor(252,235,235);
-    doc.rect(M, y-4, W-2*M, 6, 'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(8);
-    doc.setTextColor(192,57,43);
-    doc.text('⚠ '+String(label)+':', M+2, y);
-    doc.text(String(valor||'—'), M+55, y);
-    doc.setTextColor(0,0,0);
-    y += 6;
-  }
-
-  // Datos generales
-  seccion('DATOS GENERALES', [11,61,107]);
+  // ── DATOS GENERALES ────────────────────────────────────────
+  seccion('DATOS GENERALES', 11, 61, 107);
   fila('Preparación', data.nombrePrep);
   fila('Proceso', data.procesoNombre);
-  fila('Régimen', data.regimen||'—');
+  fila('Régimen', data.regimen);
   fila('Servicio', data.servicio);
-  fila('Responsable ITE', data.responsable);
-  if(data.tieneDesvios) {
-    y += 2;
-    doc.setFillColor(254,200,200);
-    doc.rect(M, y-3, W-2*M, 8, 'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(192,57,43);
-    doc.text('REGISTRO CON DESVIACIONES DE TEMPERATURA — ACCIÓN CORRECTIVA REGISTRADA', M+2, y+2);
-    doc.setTextColor(0,0,0); y += 10;
-    if(data.accionCorrectiva) fila('Acción Correctiva', data.accionCorrectiva);
-  }
+  fila('Responsable ITE', data.responsable || '—');
+  y += 3;
 
-  // Materias primas — tabla
-  seccion('REGISTRO DE RECEPCIÓN — SERVICIO COMPLETO', [11,61,107]);
-  if(data.recepComun) {
-    fila('Fecha / Hora recepción', `${data.recepComun.fecha||'—'} ${data.recepComun.hora||''}`);
-    fila('Encargado bodega', data.recepComun.encargado);
-  }
-  y += 2;
-  // Encabezado tabla
-  const colsMP = [18,28,22,16,14,18,18,16,16,18,16,14,16];
-  const hdrsMP = ['Componente','Ingrediente','Proveedor','Factura','Lote','F.Elab.','F.Venc.','F.Recep.','H.Recep.','Encargado','Cantidad','T°','Rac.'];
-  doc.setFillColor(11,61,107);
-  doc.rect(M, y-4, W-2*M, 7, 'F');
-  doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
-  let cx = M+1;
-  hdrsMP.forEach((h,j) => { doc.text(h, cx, y); cx += colsMP[j]; });
-  doc.setTextColor(0,0,0); y += 5;
-  // Filas por MP
-  data.materiasPrimas.forEach((mp,i) => {
-    if(!mp.producto) return;
-    if(y > 265) { doc.addPage(); y = 15; }
-    const bg = i%2===0 ? [255,255,255] : [245,248,252];
-    doc.setFillColor(...bg);
-    doc.rect(M, y-4, W-2*M, 7, 'F');
-    doc.setFont('helvetica','bold'); doc.setFontSize(7); doc.setTextColor(11,61,107);
-    const vals = [
-      `${i+1}.${mp.nombre}`, mp.producto||'—', mp.proveedor||'—', mp.factura||'—',
-      mp['lote-prov']||'—', mp['fecha-elab']||'—', mp['fecha-venc']||'—',
-      mp.cantidad||'—', mp['t-recep']?mp['t-recep']+'°C':'—', mp.raciones||'—'
-    ];
-    cx = M+1; doc.setTextColor(0,0,0); doc.setFont('helvetica','normal');
-    vals.forEach((val,j) => {
-      const t = parseFloat(j===11?val:'');
-      if(j===11 && !isNaN(t) && t>5) doc.setTextColor(192,57,43);
-      else doc.setTextColor(0,0,0);
-      doc.text(String(val).substring(0,14), cx, y);
-      cx += colsMP[j];
-    });
-    doc.setTextColor(0,0,0);
-    if(mp['obs-recep']) {
-      y += 5;
-      doc.setFont('helvetica','italic'); doc.setFontSize(7); doc.setTextColor(80,80,80);
-      doc.text(`  Obs MP${i+1}: ${mp['obs-recep']}`, M+2, y);
-    }
-    y += 6;
-  });
+  // ── SEMÁFORO DE CUMPLIMIENTO PCC ───────────────────────────
+  seccion('RESUMEN DE CUMPLIMIENTO PCC', 39, 55, 70);
 
-  // Producción — tabla multi-componente
-  if(data.produccion && data.produccion.componentes && data.produccion.componentes.length) {
-    seccion('REGISTRO DE PRODUCCIÓN', [11,61,107]);
-    // Encabezado tabla
-    const colsProd = [28,20,16,18,18,14,14,14,14,14,14,40];
-    const hdrsProd = ['Componente','Tipo','Lote','F.Elab.','F.Venc.','H.Ini','T°Ini','H.Fin','T°Fin','H.Ent.','T°Ent.','Sensorial'];
-    doc.setFillColor(11,61,107);
-    doc.rect(M, y-4, W-2*M, 7, 'F');
-    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
-    let cxp = M+1;
-    hdrsProd.forEach((h,j) => { doc.text(h, cxp, y); cxp += colsProd[j]; });
-    doc.setTextColor(0,0,0); y += 5;
-    data.produccion.componentes.forEach((c,i) => {
-      if(!c.componente) return;
-      if(y > 262) { doc.addPage(); y = 15; }
-      doc.setFillColor(i%2===0?255:245, i%2===0?255:248, i%2===0?255:252);
-      doc.rect(M, y-4, W-2*M, 7, 'F');
-      doc.setFont('helvetica','normal'); doc.setFontSize(7);
-      const tFin = parseFloat(c['t-fin']);
-      const tEnt = parseFloat(c['t-entrega']);
-      const ncFin = !isNaN(tFin) && tFin < 74;
-      const ncEnt = !isNaN(tEnt) && tEnt < 63;
-      const vals = [
-        c.componente||'—', c['tipo-cocc']||'—', c.lote||'—',
-        c['fecha-elab']||'—', c['fecha-venc']||'—',
-        c['hora-ini']||'—', c['t-ini']?c['t-ini']+'°':'—',
-        c['hora-fin']||'—',
-        (c['t-fin']?c['t-fin']+'°':'—') + (ncFin?' ⚠':''),
-        c['hora-entrega']||'—',
-        (c['t-entrega']?c['t-entrega']+'°':'—') + (ncEnt?' ⚠':''),
-        `C:${c['sens-color']?.charAt(0)||'—'} A:${c['sens-aroma']?.charAt(0)||'—'} S:${c['sens-sabor']?.charAt(0)||'—'} T:${c['sens-textura']?.charAt(0)||'—'}`
-      ];
-      cxp = M+1;
-      vals.forEach((val,j) => {
-        if((j===8 && ncFin)||(j===10 && ncEnt)) doc.setTextColor(192,57,43);
-        else doc.setTextColor(0,0,0);
-        doc.text(String(val).substring(0, j===0?14:j===11?18:8), cxp, y);
-        cxp += colsProd[j];
-      });
-      doc.setTextColor(0,0,0);
-      if(c.obs) {
-        y += 5;
-        doc.setFont('helvetica','italic'); doc.setFontSize(7); doc.setTextColor(80,80,80);
-        doc.text(`  Obs: ${c.obs}`.substring(0,80), M+2, y);
-      }
-      y += 6;
-    });
-    y += 2;
-  }
+  // Calcular estado por etapa
+  const etapas = [];
+
+  // Recepción MP
+  const mpNC = (data.materiasPrimas || []).filter(mp => {
+    const t = parseFloat(mp['t-recep']); return !isNaN(t) && t > 5;
+  }).length;
+  const mpTotal = (data.materiasPrimas || []).filter(mp => mp['t-recep']).length;
+  etapas.push({ nombre: 'Recepción MP', ok: mpNC === 0, detalle: mpTotal > 0 ? `${mpTotal - mpNC}/${mpTotal} OK` : 'Sin T°' });
+
+  // Producción cocción
+  const prodNC = (data.produccion?.componentes || []).filter(c => {
+    const t = parseFloat(c['t-fin']); return !isNaN(t) && t < 74;
+  }).length;
+  const prodTotal = (data.produccion?.componentes || []).filter(c => c['t-fin']).length;
+  etapas.push({ nombre: 'Cocción (≥74°C)', ok: prodNC === 0, detalle: prodTotal > 0 ? `${prodTotal - prodNC}/${prodTotal} OK` : 'Sin T°' });
 
   // Abatimiento
-  // Abatimiento — tabla multi-componente
-  if(data.abatimiento && data.abatimiento.componentes && data.abatimiento.componentes.length) {
-    seccion('REGISTRO DE ABATIMIENTO / ENFRIAMIENTO', [11,61,107]);
-    const colsAbat = [30,18,16,18,14,14,14,14,26,16];
-    const hdrsAbat = ['Componente','Equipo','T°Equip','Cantidad','H.Ini','T°Ini','H.Fin','T°Fin⚠','Responsable','Obs.'];
-    doc.setFillColor(11,61,107);
-    doc.rect(M, y-4, W-2*M, 7, 'F');
-    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
-    let cxa = M+1;
-    hdrsAbat.forEach((h,j)=>{ doc.text(h,cxa,y); cxa+=colsAbat[j]; });
-    doc.setTextColor(0,0,0); y+=5;
-    data.abatimiento.componentes.forEach((c,i)=>{
-      if(!c.componente) return;
-      if(y>265){doc.addPage();y=15;}
-      doc.setFillColor(i%2===0?255:245,i%2===0?255:248,i%2===0?255:252);
-      doc.rect(M,y-4,W-2*M,7,'F');
-      doc.setFont('helvetica','normal'); doc.setFontSize(7);
-      const tFin=parseFloat(c['t-fin']); const nc=!isNaN(tFin)&&tFin>5;
-      const vals=[c.componente||'—','Eq.'+c.equipo||'—',c['t-equipo']?c['t-equipo']+'°':'—',
-        c.cantidad||'—',c['hora-ini']||'—',c['t-ini']?c['t-ini']+'°':'—',
-        c['hora-fin']||'—',(c['t-fin']?c['t-fin']+'°':'—')+(nc?' ⚠':''),
-        c.responsable||'—',c.obs?c.obs.substring(0,12):'—'];
-      cxa=M+1;
-      vals.forEach((val,j)=>{ if(j===7&&nc)doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
-        doc.text(String(val).substring(0,j===0?14:j===8?12:8),cxa,y); cxa+=colsAbat[j]; });
-      doc.setTextColor(0,0,0); y+=6;
-    }); y+=2;
+  const abatNC = (data.abatimiento?.componentes || []).filter(c => {
+    const t = parseFloat(c['t-fin']); return !isNaN(t) && t > 5;
+  }).length;
+  const abatTotal = (data.abatimiento?.componentes || []).filter(c => c['t-fin']).length;
+  etapas.push({ nombre: 'Abatimiento (≤5°C)', ok: abatNC === 0, detalle: abatTotal > 0 ? `${abatTotal - abatNC}/${abatTotal} OK` : 'Sin T°' });
+
+  // Envasado
+  const envNC = (data.envasado?.componentes || []).filter(c => {
+    const tipo = c['tipo-envasado'] || 'frio';
+    const t = parseFloat(c['t-fin']);
+    return !isNaN(t) && (tipo === 'frio' ? t > 5 : t < 63);
+  }).length;
+  const envTotal = (data.envasado?.componentes || []).filter(c => c['t-fin']).length;
+  if (data.proceso === 'zi') etapas.push({ nombre: 'Envasado', ok: envNC === 0, detalle: envTotal > 0 ? `${envTotal - envNC}/${envTotal} OK` : 'Sin T°' });
+
+  // Despacho
+  const despNC = (data.despacho?.componentes || []).filter(c => {
+    const t = parseFloat(c.t); return !isNaN(t) && t > 5;
+  }).length;
+  const despTotal = (data.despacho?.componentes || []).filter(c => c.t).length;
+  if (data.proceso === 'zi') etapas.push({ nombre: 'Despacho (≤5°C)', ok: despNC === 0, detalle: despTotal > 0 ? `${despTotal - despNC}/${despTotal} OK` : 'Sin T°' });
+
+  // Retermalización
+  if (data.proceso === 'zi') {
+    const rtNC = (data.retermalizado?.componentes || []).filter(c => {
+      const t = parseFloat(c['t-fin']); return !isNaN(t) && t < 74;
+    }).length;
+    const rtTotal = (data.retermalizado?.componentes || []).filter(c => c['t-fin']).length;
+    etapas.push({ nombre: 'Retermalización (≥74°C)', ok: rtNC === 0, detalle: rtTotal > 0 ? `${rtTotal - rtNC}/${rtTotal} OK` : 'Sin T°' });
+
+    const respNC = (data.retermalizado?.componentes || []).filter(c => {
+      const t = parseFloat(c['t-repostero']); return !isNaN(t) && t < 63;
+    }).length;
+    const respTotal = (data.retermalizado?.componentes || []).filter(c => c['t-repostero']).length;
+    etapas.push({ nombre: 'Casino/Repostero (≥63°C)', ok: respNC === 0, detalle: respTotal > 0 ? `${respTotal - respNC}/${respTotal} OK` : 'Sin T°' });
   }
 
-  // Sanitización
-  if(data.sanitizacion && data.sanitizacion.productos && data.sanitizacion.productos.length) {
-    seccion('SANITIZACIÓN DE FRUTAS Y VERDURAS', [11,61,107]);
-    fila('Área / Servicio', `${data.sanitizacion.area||'—'} / ${data.sanitizacion.servicio||'—'}`);
-    fila('pH Sanitizante (común)', data.sanitizacion.ph ? data.sanitizacion.ph + ' pH' : '—');
-    y += 2;
-    // Tabla productos
-    const colsSan = [8,38,26,16,16,14,30,28];
-    const hdrsSan = ['N°','Producto','Lote','H.Ini','H.Fin','Min','Responsable','Obs.'];
-    doc.setFillColor(26,107,60);
-    doc.rect(M, y-4, W-2*M, 7, 'F');
-    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
-    let cxs = M+1;
-    hdrsSan.forEach((h,j) => { doc.text(h, cxs, y); cxs += colsSan[j]; });
-    doc.setTextColor(0,0,0); y += 5;
-    data.sanitizacion.productos.forEach((p,i) => {
-      if(!p.producto) return;
-      if(y > 265) { doc.addPage(); y = 15; }
-      doc.setFillColor(i%2===0?255:245, i%2===0?255:248, i%2===0?255:252);
-      doc.rect(M, y-4, W-2*M, 7, 'F');
-      doc.setFont('helvetica','normal'); doc.setFontSize(7);
-      const vals = [String(i+1), p.producto||'—', p.lote||'—', p['hora-ini']||'—',
-        p['hora-fin']||'—', p.tiempo||'—', p.responsable||'—', p.obs||'—'];
-      cxs = M+1;
-      vals.forEach((val,j) => { doc.text(String(val).substring(0,j===1||j===6?16:8), cxs, y); cxs += colsSan[j]; });
-      y += 6;
+  // Casino ZE
+  if (data.proceso === 'ze' && data.casinoZE) {
+    const horarios = ['t1130', 't1230', 't1330', 't1430'];
+    const casinoVals = horarios.map(k => parseFloat(data.casinoZE[k])).filter(v => !isNaN(v));
+    const casinoNC = casinoVals.filter(v => v < 63).length;
+    etapas.push({ nombre: 'Casino ZE (≥63°C)', ok: casinoNC === 0, detalle: casinoVals.length > 0 ? `${casinoVals.length - casinoNC}/${casinoVals.length} OK` : 'Sin T°' });
+  }
+
+  // Cumplimiento total
+  const etapasConDatos = etapas.filter(e => e.detalle !== 'Sin T°');
+  const etapasOK = etapasConDatos.filter(e => e.ok).length;
+  const pctCump = etapasConDatos.length > 0 ? Math.round((etapasOK / etapasConDatos.length) * 100) : 0;
+
+  // Dibujar semáforo por etapa — dos columnas
+  const colW = (W - 2 * M - 6) / 2;
+  const etapasLeft = etapas.slice(0, Math.ceil(etapas.length / 2));
+  const etapasRight = etapas.slice(Math.ceil(etapas.length / 2));
+  const maxRows = Math.max(etapasLeft.length, etapasRight.length);
+
+  for (let r = 0; r < maxRows; r++) {
+    checkPage(9);
+    [etapasLeft[r], etapasRight[r]].forEach((etapa, col) => {
+      if (!etapa) return;
+      const xBase = M + col * (colW + 6);
+      const color = etapa.ok ? [39, 174, 96] : [192, 57, 43];
+      const colorLight = etapa.ok ? [230, 244, 236] : [253, 236, 234];
+      doc.setFillColor(...colorLight);
+      doc.rect(xBase, y - 3, colW, 8, 'F');
+      doc.setFillColor(...color);
+      doc.rect(xBase, y - 3, 4, 8, 'F');
+      doc.setTextColor(...color);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5);
+      txt(etapa.ok ? '✓' : '✗', xBase + 1.2, y + 1.5);
+      doc.setTextColor(30, 30, 30);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(7.5);
+      txt(etapa.nombre, xBase + 6, y + 1.5);
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(7);
+      doc.setTextColor(100, 100, 100);
+      txt(etapa.detalle, xBase + colW - 22, y + 1.5);
+      doc.setTextColor(30, 30, 30);
     });
-    y += 2;
+    y += 9;
   }
 
-if(data.sanitizacion && data.sanitizacion.productos && data.sanitizacion.productos.length) {
-    seccion('SANITIZACIÓN DE FRUTAS Y VERDURAS', [11,61,107]);
-    fila('Área / Servicio', `${data.sanitizacion.area||'—'} / ${data.sanitizacion.servicio||'—'}`);
-    fila('pH Sanitizante (común)', data.sanitizacion.ph ? data.sanitizacion.ph + ' pH' : '—');
-    y += 2;
-    // Tabla productos
-    const colsSan = [8,38,26,16,16,14,30,28];
-    const hdrsSan = ['N°','Producto','Lote','H.Ini','H.Fin','Min','Responsable','Obs.'];
-    doc.setFillColor(26,107,60);
-    doc.rect(M, y-4, W-2*M, 7, 'F');
-    doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
-    let cxs = M+1;
-    hdrsSan.forEach((h,j) => { doc.text(h, cxs, y); cxs += colsSan[j]; });
-    doc.setTextColor(0,0,0); y += 5;
-    data.sanitizacion.productos.forEach((p,i) => {
-      if(!p.producto) return;
-      if(y > 265) { doc.addPage(); y = 15; }
-      doc.setFillColor(i%2===0?255:245, i%2===0?255:248, i%2===0?255:252);
-      doc.rect(M, y-4, W-2*M, 7, 'F');
-      doc.setFont('helvetica','normal'); doc.setFontSize(7);
-      const vals = [String(i+1), p.producto||'—', p.lote||'—', p['hora-ini']||'—',
-        p['hora-fin']||'—', p.tiempo||'—', p.responsable||'—', p.obs||'—'];
-      cxs = M+1;
-      vals.forEach((val,j) => { doc.text(String(val).substring(0,j===1||j===6?16:8), cxs, y); cxs += colsSan[j]; });
-      y += 6;
+  // Barra de cumplimiento total
+  y += 3; checkPage(14);
+  doc.setFillColor(240, 240, 240);
+  doc.rect(M, y, W - 2 * M, 8, 'F');
+  const barColor = pctCump >= 90 ? [39, 174, 96] : pctCump >= 70 ? [230, 126, 34] : [192, 57, 43];
+  doc.setFillColor(...barColor);
+  doc.rect(M, y, (W - 2 * M) * pctCump / 100, 8, 'F');
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
+  if (pctCump > 15) txt(`CUMPLIMIENTO TOTAL: ${pctCump}%`, M + 3, y + 5.5);
+  doc.setTextColor(30, 30, 30);
+  if (pctCump <= 15) txt(`CUMPLIMIENTO TOTAL: ${pctCump}%`, M + (W - 2 * M) * pctCump / 100 + 3, y + 5.5);
+  y += 12;
+
+  // Acción correctiva global
+  if (data.tieneDesvios) {
+    checkPage(14);
+    doc.setFillColor(253, 236, 234);
+    doc.rect(M, y, W - 2 * M, data.accionCorrectiva ? 16 : 8, 'F');
+    doc.setTextColor(192, 57, 43);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8);
+    txt('⚠ REGISTRO CON DESVIACIONES — ACCIÓN CORRECTIVA REGISTRADA', M + 3, y + 5);
+    if (data.accionCorrectiva) {
+      doc.setFont('helvetica', 'normal'); doc.setFontSize(7.5);
+      const acLines = doc.splitTextToSize(data.accionCorrectiva, W - 2 * M - 6);
+      doc.text(acLines, M + 3, y + 11);
+      y += acLines.length * 4;
+    }
+    doc.setTextColor(30, 30, 30);
+    y += 11;
+  }
+
+  // ── RECEPCIÓN DE MATERIAS PRIMAS ───────────────────────────
+  if (data.materiasPrimas?.length) {
+    seccion('REGISTRO DE RECEPCIÓN — MATERIAS PRIMAS', 11, 61, 107);
+    const hdrs = ['Comp.', 'Ingrediente', 'Proveedor', 'Factura', 'Lote', 'F.Elab', 'F.Venc', 'F.Recep', 'H.Recep', 'Encargado', 'Cantidad', 'T° Recep.', 'Rac.'];
+    const cols = [16, 28, 28, 18, 18, 18, 18, 18, 14, 24, 18, 16, 14];
+    const rows = data.materiasPrimas.filter(mp => mp.producto || mp.componente).map(mp => [
+      mp.componente || '—',
+      mp.producto || '—',
+      mp.proveedor || '—',
+      mp.factura || '—',
+      mp.lote || mp['lote-prov'] || '—',
+      mp['fecha-elab'] || '—',
+      mp['fecha-venc'] || '—',
+      mp['fecha-recep'] || '—',
+      mp['hora-recep'] || '—',
+      mp.encargado || '—',
+      mp.cantidad || '—',
+      tStr(mp['t-recep'], 5, 'max'),
+      mp.raciones || '—'
+    ]);
+    miniTabla(hdrs, rows, cols, [11]);
+  }
+
+  // ── SANITIZACIÓN ───────────────────────────────────────────
+  if (data.sanitizacion?.productos?.length) {
+    seccion('SANITIZACIÓN DE FRUTAS Y VERDURAS', 11, 61, 107);
+    fila('Área', data.sanitizacion.area);
+    fila('pH Sanitizante', data.sanitizacion.ph ? data.sanitizacion.ph + ' pH' : '—');
+    const hdrs = ['Producto', 'Lote', 'H.Inicio', 'H.Fin', 'Tiempo (min)', 'Responsable', 'Obs.'];
+    const cols = [34, 22, 18, 18, 22, 34, 38];
+    const rows = data.sanitizacion.productos.filter(p => p.producto).map(p => [
+      p.producto || '—', p.lote || '—', p['hora-ini'] || '—',
+      p['hora-fin'] || '—', p.tiempo || '—', p.responsable || '—', p.obs || '—'
+    ]);
+    miniTabla(hdrs, rows, cols);
+  }
+
+  // ── PRODUCCIÓN ─────────────────────────────────────────────
+  if (data.produccion?.componentes?.length) {
+    seccion('REGISTRO DE PRODUCCIÓN', 11, 61, 107);
+    const hdrs = ['Componente', 'Tipo', 'Lote', 'F.Elab', 'F.Venc', 'H.Ini', 'T°Ini', 'H.Fin', 'T°Final⚠', 'H.Ent', 'T°Ent⚠', 'Color', 'Aroma', 'Sabor', 'Text.'];
+    const cols = [24, 18, 16, 16, 16, 12, 12, 12, 16, 12, 16, 10, 10, 10, 10];
+    const rows = data.produccion.componentes.filter(c => c.componente).map(c => [
+      c.componente || '—', c['tipo-cocc'] || '—', c.lote || '—',
+      c['fecha-elab'] || '—', c['fecha-venc'] || '—',
+      c['hora-ini'] || '—', c['t-ini'] ? c['t-ini'] + '°' : '—',
+      c['hora-fin'] || '—',
+      tStr(c['t-fin'], 74, 'min'),
+      c['hora-entrega'] || '—',
+      tStr(c['t-entrega'], 63, 'min'),
+      (c['sens-color'] || '—').charAt(0),
+      (c['sens-aroma'] || '—').charAt(0),
+      (c['sens-sabor'] || '—').charAt(0),
+      (c['sens-textura'] || '—').charAt(0)
+    ]);
+    miniTabla(hdrs, rows, cols, [8, 10]);
+  }
+
+  // ── ABATIMIENTO ────────────────────────────────────────────
+  if (data.abatimiento?.componentes?.length) {
+    seccion('REGISTRO DE ABATIMIENTO / ENFRIAMIENTO', 11, 61, 107);
+    const hdrs = ['Componente', 'Equipo', 'T°Equip', 'Cantidad', 'H.Ini', 'T°Ini', 'H.Fin', 'T°Final⚠', 'Responsable', 'Obs.'];
+    const cols = [30, 14, 14, 20, 14, 14, 14, 16, 28, 22];
+    const rows = data.abatimiento.componentes.filter(c => c.componente).map(c => [
+      c.componente || '—', c.equipo ? 'Eq.' + c.equipo : '—',
+      c['t-equipo'] ? c['t-equipo'] + '°' : '—', c.cantidad || '—',
+      c['hora-ini'] || '—', c['t-ini'] ? c['t-ini'] + '°' : '—',
+      c['hora-fin'] || '—', tStr(c['t-fin'], 5, 'max'),
+      c.responsable || '—', c.obs || '—'
+    ]);
+    miniTabla(hdrs, rows, cols, [7]);
+  }
+
+  // ── ENVASADO (ZI) ──────────────────────────────────────────
+  if (data.proceso === 'zi' && data.envasado?.componentes?.length) {
+    seccion('REGISTRO DE ENVASADO', 11, 61, 107);
+    const hdrs = ['Componente', 'Tipo', 'Lote', 'Cantidad', 'H.Ini', 'T°Ini⚠', 'H.Fin', 'T°Fin⚠', 'Responsable', 'Obs.'];
+    const cols = [26, 16, 18, 18, 12, 16, 12, 16, 26, 26];
+    const rows = data.envasado.componentes.filter(c => c.componente).map(c => {
+      const tipo = c['tipo-envasado'] || 'frio';
+      const limite = tipo === 'frio' ? 5 : 63;
+      const tipoVal = tipo === 'frio' ? 'max' : 'min';
+      return [
+        c.componente || '—', tipo === 'frio' ? '❄️ Frío' : '🔥 Cal.',
+        c.lote || '—', c.cantidad || '—',
+        c['hora-ini'] || '—', tStr(c['t-ini'], limite, tipoVal),
+        c['hora-fin'] || '—', tStr(c['t-fin'], limite, tipoVal),
+        c.responsable || '—', c.obs || '—'
+      ];
     });
-    y += 2;
+    miniTabla(hdrs, rows, cols, [5, 7]);
   }
 
-  // ZI: Envasado, Despacho, Retermalización
-  if(data.proceso === 'zi' && data.envasado) {
-    seccion('ENVASADO / DESPACHO / RETERMALIZACIÓN', [11,61,107]);
-    if(data.envasado.componentes && data.envasado.componentes.length) {
-      const colsEnv=[30,18,18,14,14,14,14,26];
-      const hdrsEnv=['Componente','Lote','Cantidad','H.Ini','T°Ini⚠','H.Fin','T°Fin⚠','Responsable'];
-      doc.setFillColor(11,61,107); doc.rect(M,y-4,W-2*M,7,'F');
-      doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
-      let cxe=M+1; hdrsEnv.forEach((h,j)=>{doc.text(h,cxe,y);cxe+=colsEnv[j];});
-      doc.setTextColor(0,0,0); y+=5;
-      data.envasado.componentes.forEach((c,i)=>{
-        if(!c.componente)return; if(y>265){doc.addPage();y=15;}
-        doc.setFillColor(i%2===0?255:245,i%2===0?255:248,i%2===0?255:252);
-        doc.rect(M,y-4,W-2*M,7,'F'); doc.setFont('helvetica','normal'); doc.setFontSize(7);
-        const tI=parseFloat(c['t-ini']),tF=parseFloat(c['t-fin']);
-        const ncI=!isNaN(tI)&&tI>5, ncF=!isNaN(tF)&&tF>5;
-        const vals=[c.componente||'—',c.lote||'—',c.cantidad||'—',c['hora-ini']||'—',
-          (c['t-ini']?c['t-ini']+'°':'—')+(ncI?' ⚠':''),c['hora-fin']||'—',
-          (c['t-fin']?c['t-fin']+'°':'—')+(ncF?' ⚠':''),c.responsable||'—'];
-        cxe=M+1; vals.forEach((val,j)=>{
-          if((j===4&&ncI)||(j===6&&ncF))doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
-          doc.text(String(val).substring(0,j===0?14:j===7?12:8),cxe,y); cxe+=colsEnv[j];});
-        doc.setTextColor(0,0,0); y+=6;
-      }); y+=2;
-    }
-    fila('Condiciones Vehículo', data.despacho?.vehiculo||'—');
-    if(data.despacho?.obsVehiculo) fila('Obs. Vehículo', data.despacho.obsVehiculo);
-    if(data.despacho?.componentes && data.despacho.componentes.length) {
-      y += 2;
-      const colsD=[28,16,18,16,18,14,14,28];
-      const hdrsD=['Componente','Lote','F.Venc.','Cantidad','Fecha','Hora','T°⚠','Obs.'];
-      doc.setFillColor(11,61,107); doc.rect(M,y-4,W-2*M,7,'F');
-      doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
-      let cxd=M+1; hdrsD.forEach((h,j)=>{doc.text(h,cxd,y);cxd+=colsD[j];});
-      doc.setTextColor(0,0,0); y+=5;
-      data.despacho.componentes.forEach((c,i)=>{
-        if(!c.componente)return; if(y>265){doc.addPage();y=15;}
-        doc.setFillColor(i%2===0?255:245,i%2===0?255:248,i%2===0?255:252);
-        doc.rect(M,y-4,W-2*M,7,'F'); doc.setFont('helvetica','normal'); doc.setFontSize(7);
-        const tD=parseFloat(c.t); const ncD=!isNaN(tD)&&tD>5;
-        const vals=[c.componente||'—',c.lote||'—',c['fecha-venc']||'—',c.cantidad||'—',
-          c.fecha||'—',c.hora||'—',(c.t?c.t+'°':'—')+(ncD?' ⚠':''),c.obs||'—'];
-        cxd=M+1; vals.forEach((val,j)=>{
-          if(j===6&&ncD)doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
-          doc.text(String(val).substring(0,j===0?14:j===7?14:8),cxd,y); cxd+=colsD[j];});
-        doc.setTextColor(0,0,0); y+=6;
-      }); y+=2;
-    }
-    // Recepción retermalizado por producto
-    if(data.recepcionReterm?.componentes?.length) {
-      y += 2;
-      doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(11,61,107);
-      doc.text('Recepción en Retermalizado:', M+2, y); y += 5;
-      const colsRR=[32,16,16,18,14,14,22,22];
-      const hdrsRR=['Componente','Lote','Cantidad','Fecha','Hora','T°⚠','Vehículo','Obs.'];
-      doc.setFillColor(11,61,107); doc.rect(M,y-4,W-2*M,7,'F');
-      doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
-      let cxrr=M+1; hdrsRR.forEach((h,j)=>{doc.text(h,cxrr,y);cxrr+=colsRR[j];});
-      doc.setTextColor(0,0,0); y+=5;
-      data.recepcionReterm.componentes.forEach((c,i)=>{
-        if(!c.componente)return; if(y>265){doc.addPage();y=15;}
-        doc.setFillColor(i%2===0?255:245,i%2===0?255:248,i%2===0?255:252);
-        doc.rect(M,y-4,W-2*M,7,'F'); doc.setFont('helvetica','normal'); doc.setFontSize(7);
-        const tRR=parseFloat(c.t); const ncRR=!isNaN(tRR)&&tRR>5;
-        const vals=[c.componente||'—',c.lote||'—',c.cantidad||'—',
-          c.fecha||'—',c.hora||'—',(c.t?c.t+'°':'—')+(ncRR?' ⚠':''),
-          c.vehiculo||'—',c.obs||'—'];
-        cxrr=M+1; vals.forEach((val,j)=>{
-          if(j===5&&ncRR)doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
-          doc.text(String(val).substring(0,j===0?16:j===6||j===7?12:8),cxrr,y); cxrr+=colsRR[j];});
-        doc.setTextColor(0,0,0); y+=6;
-      }); y+=2;
-    }
-    // Retermalización por producto
-    if(data.retermalizado?.componentes?.length) {
-      y += 2;
-      doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(139,26,26);
-      doc.text('Retermalización y Despacho a Reposteros:', M+2, y); y += 5;
-      const colsRT=[24,14,18,14,12,14,14,14,14,14,20];
-      const hdrsRT=['Componente','Lote','F.Venc.','Cantidad','Equipo','H.Ini','T°Ini','H.Fin','T°Fin⚠','T°Resp⚠','Obs.'];
-      doc.setFillColor(139,26,26); doc.rect(M,y-4,W-2*M,7,'F');
-      doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
-      let cxrt=M+1; hdrsRT.forEach((h,j)=>{doc.text(h,cxrt,y);cxrt+=colsRT[j];});
-      doc.setTextColor(0,0,0); y+=5;
-      data.retermalizado.componentes.forEach((c,i)=>{
-        if(!c.componente)return; if(y>265){doc.addPage();y=15;}
-        doc.setFillColor(i%2===0?255:254,i%2===0?255:248,i%2===0?255:248);
-        doc.rect(M,y-4,W-2*M,7,'F'); doc.setFont('helvetica','normal'); doc.setFontSize(7);
-        const tF=parseFloat(c['t-fin']),tR=parseFloat(c['t-repostero']);
-        const ncF=!isNaN(tF)&&tF<74, ncR=!isNaN(tR)&&tR<63;
-        const vals=[c.componente||'—',c.lote||'—',c['fecha-venc']||'—',c.cantidad||'—',
-          c.equipo?'Eq.'+c.equipo:'—',c['hora-ini']||'—',c['t-ini']?c['t-ini']+'°':'—',
-          c['hora-fin']||'—',(c['t-fin']?c['t-fin']+'°':'—')+(ncF?' ⚠':''),
-          (c['t-repostero']?c['t-repostero']+'°':'—')+(ncR?' ⚠':''),c.obs||'—'];
-        cxrt=M+1; vals.forEach((val,j)=>{
-          if((j===8&&ncF)||(j===9&&ncR))doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
-          doc.text(String(val).substring(0,j===0?12:j===10?10:8),cxrt,y); cxrt+=colsRT[j];});
-        doc.setTextColor(0,0,0); y+=6;
-      }); y+=2;
-      // Baños María
-      if(data.retermalizado.banosMaria?.length) {
-        doc.setFont('helvetica','bold'); doc.setFontSize(8); doc.setTextColor(139,26,26);
-        doc.text('Control de Baños María:', M+2, y); y+=5;
-        const colsBM=[50,24,20,56];
-        const hdrsBM=['Identificación','Hora','T° (≥63°C)','Obs.'];
-        doc.setFillColor(139,26,26); doc.rect(M,y-4,W-2*M,7,'F');
-        doc.setTextColor(255,255,255); doc.setFont('helvetica','bold'); doc.setFontSize(7);
-        let cxbm=M+1; hdrsBM.forEach((h,j)=>{doc.text(h,cxbm,y);cxbm+=colsBM[j];});
-        doc.setTextColor(0,0,0); y+=5;
-        data.retermalizado.banosMaria.forEach((b,i)=>{
-          if(!b.identificacion&&!b.t)return; if(y>265){doc.addPage();y=15;}
-          doc.setFillColor(i%2===0?255:254,i%2===0?255:248,i%2===0?255:248);
-          doc.rect(M,y-4,W-2*M,7,'F'); doc.setFont('helvetica','normal'); doc.setFontSize(7);
-          const tBM=parseFloat(b.t); const ncBM=!isNaN(tBM)&&tBM<63;
-          const vals=[b.identificacion||'—',b.hora||'—',(b.t?b.t+'°C':'—')+(ncBM?' ⚠':''),b.obs||'—'];
-          cxbm=M+1; vals.forEach((val,j)=>{
-            if(j===2&&ncBM)doc.setTextColor(192,57,43); else doc.setTextColor(0,0,0);
-            doc.text(String(val).substring(0,j===3?28:j===0?24:10),cxbm,y); cxbm+=colsBM[j];});
-          doc.setTextColor(0,0,0); y+=6;
-        }); y+=2;
-      }
+  // ── DESPACHO (ZI) ──────────────────────────────────────────
+  if (data.proceso === 'zi' && data.despacho?.componentes?.length) {
+    seccion('REGISTRO DE DESPACHO', 11, 61, 107);
+    fila('Condición Vehículo', data.despacho.vehiculo);
+    if (data.despacho.obsVehiculo) fila('Obs. Vehículo', data.despacho.obsVehiculo);
+    const hdrs = ['Componente', 'Lote', 'F.Venc.', 'Cantidad', 'Fecha Desp.', 'Hora Desp.', 'T° Desp.⚠', 'Obs.'];
+    const cols = [30, 18, 18, 18, 20, 18, 18, 46];
+    const rows = data.despacho.componentes.filter(c => c.componente).map(c => [
+      c.componente || '—', c.lote || '—', c['fecha-venc'] || '—',
+      c.cantidad || '—', c.fecha || '—', c.hora || '—',
+      tStr(c.t, 5, 'max'), c.obs || '—'
+    ]);
+    miniTabla(hdrs, rows, cols, [6]);
+  }
+
+  // ── RECEPCIÓN RETERMALIZADO (ZI) ───────────────────────────
+  if (data.proceso === 'zi' && data.recepcionReterm?.componentes?.length) {
+    seccion('RECEPCIÓN EN RETERMALIZADO', 11, 61, 107);
+    const hdrs = ['Componente', 'Lote', 'Cantidad', 'Fecha', 'Hora', 'T° Recep.⚠', 'Vehículo', 'Obs.'];
+    const cols = [30, 18, 18, 18, 14, 18, 26, 44];
+    const rows = data.recepcionReterm.componentes.filter(c => c.componente).map(c => [
+      c.componente || '—', c.lote || '—', c.cantidad || '—',
+      c.fecha || '—', c.hora || '—', tStr(c.t, 5, 'max'),
+      c.vehiculo || '—', c.obs || '—'
+    ]);
+    miniTabla(hdrs, rows, cols, [5]);
+  }
+
+  // ── RETERMALIZACIÓN (ZI) ───────────────────────────────────
+  if (data.proceso === 'zi' && data.retermalizado?.componentes?.length) {
+    seccion('RETERMALIZACIÓN Y DESPACHO A REPOSTEROS', 139, 26, 26);
+    const hdrs = ['Componente', 'Lote', 'F.Venc', 'Cantidad', 'Equipo', 'H.Ini', 'T°Ini', 'H.Fin', 'T°Fin⚠', 'T°Repos⚠', 'Obs.'];
+    const cols = [24, 16, 16, 16, 12, 12, 12, 12, 16, 16, 34];
+    const rows = data.retermalizado.componentes.filter(c => c.componente).map(c => [
+      c.componente || '—', c.lote || '—', c['fecha-venc'] || '—',
+      c.cantidad || '—', c.equipo ? 'Eq.' + c.equipo : '—',
+      c['hora-ini'] || '—', c['t-ini'] ? c['t-ini'] + '°' : '—',
+      c['hora-fin'] || '—', tStr(c['t-fin'], 74, 'min'),
+      tStr(c['t-repostero'], 63, 'min'), c.obs || '—'
+    ]);
+    miniTabla(hdrs, rows, cols, [8, 9]);
+
+    // Baños María
+    if (data.retermalizado.banosMaria?.length) {
+      checkPage(10);
+      doc.setFont('helvetica', 'bold'); doc.setFontSize(8); doc.setTextColor(139, 26, 26);
+      txt('Control de Baños María:', M + 2, y); y += 5;
+      doc.setTextColor(30, 30, 30);
+      const hdrsBM = ['Identificación', 'Hora Medición', 'T° Medida⚠', 'Obs.'];
+      const colsBM = [56, 26, 26, 78];
+      const rowsBM = data.retermalizado.banosMaria.filter(b => b.identificacion || b.t).map(b => [
+        b.identificacion || '—', b.hora || '—', tStr(b.t, 63, 'min'), b.obs || '—'
+      ]);
+      miniTabla(hdrsBM, rowsBM, colsBM, [2]);
     }
   }
 
-  // ZE: Casino
-  if(data.proceso === 'ze' && data.casinoZE) {
-    seccion('TEMPERATURAS CASINO — ZONA EXTERNA', [26,107,60]);
+  // ── CASINO ZE ──────────────────────────────────────────────
+  if (data.proceso === 'ze' && data.casinoZE) {
     const cze = data.casinoZE;
-    ['1130','1230','1330','1430'].forEach(h => {
-      const t = parseFloat(cze[`t${h}`]);
-      const hs = h.slice(0,2)+':'+h.slice(2);
-      if(!isNaN(t) && t < 63) filaNC(`T° ${hs} hrs (PCC)`, `${t}°C ⚠ Límite: ≥ 63°C`);
-      else fila(`T° ${hs} hrs`, `${cze['t'+h]||'—'}°C`);
-    });
-    fila('Baño María 1 / 2', `${cze.bm1||'—'}°C / ${cze.bm2||'—'}°C`);
-    fila('Comensales Común/Liviano/Hipo', `${cze.comun||'—'} / ${cze.liviano||'—'} / ${cze.hipo||'—'}`);
+    seccion('TEMPERATURAS CASINO — ZONA EXTERNA', 26, 107, 60);
+    const hdrs = ['11:30 hrs', '12:30 hrs', '13:30 hrs', '14:30 hrs', 'Baño María 1', 'Baño María 2'];
+    const cols = [30, 30, 30, 30, 30, 36];
+    const rows = [[
+      tStr(cze.t1130, 63, 'min'), tStr(cze.t1230, 63, 'min'),
+      tStr(cze.t1330, 63, 'min'), tStr(cze.t1430, 63, 'min'),
+      tStr(cze.bm1, 63, 'min'), tStr(cze.bm2, 63, 'min')
+    ]];
+    miniTabla(hdrs, rows, cols, [0, 1, 2, 3, 4, 5]);
+    y += 2;
+    fila('Comensales Común', cze.comun || '—');
+    fila('Comensales Liviano', cze.liviano || '—');
+    fila('Comensales Hipo', cze.hipo || '—');
+    if (cze.obs) fila('Observaciones', cze.obs);
   }
 
-  // Observaciones
-  if(data.obsGenerales) {
-    seccion('OBSERVACIONES GENERALES', [74,74,74]);
-    const lines = doc.splitTextToSize(data.obsGenerales, W-2*M-10);
-    doc.setFontSize(8); doc.text(lines, M+3, y); y += lines.length * 5 + 3;
+  // ── OBSERVACIONES GENERALES ────────────────────────────────
+  if (data.obsGenerales) {
+    seccion('OBSERVACIONES GENERALES', 74, 74, 74);
+    checkPage(12);
+    doc.setFont('helvetica', 'normal'); doc.setFontSize(8);
+    const obsLines = doc.splitTextToSize(data.obsGenerales, W - 2 * M - 4);
+    doc.text(obsLines, M + 2, y);
+    y += obsLines.length * 4.5 + 4;
   }
 
-  // Firma
-  if(y > 240) { doc.addPage(); y = 15; }
-  y = Math.max(y, 240);
-  doc.setDrawColor(180,180,180); doc.setLineWidth(0.3);
-  doc.line(M, y, M+70, y);
-  doc.setFontSize(8); doc.setFont('helvetica','normal');
-  doc.text(`${data.responsable||'Inspector ITE'}`, M+35, y+4, {align:'center'});
-  doc.text('Firma / Timbre ITE', M+35, y+8, {align:'center'});
-  doc.setFontSize(7); doc.setTextColor(120,120,120);
-  doc.text(`Generado: ${new Date().toLocaleString('es-CL')} — Sistema de Trazabilidad E.P. Santiago 1`, W/2, 290, {align:'center'});
+  // ── FIRMA ──────────────────────────────────────────────────
+  checkPage(20);
+  y = Math.max(y + 4, 260);
+  doc.setDrawColor(180, 180, 180); doc.setLineWidth(0.3);
+  doc.line(M, y, M + 70, y);
+  doc.setFontSize(8); doc.setFont('helvetica', 'normal'); doc.setTextColor(80, 80, 80);
+  txt(data.responsable || 'Inspector ITE', M + 35, y + 4, { align: 'center' });
+  txt('Firma / Timbre ITE', M + 35, y + 8, { align: 'center' });
 
-  const regStr = (data.regimen||'').replace(/\s+/g,'_').replace(/[^a-zA-Z0-9_]/g,'');
-  const nombre = `Trazabilidad_${data.proceso.toUpperCase()}_${regStr}_${data.nroRegistro}_${data.fecha?.replace(/\//g,'-')}.pdf`;
+  // Footer en todas las páginas
+  const totalPages = doc.getNumberOfPages();
+  for (let pg = 1; pg <= totalPages; pg++) {
+    doc.setPage(pg);
+    doc.setFontSize(6.5); doc.setTextColor(150, 150, 150);
+    doc.setFont('helvetica', 'normal');
+    txt(`Generado: ${new Date().toLocaleString('es-CL')} — Sistema de Trazabilidad E.P. Santiago 1 — Pág. ${pg}/${totalPages}`, W / 2, 291, { align: 'center' });
+  }
+
+  const regStr = (data.regimen || '').replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+  const nombre = `Trazabilidad_${data.proceso.toUpperCase()}_${regStr}_${data.nroRegistro}_${(data.fecha || '').replace(/\//g, '-')}.pdf`;
   doc.save(nombre);
   mostrarToast('📄 PDF generado correctamente.', 'verde');
 }
@@ -3051,57 +3067,7 @@ function actualizarHeader() {
 // INICIO
 // =============================================
 
-// =============================================
-// CONFIGURACIÓN SUPABASE
-// =============================================
-function guardarConfigSupabase() {
-  const url = document.getElementById('config-sb-url').value.trim();
-  const key = document.getElementById('config-sb-key').value.trim();
-  if(!url || !key) {
-    mostrarToast('Ingresa ambos campos antes de guardar.', 'rojo');
-    return;
-  }
-  localStorage.setItem('sb_url', url);
-  localStorage.setItem('sb_key', key);
-  sb.url = url;
-  sb.key = key;
-  mostrarToast('✅ Configuración guardada.', 'verde');
-  actualizarEstadoSB();
-}
-
-async function probarConexionSupabase() {
-  const status = document.getElementById('sb-status');
-  status.textContent = '⏳ Probando...';
-  status.style.color = '#888';
-  const { data, error } = await sb.select('registros_trazabilidad', 'limit=1');
-  if(error) {
-    status.textContent = '❌ Error: ' + JSON.stringify(error).substring(0,60);
-    status.style.color = 'var(--rojo)';
-  } else {
-    status.textContent = '✅ Conexión exitosa';
-    status.style.color = 'var(--verde)';
-  }
-}
-
-function actualizarEstadoSB() {
-  const status = document.getElementById('sb-status');
-  if(!status) return;
-  if(sb.configured()) {
-    status.textContent = '✅ Supabase configurado';
-    status.style.color = 'var(--verde)';
-  } else {
-    status.textContent = '⚠️ Sin configurar — guardado solo local';
-    status.style.color = 'var(--naranja)';
-  }
-}
-
-window.addEventListener('DOMContentLoaded', () => { init(); actualizarEstadoSB(); 
-  // Cargar config Supabase en los inputs
-  const sbUrlEl = document.getElementById('config-sb-url');
-  const sbKeyEl = document.getElementById('config-sb-key');
-  if(sbUrlEl) sbUrlEl.value = localStorage.getItem('sb_url') || '';
-  if(sbKeyEl) sbKeyEl.value = localStorage.getItem('sb_key') || '';
- });
+window.addEventListener('DOMContentLoaded', init);
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
