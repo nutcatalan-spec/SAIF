@@ -2557,17 +2557,112 @@ function eliminarRegistro(i) {
 // =============================================
 // PDF
 // =============================================
-function generarPDF() {
+async function generarPDF() {
   const data = recopilarDatos();
-  construirPDF(data);
+  await construirPDF(data);
 }
 
-function generarPDFHistorial(i) {
+async function generarPDFHistorial(i) {
   const todos = JSON.parse(localStorage.getItem(KEY) || '[]');
-  construirPDF(todos[i]);
+  await construirPDF(todos[i]);
 }
 
-function construirPDF(data) {
+// =============================================
+// GENERADOR DE GRÁFICO PARA PDF
+// =============================================
+function generarGraficoPDF(etapas, pctTotal) {
+  return new Promise((resolve) => {
+    const canvas = document.getElementById('pdf-chart-canvas');
+    if(!canvas) { resolve(null); return; }
+
+    // Destruir instancia previa si existe
+    const existingChart = Chart.getChart(canvas);
+    if(existingChart) existingChart.destroy();
+
+    const labels = etapas.map(e => e.nombre);
+    const valores = etapas.map(e => {
+      if(e.detalle === 'Sin T°') return null;
+      // Parsear "X/Y OK"
+      const m = e.detalle.match(/(\d+)\/(\d+)/);
+      if(!m) return e.ok ? 100 : 0;
+      return Math.round((parseInt(m[1]) / parseInt(m[2])) * 100);
+    });
+    const colores = etapas.map((e, i) => {
+      const v = valores[i];
+      if(v === null) return 'rgba(180,180,180,0.6)';
+      if(v === 100) return 'rgba(39,174,96,0.85)';
+      if(v >= 50)   return 'rgba(230,126,34,0.85)';
+      return 'rgba(192,57,43,0.85)';
+    });
+
+    // Agregar barra de cumplimiento total al final
+    labels.push('CUMPLIMIENTO TOTAL');
+    valores.push(pctTotal);
+    colores.push(pctTotal >= 90 ? 'rgba(11,61,107,0.9)' : pctTotal >= 70 ? 'rgba(230,126,34,0.9)' : 'rgba(192,57,43,0.9)');
+
+    const chart = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{
+          label: '% Cumplimiento',
+          data: valores,
+          backgroundColor: colores,
+          borderRadius: 4,
+          borderSkipped: false
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: false,
+        animation: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { enabled: false }
+        },
+        scales: {
+          x: {
+            min: 0, max: 100,
+            ticks: {
+              font: { size: 11 },
+              callback: v => v + '%'
+            },
+            grid: { color: 'rgba(0,0,0,0.08)' }
+          },
+          y: {
+            ticks: { font: { size: 11, weight: 'bold' } },
+            grid: { display: false }
+          }
+        },
+        layout: { padding: { right: 30 } }
+      },
+      plugins: [{
+        id: 'valueLabels',
+        afterDatasetsDraw(chart) {
+          const ctx = chart.ctx;
+          chart.data.datasets[0].data.forEach((val, i) => {
+            if(val === null) return;
+            const meta = chart.getDatasetMeta(0);
+            const bar = meta.data[i];
+            ctx.fillStyle = '#333';
+            ctx.font = 'bold 11px sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(val + '%', bar.x + 4, bar.y + 4);
+          });
+        }
+      }]
+    });
+
+    // Esperar un frame para que Chart.js renderice
+    setTimeout(() => {
+      const imgData = canvas.toDataURL('image/png');
+      chart.destroy();
+      resolve(imgData);
+    }, 100);
+  });
+}
+
+async function construirPDF(data) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
   const W = 210; const M = 12;
@@ -2781,6 +2876,44 @@ function construirPDF(data) {
   doc.setTextColor(30, 30, 30);
   if (pctCump <= 15) txt(`CUMPLIMIENTO TOTAL: ${pctCump}%`, M + (W - 2 * M) * pctCump / 100 + 3, y + 5.5);
   y += 12;
+
+  // ── GRÁFICO DE CUMPLIMIENTO ───────────────────────────────
+  const imgGrafico = await generarGraficoPDF(etapas, pctCump);
+  if(imgGrafico) {
+    checkPage(75);
+    // Título del gráfico
+    doc.setFillColor(39, 55, 70);
+    doc.rect(M, y, W - 2*M, 7, 'F');
+    doc.setTextColor(255, 255, 255);
+    doc.setFont('helvetica', 'bold'); doc.setFontSize(8.5);
+    txt('GRÁFICO DE CUMPLIMIENTO POR ETAPA DEL PROCESO', M + 3, y + 5);
+    doc.setTextColor(30, 30, 30);
+    y += 10;
+
+    // Insertar imagen del gráfico
+    const grafW = W - 2*M;
+    const grafH = 68;
+    doc.addImage(imgGrafico, 'PNG', M, y, grafW, grafH);
+    y += grafH + 4;
+
+    // Leyenda de colores
+    doc.setFontSize(7); doc.setFont('helvetica', 'normal');
+    const leyenda = [
+      { color: [39,174,96], label: '100% — Cumple PCC' },
+      { color: [230,126,34], label: '50-99% — Cumplimiento parcial' },
+      { color: [192,57,43], label: '<50% — No cumple' },
+      { color: [11,61,107], label: 'Cumplimiento total del ejercicio' },
+    ];
+    let lx = M;
+    leyenda.forEach(l => {
+      doc.setFillColor(...l.color);
+      doc.rect(lx, y, 6, 4, 'F');
+      doc.setTextColor(80, 80, 80);
+      txt(l.label, lx + 8, y + 3);
+      lx += 46;
+    });
+    y += 8;
+  }
 
   // Acción correctiva global
   if (data.tieneDesvios) {
@@ -3438,5 +3571,8 @@ function renderBarrasChart(registros) {
 
 window.addEventListener('DOMContentLoaded', () => setTimeout(renderDashboard, 400));
 </script>
+
+<!-- Canvas oculto para gráfico PDF -->
+<canvas id="pdf-chart-canvas" style="display:none;position:absolute;left:-9999px" width="560" height="280"></canvas>
 </body>
 </html>
